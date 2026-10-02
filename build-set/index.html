@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>createMPLS Build Kit</title>
+<meta name="description" content="createMPLS brings hands-on STEM labs into Minneapolis schools and community sites, free for every student and family. Kids do the building; we bring every part.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect x=%224%22 y=%223%22 width=%227%22 height=%225%22 rx=%221.5%22 fill=%22%231E46D2%22 stroke=%22%2315171E%22 stroke-width=%222%22/%3E%3Crect x=%2221%22 y=%223%22 width=%227%22 height=%225%22 rx=%221.5%22 fill=%22%231E46D2%22 stroke=%22%2315171E%22 stroke-width=%222%22/%3E%3Crect x=%222%22 y=%227%22 width=%2228%22 height=%2222%22 rx=%223%22 fill=%22%231E46D2%22 stroke=%22%2315171E%22 stroke-width=%222.5%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Figtree:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script>
+  try { if (localStorage.getItem('cm-motion') === 'reduce') document.documentElement.dataset.motion = 'reduce'; } catch (e) {}
+</script>
+<style>
+:root{
+  --paper:#F6F1E7; --paper-2:#EDE5D4; --card:#FFFDF8;
+  --ink:#15171E; --ink-2:#3A3E4A; --muted:#5A5E6B;
+  --blueprint:#D3E6F0; --grid:rgba(30,70,210,.10);
+  --blue:#1E46D2; --yellow:#FFC21A; --red:#E5412D; --green:#15A06A;
+  --purple:#7948CB; --sky:#19A7CE; --orange:#FF7A1A; --pink:#D9447C;
+  --r:22px; --bw:3px; --hard:8px 8px 0 var(--ink);
+  --display:"Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"Space Mono", ui-monospace, Menlo, Consolas, monospace;
+  --gut:clamp(16px, 3.2vw, 48px);
+  --max:1360px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html[data-motion="reduce"]{scroll-behavior:auto}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  background-image:radial-gradient(rgba(21,23,30,.09) 1.2px, transparent 1.3px);background-size:26px 26px;}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gut)}
+.mono{font-family:var(--mono);letter-spacing:.02em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:6px}
+
+/* ---------- buttons ---------- */
+.btn{--bg:var(--yellow);--fg:var(--ink);display:inline-flex;align-items:center;gap:.6em;font:800 17px/1 var(--body);text-decoration:none;
+  padding:17px 22px;border:var(--bw) solid var(--ink);border-radius:14px;background:var(--bg);color:var(--fg);box-shadow:5px 5px 0 var(--ink);
+  transition:transform .12s ease, box-shadow .12s ease;cursor:pointer}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.btn:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--ink)}
+.btn.ghost{--bg:var(--card)}
+.btn.blue{--bg:var(--blue);--fg:#fff}
+.btn .arr{display:inline-block;transition:transform .2s}
+.btn:hover .arr{transform:translateX(4px)}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(246,241,231,.92);backdrop-filter:blur(8px);border-bottom:var(--bw) solid var(--ink)}
+.nav .wrap{display:flex;align-items:center;gap:28px;height:74px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo svg{height:50px;width:auto}
+.nav ul{display:flex;gap:6px;list-style:none;margin:0 0 0 auto;padding:0}
+.nav ul a{font:700 16px/1 var(--body);text-decoration:none;padding:10px 12px;border-radius:10px}
+.nav ul a:hover{background:var(--blueprint)}
+.nav .btn{padding:12px 16px;font-size:15px;box-shadow:3px 3px 0 var(--ink)}
+.studs{position:absolute;left:0;right:0;bottom:-9px;height:14px;display:flex;justify-content:space-between;padding:0 var(--gut);pointer-events:none}
+.studs i{width:14px;height:14px;border-radius:50%;background:var(--paper);border:2.5px solid var(--ink);transition:background .25s}
+.studs i.on{background:var(--yellow)}
+.menu-btn{display:none}
+
+/* ---------- pager ---------- */
+.pager{position:fixed;right:var(--gut);bottom:18px;z-index:40;font:700 12px/1 var(--mono);background:var(--card);border:2.5px solid var(--ink);border-radius:999px;padding:9px 14px;display:flex;gap:10px;align-items:center;box-shadow:3px 3px 0 var(--ink)}
+.pager b{display:inline-block;min-width:2ch;color:var(--blue)}
+.pager .lbl{color:var(--muted);text-transform:uppercase}
+
+/* ---------- shared step header ---------- */
+section{position:relative}
+.step{padding:96px 0 80px}
+.step-head{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:end;margin-bottom:56px}
+.step-num{width:132px;height:150px;border:var(--bw) solid var(--ink);border-radius:20px;background:var(--card);box-shadow:var(--hard);display:flex;flex-direction:column;align-items:center;justify-content:center;transform-origin:50% 100%}
+.step-num span{font:700 13px/1 var(--mono);letter-spacing:.18em}
+.step-num b{font:800 112px/0.86 var(--display);font-stretch:80%;color:var(--blue)}
+.step-head h2{font:800 clamp(48px,7vw,104px)/.9 var(--display);font-stretch:78%;letter-spacing:-.02em;margin:0 0 12px}
+.step-head p{margin:0;max-width:640px;font-size:20px;color:var(--ink-2)}
+.kicker{font:700 13px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+
+.panel{border:var(--bw) solid var(--ink);border-radius:var(--r);background:var(--card);box-shadow:var(--hard);position:relative}
+.bp{background-color:var(--blueprint);background-image:linear-gradient(var(--grid) 1.5px,transparent 1.5px),linear-gradient(90deg,var(--grid) 1.5px,transparent 1.5px);background-size:28px 28px}
+.cut{filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(10px 12px 0 rgba(21,23,30,.16))}
+.burst{position:absolute;width:64px;height:64px;pointer-events:none;opacity:0;z-index:6}
+.burst line{stroke:var(--ink);stroke-width:4;stroke-linecap:round}
+
+/* ---------- seam (stud row divider) ---------- */
+.seam{height:36px;background:radial-gradient(circle at 18px 18px, var(--ink) 0 9px, transparent 9.5px) 0 0/36px 36px repeat-x;opacity:.9;margin:0 var(--gut)}
+
+/* =========================== COVER =========================== */
+.cover{padding:118px 0 60px;min-height:100vh}
+.cover-grid{display:grid;grid-template-columns:1fr 1.02fr;gap:24px;align-items:center}
+.kit-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.chip{display:inline-flex;align-items:center;gap:8px;font:700 12.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;border:2.5px solid var(--ink);border-radius:999px;padding:8px 12px;background:var(--card)}
+.chip.ink{background:var(--ink);color:var(--paper)}
+.chip.y{background:var(--yellow)}
+.cover h1{font:800 clamp(56px,7.2vw,112px)/.86 var(--display);font-stretch:76%;letter-spacing:-.025em;margin:0 0 26px}
+.cover h1 .w{display:inline-block}
+.cover h1 .l2{color:var(--blue)}
+.cover h1 .hl{position:relative;white-space:nowrap}
+.cover h1 .hl svg{position:absolute;left:-2%;bottom:-.08em;width:104%;height:.3em;overflow:visible}
+.lede{font-size:clamp(18px,1.5vw,21px);max-width:560px;margin:0 0 30px;color:var(--ink-2)}
+.lede strong{color:var(--ink)}
+.ctas{display:flex;flex-wrap:wrap;gap:14px}
+.in-set{margin-top:34px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.in-set .kicker{color:var(--muted)}
+.in-set ul{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.in-set li{font:700 14px/1 var(--mono);border:2px dashed var(--ink);border-radius:10px;padding:8px 10px;background:rgba(255,255,255,.5)}
+.in-set li b{color:var(--blue)}
+.in-set li.zero b{color:var(--red)}
+
+.cover-art{position:relative;height:min(720px, 80vh);min-height:560px}
+.cover-art .stage{position:absolute;left:22%;right:0;bottom:0;height:70%;border-radius:30px;overflow:hidden}
+.cover-art .stage .tag{position:absolute;right:18px;bottom:44px;z-index:5}
+.cover-art .stage .ruler{position:absolute;left:0;right:0;bottom:0;height:30px;border-top:2.5px solid var(--ink);background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 28px) bottom/100% 12px no-repeat, var(--card)}
+.cover-kids{position:absolute;right:2%;bottom:30px;height:80%;width:auto;z-index:3;transform-origin:50% 100%}
+.hero-bricks{position:absolute;left:-4%;top:-2%;width:58%;height:100%;z-index:4;overflow:visible}
+.hero-bricks text{font:700 15px var(--mono);fill:var(--ink)}
+.hero-bricks .qty{font:800 26px var(--display);fill:var(--blue)}
+.hero-bricks .qty.zero{fill:var(--red)}
+.zoom{position:absolute;left:8%;bottom:6%;width:150px;height:150px;border-radius:50%;border:var(--bw) solid var(--ink);background:#fff;z-index:5;box-shadow:5px 5px 0 var(--ink);display:grid;place-items:center;overflow:hidden}
+.zoom img{width:84%}
+.zoom-line{position:absolute;z-index:4;left:calc(8% + 140px);bottom:calc(6% + 96px);width:130px;height:60px;overflow:visible}
+.age{position:absolute;right:-6px;top:6%;z-index:6;width:132px;height:132px;border-radius:50%;background:var(--yellow);border:var(--bw) solid var(--ink);box-shadow:5px 5px 0 var(--ink);display:grid;place-items:center;text-align:center}
+.age b{font:800 44px/.9 var(--display);font-stretch:80%;display:block}
+.age span{font:700 11px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.age svg{position:absolute;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px)}
+.age svg text{font:700 10.5px var(--mono);letter-spacing:.2em;fill:var(--ink)}
+.scroll-hint{position:absolute;left:22%;bottom:-40px;font:700 12px var(--mono);letter-spacing:.12em;display:flex;align-items:center;gap:8px}
+
+/* =========================== STEP 1 =========================== */
+.box-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:start}
+.partsbox{padding:28px 28px 30px}
+.partsbox .kicker{display:flex;justify-content:space-between;margin-bottom:20px}
+.parts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.part{background:var(--card);border:2.5px solid var(--ink);border-radius:16px;padding:14px 14px 16px;position:relative;min-height:190px;display:flex;flex-direction:column}
+.part .pic{height:92px;display:grid;place-items:center;margin-bottom:10px}
+.part .pic img{max-height:92px;width:auto}
+.part .pic .face{width:84px;height:84px;border-radius:50%;border:2.5px solid var(--ink);object-fit:cover;background:var(--yellow)}
+.part .q{font:800 34px/1 var(--display);font-stretch:80%;color:var(--blue)}
+.part.zero .q{color:var(--red)}
+.part p{margin:2px 0 0;font:600 15px/1.25 var(--body)}
+.statement{font:800 clamp(34px,3.6vw,54px)/1 var(--display);font-stretch:82%;letter-spacing:-.015em;margin:0 0 22px}
+.statement mark{background:none;color:var(--blue);position:relative;white-space:nowrap}
+.statement mark::after{content:"";position:absolute;left:-2%;right:-2%;bottom:.04em;height:.22em;background:var(--yellow);z-index:-1;border-radius:4px;transform-origin:0 50%}
+.box-copy p{color:var(--ink-2);margin:0 0 18px;max-width:560px}
+.notes{list-style:none;padding:0;margin:26px 0 30px;display:grid;gap:10px}
+.notes li{display:flex;gap:14px;align-items:baseline;font-weight:600}
+.notes li i{font:700 12px/1 var(--mono);flex:none;width:30px;height:30px;border-radius:50%;border:2.5px solid var(--ink);display:grid;place-items:center;font-style:normal;background:var(--yellow);transform:translateY(7px)}
+.quote{padding:26px 28px 24px 28px;background:var(--yellow);transform:rotate(-1.2deg)}
+.quote blockquote{margin:0;font:700 22px/1.3 var(--body)}
+.quote blockquote b{font-family:var(--display);font-size:34px;font-stretch:80%;display:block;line-height:1;margin-top:6px}
+.quote cite{display:block;margin-top:12px;font:700 13px/1 var(--mono);font-style:normal;letter-spacing:.06em;text-transform:uppercase}
+.since{margin-top:70px;display:grid;grid-template-columns:1.4fr 1fr;gap:28px;align-items:center}
+.since .panel{overflow:hidden}
+.since .panel img{width:100%;aspect-ratio:16/8;object-fit:cover}
+.since .cap{position:absolute;left:16px;bottom:16px;background:var(--card);border:2.5px solid var(--ink);border-radius:10px;padding:8px 12px;font:700 12.5px/1.2 var(--mono)}
+.since h3{font:800 clamp(30px,3vw,44px)/1 var(--display);font-stretch:80%;margin:0 0 12px}
+.since p{color:var(--ink-2);margin:0}
+
+/* =========================== STEP 2 =========================== */
+.seq{display:grid;grid-template-columns:repeat(3,1fr);gap:46px 54px;counter-reset:sub}
+.sub{position:relative}
+.sub .frame{overflow:hidden;border-radius:18px;border:var(--bw) solid var(--ink);box-shadow:var(--hard);background:var(--card)}
+.sub .frame img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.sub .n{position:absolute;left:-14px;top:-16px;z-index:3;width:54px;height:54px;border-radius:50%;background:var(--blue);color:#fff;border:var(--bw) solid var(--ink);display:grid;place-items:center;font:800 28px/1 var(--display)}
+.sub .t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:16px 4px 4px}
+.sub h3{font:800 30px/1 var(--display);font-stretch:80%;margin:0}
+.sub .time{font:700 12px/1 var(--mono);background:var(--card);border:2px solid var(--ink);border-radius:999px;padding:6px 9px;white-space:nowrap}
+.sub p{margin:6px 4px 0;color:var(--ink-2);font-size:16.5px}
+.sub .arrow{position:absolute;right:-50px;top:38%;width:46px;height:30px;z-index:2}
+.sub.done .frame{background-color:var(--yellow);overflow:visible;height:auto}
+.sub.done .frame .inner{position:relative;aspect-ratio:4/3;border-radius:15px;background:var(--yellow) radial-gradient(rgba(21,23,30,.14) 1.6px,transparent 1.7px) 0 0/18px 18px}
+.sub.done .frame img{position:absolute;left:50%;bottom:0;width:112%;max-width:none;aspect-ratio:auto;object-fit:contain;transform:translateX(-50%);transform-origin:50% 100%}
+.sub.done .n{background:var(--yellow);color:var(--ink)}
+.tip{margin-top:56px;display:flex;gap:18px;align-items:center;padding:18px 22px;border:2.5px dashed var(--ink);border-radius:16px;max-width:860px;background:rgba(255,255,255,.55)}
+.tip b{font:700 12px/1 var(--mono);letter-spacing:.12em;background:var(--ink);color:var(--paper);padding:8px 10px;border-radius:8px;white-space:nowrap}
+.tip p{margin:0;font-weight:600}
+
+.marquee{margin-top:90px;border-block:var(--bw) solid var(--ink);background:var(--blue);color:#fff;overflow:hidden;padding:20px 0}
+.marquee .track{display:flex;gap:0;width:max-content;font:800 clamp(30px,3.6vw,52px)/1 var(--display);font-stretch:80%;white-space:nowrap}
+.marquee span{display:inline-flex;align-items:center;gap:28px;padding-right:28px}
+.marquee .dot{width:.5em;height:.5em;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);flex:none}
+
+/* =========================== STEP 3: BAGS =========================== */
+.bags{padding-bottom:40px}
+.controls{display:grid;gap:22px;margin-bottom:34px}
+.ruler-wrap .kicker{display:block;margin-bottom:12px;color:var(--muted)}
+.ruler{display:grid;grid-template-columns:4fr 3fr 3fr 4fr 1.8fr;border:var(--bw) solid var(--ink);border-radius:16px;overflow:hidden;background:var(--card);box-shadow:5px 5px 0 var(--ink)}
+.ruler button{all:unset;cursor:pointer;position:relative;padding:14px 12px 30px;border-right:2.5px solid var(--ink);font:800 20px/1 var(--display);font-stretch:85%;text-align:left;
+  background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 100%) left bottom/calc(100% / var(--ticks,4)) 12px repeat-x}
+.ruler button:last-child{border-right:0;background:none;text-align:center}
+.ruler button small{display:block;font:700 11px/1 var(--mono);letter-spacing:.06em;margin-top:6px;color:var(--muted)}
+.ruler button[aria-pressed="true"]{background-color:var(--yellow)}
+.ruler button:focus-visible{outline:3px solid var(--blue);outline-offset:-6px}
+.bagrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.bagbtn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:9px;font:700 15px/1 var(--body);padding:9px 14px 9px 9px;border:2.5px solid var(--ink);border-radius:12px;background:var(--card);transition:transform .12s, box-shadow .12s}
+.bagbtn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--ink)}
+.bagbtn .sw{width:26px;height:20px;border-radius:5px;border:2px solid var(--ink);background:var(--c);position:relative}
+.bagbtn .sw::before,.bagbtn .sw::after{content:"";position:absolute;top:-6px;width:8px;height:5px;border:2px solid var(--ink);border-bottom:0;border-radius:3px 3px 0 0;background:var(--c)}
+.bagbtn .sw::before{left:2px}.bagbtn .sw::after{right:2px}
+.bagbtn b{font:700 11px/1 var(--mono);color:var(--muted)}
+.bagbtn[aria-pressed="true"]{background:var(--ink);color:#fff}
+.bagbtn[aria-pressed="true"] b{color:var(--yellow)}
+.bagbtn:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.switch{display:inline-flex;align-items:center;gap:10px;font:700 15px/1.2 var(--body);cursor:pointer;margin-left:auto}
+.switch input{appearance:none;width:52px;height:30px;border:2.5px solid var(--ink);border-radius:999px;background:var(--card);position:relative;cursor:pointer;margin:0;flex:none}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:var(--ink);transition:transform .2s}
+.switch input:checked{background:var(--green)}
+.switch input:checked::after{transform:translateX(22px)}
+.count{font:700 13px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+.kits{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;align-items:stretch}
+.kit{--c:var(--blue);--cfg:#fff;position:relative;border:var(--bw) solid var(--ink);border-radius:20px;background:var(--card);box-shadow:6px 6px 0 var(--ink);display:flex;flex-direction:column;transition:transform .15s, box-shadow .15s}
+.kit:hover{transform:translate(-2px,-3px);box-shadow:9px 10px 0 var(--ink)}
+.kit[hidden]{display:none}
+.kit-top{height:88px;background:var(--c);border-bottom:var(--bw) solid var(--ink);border-radius:17px 17px 0 0;position:relative;padding:14px 16px;display:flex;align-items:flex-start;gap:8px;
+  background-image:radial-gradient(circle at 16px 16px, rgba(255,255,255,.28) 0 7px, rgba(21,23,30,.18) 7.5px 9px, transparent 9.5px);background-size:32px 32px;background-position:6px 4px}
+.kit-top .lab{font:700 11.5px/1 var(--mono);letter-spacing:.08em;background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:6px 8px;text-transform:uppercase;white-space:nowrap}
+.kit-part{position:absolute;right:10px;bottom:-22px;height:104px;width:auto;max-width:48%;object-fit:contain;z-index:2;filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(5px 6px 0 rgba(21,23,30,.25));transition:transform .25s}
+.kit:hover .kit-part{transform:translateY(-8px) rotate(-4deg)}
+.kit-body{padding:20px 20px 12px;flex:1;display:flex;flex-direction:column}
+.kit-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.kit-age{display:inline-flex;align-items:stretch;border:2.5px solid var(--ink);border-radius:9px;overflow:hidden;flex:none}
+.kgr{position:relative;flex:1;display:grid;grid-template-columns:repeat(14,1fr);gap:2px;max-width:150px;padding-bottom:12px}
+.kgr i{height:12px;border:1.5px solid var(--ink);border-radius:2px;background:var(--card)}
+.kgr i.on{background:var(--c)}
+.kgr span{position:absolute;bottom:-2px;font:700 8.5px/1 var(--mono);color:var(--muted)}
+.kgr span:first-of-type{left:0}.kgr span:last-of-type{right:0}
+.pgtab{position:absolute;right:var(--gut);top:24px;font:700 12px/1 var(--mono);letter-spacing:.1em;color:var(--muted);border-bottom:2px solid var(--muted);padding-bottom:6px}
+.kit-age small{font:700 10.5px/1 var(--mono);letter-spacing:.08em;background:var(--ink);color:#fff;padding:7px 7px;display:grid;place-items:center}
+.kit-age b{font:800 20px/1 var(--display);font-stretch:85%;padding:5px 9px}
+.kit h3{font:800 29px/.98 var(--display);font-stretch:82%;margin:0 0 6px;letter-spacing:-.01em;padding-right:4px}
+.kit .nm{margin:0 0 16px;font:600 14.5px/1.3 var(--body);color:var(--muted)}
+.kit .inbag{margin-top:auto}
+.kit .inbag .kicker{font-size:10.5px;color:var(--muted);display:block;margin-bottom:8px}
+.kit .inbag ul{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;padding:0;list-style:none}
+.kit .inbag li{font:600 13px/1.1 var(--body);border:2px solid var(--ink);border-radius:8px;padding:5px 8px;background:var(--paper)}
+.kit .inbag li::before{content:"1x ";font:700 11px var(--mono);color:var(--blue)}
+.kit dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:2px dashed rgba(21,23,30,.35);padding-top:12px}
+.kit dt{font:700 10.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.kit dd{margin:0;font:600 13.5px/1.25 var(--body)}
+.dial{display:flex;gap:3px;margin-bottom:5px}
+.dial i{flex:1;height:9px;border:2px solid var(--ink);border-radius:3px;background:var(--card)}
+.dial i.on{background:var(--ink)}
+.kit-add{all:unset;cursor:pointer;margin:6px 14px 14px;text-align:center;font:800 15px/1 var(--body);padding:13px;border:2.5px solid var(--ink);border-radius:12px;background:var(--paper);transition:background .15s}
+.kit-add:hover{background:var(--yellow)}
+.kit-add[aria-pressed="true"]{background:var(--ink);color:#fff}
+.kit-add:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.stamp{position:absolute;right:12px;top:98px;z-index:3;transform:rotate(8deg);font:700 11px/1.05 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--red);border:2.5px solid var(--red);border-radius:8px;padding:6px 8px;background:rgba(255,253,248,.92);text-align:center}
+.more{display:flex;justify-content:center;margin-top:36px}
+.tray{position:relative;bottom:16px;z-index:30;margin:46px auto 0;max-width:980px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 14px 14px 20px;border:var(--bw) solid var(--ink);border-radius:18px;background:var(--ink);color:#fff;box-shadow:6px 6px 0 var(--yellow)}
+.tray.has{position:sticky}
+.tray .kicker{color:var(--yellow)}
+.tray .picked{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:200px;font-size:15px}
+.tray .picked span{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--ink);border-radius:8px;padding:5px 9px;font:700 13px/1.1 var(--body)}
+.tray .picked span i{width:12px;height:12px;border-radius:3px;background:var(--c);border:2px solid var(--ink)}
+.tray .empty{color:#C9CCD6;font-weight:600}
+.tray .btn{box-shadow:none;border-color:#fff}
+.flybrick{position:fixed;z-index:80;width:34px;height:24px;border:2.5px solid var(--ink);border-radius:6px;pointer-events:none}
+
+/* =========================== JOIN =========================== */
+.join-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:40px;align-items:center;margin-bottom:56px}
+.city{width:100%;height:auto;overflow:visible}
+.city text{font:800 22px var(--display)}
+.join-copy .statement{margin-bottom:16px}
+.join-copy p{color:var(--ink-2);max-width:540px}
+.asks{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:28px;align-items:stretch}
+.ask{padding:0;display:flex;flex-direction:column;overflow:visible}
+.ask .slot{position:absolute;top:-22px;left:22px;width:46px;height:46px;border-radius:50%;border:var(--bw) solid var(--ink);display:grid;place-items:center;font:800 24px/1 var(--display);background:var(--card);z-index:2}
+.ask .ph{height:200px;border-bottom:var(--bw) solid var(--ink);border-radius:19px 19px 0 0;overflow:hidden;position:relative}
+.ask .ph img{width:100%;height:100%;object-fit:cover}
+.ask .bd{padding:24px 24px 26px;display:flex;flex-direction:column;flex:1}
+.ask h3{font:800 38px/.95 var(--display);font-stretch:80%;margin:0 0 10px}
+.ask p{margin:0 0 20px;font-size:17px}
+.ask .btn{margin-top:auto;align-self:flex-start}
+.ask.a{background:var(--yellow)}
+.ask.a .slip{max-width:420px}
+.ask .pop{position:absolute;right:0;bottom:0;width:38%;z-index:3;transform-origin:80% 100%;border-bottom-right-radius:19px;filter:drop-shadow(-3px 0 0 #fff) drop-shadow(0 -3px 0 #fff)}
+.ask.a .slot{background:var(--yellow)}
+.ask.b{background:var(--blue);color:#fff}
+.ask.b .slot{background:var(--blue);color:#fff}
+.ask.b .btn{--bg:#fff}
+.ask.c{background:var(--green)}
+.ask.c .slot{background:var(--green)}
+.ask.c .btn{--bg:#fff}
+.slip{border:2.5px dashed var(--ink);border-radius:12px;padding:12px 14px;margin:0 0 20px;background:rgba(255,255,255,.55);font:700 13px/1.9 var(--mono)}
+.slip div{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.slip .box{width:15px;height:15px;border:2px solid var(--ink);border-radius:3px;display:inline-block;background:#fff}
+.slip .box.x{background:var(--ink) linear-gradient(45deg,transparent 45%,#fff 45% 55%,transparent 55%)}
+.slip .stampy{display:inline-block;margin-top:6px;border:2.5px solid var(--red);color:var(--red);border-radius:6px;padding:0 8px;transform:rotate(-3deg);background:#fff}
+
+/* =========================== BACK COVER =========================== */
+.back{background:var(--ink);color:var(--paper);margin-top:40px;padding:90px 0 120px;border-top:var(--bw) solid var(--ink);position:relative;overflow:hidden}
+.back::before{content:"";position:absolute;left:0;right:0;top:0;height:22px;background:radial-gradient(circle at 18px 0, var(--paper) 0 10px, transparent 10.5px) 0 0/36px 22px repeat-x}
+.back-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:48px}
+.back h2{font:800 clamp(52px,7vw,110px)/.86 var(--display);font-stretch:76%;margin:0 0 22px;letter-spacing:-.02em}
+.back h2 span{color:var(--yellow)}
+.back p{color:#C9CCD6;max-width:460px}
+.back h4{font:700 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);margin:0 0 14px}
+.back ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.back ul a{text-decoration:none;font-weight:600}
+.back ul a:hover{text-decoration:underline}
+.fine{margin-top:64px;padding-top:24px;border-top:2px dashed rgba(246,241,231,.3);display:flex;gap:28px;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;font:400 12.5px/1.6 var(--mono);color:#AEB2BE}
+.fine .barcode{background:#fff;padding:10px 12px 6px;border-radius:6px;color:var(--ink);text-align:center;font:700 11px/1 var(--mono)}
+.fine .barcode svg{display:block;height:46px;width:170px;margin-bottom:4px}
+.sticker-photo{border:3px solid var(--paper);border-radius:16px;overflow:hidden;transform:rotate(2.5deg);max-width:300px;margin-top:20px}
+.sticker-photo img{aspect-ratio:16/9;object-fit:cover;width:100%;object-position:70% 60%}
+.cap2{font:400 12px/1.4 var(--mono);color:#AEB2BE;margin-top:10px}
+.motion-toggle{all:unset;cursor:pointer;font:700 12px/1 var(--mono);letter-spacing:.06em;border:2px solid #AEB2BE;border-radius:999px;padding:9px 12px;color:var(--paper)}
+.motion-toggle:focus-visible{outline:3px solid var(--yellow)}
+
+/* =========================== RESPONSIVE =========================== */
+@media (max-width:1100px){
+  .kits{grid-template-columns:repeat(2,1fr)}
+  .seq{grid-template-columns:repeat(2,1fr)}
+  .sub .arrow{display:none}
+  .asks{grid-template-columns:1fr 1fr}
+  .ask.a{grid-column:1/-1}
+  .nav ul{display:none}
+  .menu-btn{display:inline-flex;margin-left:auto}
+}
+@media (max-width:900px){
+  body{font-size:17px}
+  .cover{padding-top:100px}
+  .cover-grid,.box-grid,.since,.join-grid,.back-grid{grid-template-columns:1fr}
+  .cover-art{height:520px;min-height:0;margin-top:20px}
+  .step{padding:100px 0 70px}
+  .step-head{grid-template-columns:1fr;gap:18px}
+  .step-num{width:92px;height:104px}
+  .step-num b{font-size:76px}
+  .ruler{grid-template-columns:repeat(5,1fr)}
+}
+@media (max-width:640px){
+  .nav .wrap{height:64px;gap:12px}
+  .logo svg{height:42px}
+  .nav .btn{padding:10px 12px;font-size:14px}
+  .menu-btn{display:none}
+  .cover h1{font-size:clamp(50px,15vw,72px)}
+  .cover-art{height:440px}
+  .cover-art .stage{left:4%;height:66%}
+  .hero-bricks{width:60%;left:-6%}
+  .cover-kids{height:72%;right:-2%}
+  .zoom{width:104px;height:104px;left:2%;bottom:4%}
+  .zoom-line{display:none}
+  .hl-lab text,.hl-lab path{display:none}
+  .cover-art .stage .tag{display:none}
+  .scroll-hint{left:auto;right:0;bottom:-34px}
+  .bagrow#bagrow{flex-wrap:nowrap;overflow-x:auto;margin:0 calc(-1 * var(--gut));padding:4px var(--gut) 10px;scrollbar-width:none}
+  .bagbtn{flex:none}
+  .ask.a .bd{padding-bottom:150px}
+  .tip{flex-direction:column;align-items:flex-start}
+  .ask .pop{width:62%}
+  .age{width:96px;height:96px;right:0;top:0}
+  .age b{font-size:32px}
+  .parts{grid-template-columns:repeat(2,1fr)}
+  .partsbox{padding:18px}
+  .kits,.seq,.asks{grid-template-columns:1fr}
+  .ruler{grid-template-columns:repeat(2,1fr)}
+  .ruler button{border-bottom:2.5px solid var(--ink);padding:12px 12px 26px}
+  .ruler button:nth-child(2n){border-right:0}
+  .ruler button:last-child{grid-column:1/-1;border-bottom:0;padding:14px}
+  .switch{margin-left:0}
+  .tray{bottom:10px;padding:12px}
+  .tray .picked{min-width:100%}
+  .pager{display:none}
+  .back-grid{gap:34px}
+  .quote{transform:none}
+}
+
+/* reduced motion: nothing hidden, nothing moving */
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
+html[data-motion="reduce"] *{animation:none!important;transition:none!important}
+</style>
+</head>
+<body>
+
+<a class="sr" href="#main">Skip to content</a>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#cover" aria-label="createMPLS home">
+      <svg viewBox="0 0 150 96" aria-hidden="true">
+        <!-- brick-mark: a 1x4 brick seen from the front; studs on top; stacked CREATE / MPLS -->
+        <g stroke="#15171E" stroke-width="4" stroke-linejoin="round">
+          <rect x="16" y="4" width="22" height="12" rx="3" fill="#1E46D2"/>
+          <rect x="47" y="4" width="22" height="12" rx="3" fill="#1E46D2"/>
+          <rect x="78" y="4" width="22" height="12" rx="3" fill="#1E46D2"/>
+          <rect x="109" y="4" width="22" height="12" rx="3" fill="#1E46D2"/>
+          <rect x="4" y="15" width="140" height="77" rx="9" fill="#1E46D2"/>
+        </g>
+        <text x="74" y="40" text-anchor="middle" fill="#FFC21A" style="font:800 22px 'Bricolage Grotesque';font-stretch:75%;letter-spacing:.32em">CREATE</text>
+        <text x="74" y="84" text-anchor="middle" fill="#fff" style="font:800 52px 'Bricolage Grotesque';font-stretch:75%;letter-spacing:.02em">MPLS</text>
+      </svg>
+    </a>
+    <ul>
+      <li><a href="#build">What kids make</a></li>
+      <li><a href="#bags">Programs</a></li>
+      <li><a href="#join">Volunteer</a></li>
+      <li><a href="#join">Donate</a></li>
+    </ul>
+    <a class="btn" href="#join">Bring a lab <span class="arr">→</span></a>
+  </div>
+  <div class="studs" aria-hidden="true"></div>
+</header>
+
+<div class="pager" aria-hidden="true"><span>PAGE</span><b id="pg">01</b><span>/ <span id="pgt">06</span></span><span class="lbl" id="pgl">Cover</span></div>
+
+<main id="main">
+
+<!-- ============ COVER ============ -->
+<section class="cover" id="cover" data-page="Cover">
+  <div class="wrap cover-grid">
+    <div class="cover-copy">
+      <div class="kit-meta">
+        <span class="chip ink">Build set 612</span>
+        <span class="chip">Minneapolis</span>
+        <span class="chip y">Free for students &amp; families</span>
+      </div>
+      <h1 id="h1">
+        <span class="w">Some</span> <span class="w">assembly</span> <span class="w">required.</span><br>
+        <span class="w l2">Every</span> <span class="w l2">part</span> <span class="w l2 hl">included.<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path id="hlPath" d="M4 14 C 70 4, 150 4, 296 10" fill="none" stroke="#FFC21A" stroke-width="9" stroke-linecap="round"/></svg></span>
+      </h1>
+      <p class="lede">Kids do the building. <strong>createMPLS brings everything else</strong>: robots, code, 3D printers, sound gear, drones and the mentors who lean in, right into Minneapolis schools and community sites.</p>
+      <div class="ctas">
+        <a class="btn" href="#join">Bring a lab to your site <span class="arr">→</span></a>
+        <a class="btn ghost" href="#bags">See what kids build</a>
+      </div>
+      <div class="in-set">
+        <span class="kicker">In this set</span>
+        <ul>
+          <li><b>1x</b> curious kid</li>
+          <li><b>1x</b> mentor</li>
+          <li><b>1x</b> real tools</li>
+          <li class="zero"><b>0x</b> cost</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cover-art" aria-hidden="true">
+      <div class="stage panel bp"><span class="chip tag">Fig. 1 — the build table</span><div class="ruler"></div></div>
+      <img class="cover-kids cut" src="img/cut-boy-girl-ev3.webp" alt="">
+      <svg class="hero-bricks" id="heroBricks"></svg>
+      <svg class="zoom-line" viewBox="0 0 150 60"><path d="M0 40 L150 8" stroke="#15171E" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round" fill="none"/></svg>
+      <div class="zoom"><img src="img/obj-robot.webp" alt=""></div>
+      <div class="age"><svg viewBox="0 0 160 160"><defs><path id="ring" d="M80 80 m-68 0 a68 68 0 1 1 136 0 a68 68 0 1 1 -136 0"/></defs><text><textPath href="#ring">GRADES PRE-K TO 12 · ON-SITE · NO COST · </textPath></text></svg><div><span>Ages</span><b>K–12</b></div></div>
+      <div class="scroll-hint">SCROLL TO ASSEMBLE <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 2v11M3 8l5 5 5-5" stroke="#15171E" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<div class="seam" aria-hidden="true"></div>
+
+<!-- ============ STEP 1: OPEN THE BOX (mission / value) ============ -->
+<section class="step" id="box" data-page="Step 1">
+  <div class="wrap">
+    <div class="step-head">
+      <div class="step-num"><span>STEP</span><b>1</b></div>
+      <div>
+        <h2>Open the box.</h2>
+        <p>Here's everything that comes with a createMPLS lab, and what it costs the family at home.</p>
+      </div>
+    </div>
+
+    <div class="box-grid">
+      <div class="partsbox panel bp snap">
+        <div class="kicker"><span>Parts for this step</span><span>6 pcs</span></div>
+        <div class="parts">
+          <div class="part"><div class="pic"><img class="face" src="img/cut-girl-red.webp" alt="" style="object-position:50% 20%"></div><span class="q">1x</span><p>curious kid, any grade, any background</p></div>
+          <div class="part"><div class="pic"><img class="face" src="img/p-mentor-girl.jpg" alt="" style="object-position:62% 30%"></div><span class="q">1x</span><p>mentor who leans in beside them</p></div>
+          <div class="part"><div class="pic"><img src="img/obj-robot.webp" alt=""></div><span class="q">1x</span><p>kit of real tools: robots, printers, mics, drones</p></div>
+          <div class="part"><div class="pic"><svg id="isoRoom" width="110" height="92" viewBox="-60 -70 120 100"></svg></div><span class="q">1x</span><p>room your students already use</p></div>
+          <div class="part zero"><div class="pic"><svg width="88" height="88" viewBox="0 0 88 88"><circle cx="44" cy="44" r="38" fill="#fff" stroke="#15171E" stroke-width="4"/><text x="44" y="60" text-anchor="middle" style="font:800 48px 'Bricolage Grotesque'" fill="#15171E">$</text><path d="M16 72 L72 16" stroke="#E5412D" stroke-width="7" stroke-linecap="round"/></svg></div><span class="q">0x</span><p>cost to students or families</p></div>
+          <div class="part zero"><div class="pic"><svg width="96" height="80" viewBox="0 0 96 80"><rect x="6" y="14" width="80" height="44" rx="8" fill="#FFC21A" stroke="#15171E" stroke-width="4"/><rect x="14" y="22" width="16" height="14" rx="2" fill="#fff" stroke="#15171E" stroke-width="3"/><rect x="36" y="22" width="16" height="14" rx="2" fill="#fff" stroke="#15171E" stroke-width="3"/><rect x="58" y="22" width="20" height="14" rx="2" fill="#fff" stroke="#15171E" stroke-width="3"/><circle cx="24" cy="62" r="9" fill="#15171E"/><circle cx="68" cy="62" r="9" fill="#15171E"/><path d="M10 76 L86 6" stroke="#E5412D" stroke-width="7" stroke-linecap="round"/></svg></div><span class="q">0x</span><p>extra rides to get there</p></div>
+        </div>
+      </div>
+
+      <div class="box-copy">
+        <h3 class="statement">We bring the lab <mark>to the kids</mark>, not the other way around.</h3>
+        <p>createMPLS is a Minneapolis nonprofit that runs hands-on STEM inside the places students already spend their day: classrooms during school, and after-school, summer and community programs around them.</p>
+        <p>Students build robots, code games, print parts, record sounds and fly drones. They test what they made, change one thing, and show it to someone. Partners provide the room. We bring the rest.</p>
+        <ul class="notes">
+          <li><i>A</i>Free for every student and family, by design.</li>
+          <li><i>B</i>Delivered on-site, in school and out of school.</li>
+          <li><i>C</i>Real tools, real mentors, real things made.</li>
+        </ul>
+        <figure class="quote panel snap" style="margin:0">
+          <blockquote>"The best part is that the programming takes place on site at my children's school! As parents, we don't have to drive our children to the programs,<b>it comes to us!"</b></blockquote>
+          <cite>Raechelle, parent</cite>
+        </figure>
+      </div>
+    </div>
+
+    <div class="since">
+      <div class="panel snap"><img src="img/p-fll-table.jpg" alt="Students and two adult coaches gathered around a robotics competition table, adjusting a robot." loading="lazy"><span class="cap">Fig. 2 — robotics practice, 2016</span></div>
+      <div>
+        <span class="kicker" style="color:var(--muted)">Building since 2015</span>
+        <h3>It started with one robotics team and a cafeteria table.</h3>
+        <p>Ten years on, the kit is bigger: coding, fabrication, circuits, sound, flight and design. The idea is the same. Show up where kids are, hand them real tools, and let them build.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="seam" aria-hidden="true"></div>
+
+<!-- ============ STEP 2: SNAP IT TOGETHER (what kids do / make) ============ -->
+<section class="step" id="build" data-page="Step 2">
+  <div class="wrap">
+    <div class="step-head">
+      <div class="step-num"><span>STEP</span><b>2</b></div>
+      <div>
+        <h2>Snap it together.</h2>
+        <p>Every session follows the same build rhythm. Short demo, long build, then test it, fix it, and show it off.</p>
+      </div>
+    </div>
+
+    <div class="seq">
+      <div class="sub snap"><span class="n">1</span><div class="frame"><img src="img/p-classroom-mentors.jpg" alt="A classroom of student teams working at tables while two mentors circulate." loading="lazy"></div>
+        <div class="t"><h3>See it once</h3><span class="time">~5 MIN</span></div><p>A quick demo, then hands off. Nobody sits through a lecture.</p>
+        <svg class="arrow" viewBox="0 0 46 30"><path d="M2 15 H36 M28 6 L40 15 L28 24" stroke="#15171E" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="sub snap"><span class="n">2</span><div class="frame"><img src="img/p-two-girls-robot.jpg" alt="Two girls lean over a robot they are building, one gripping its controller brick." loading="lazy"></div>
+        <div class="t"><h3>Build sprint</h3><span class="time">~20 MIN</span></div><p>Teams get the most time on the clock, with real parts in their hands.</p>
+        <svg class="arrow" viewBox="0 0 46 30"><path d="M2 15 H36 M28 6 L40 15 L28 24" stroke="#15171E" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="sub snap"><span class="n">3</span><div class="frame"><img src="img/p-paper-tower.jpg" alt="A mentor measures a paper-tube tower holding up a heavy book while students watch." loading="lazy" style="object-position:50% 35%"></div>
+        <div class="t"><h3>Test it</h3><span class="time">MEASURE</span></div><p>Does it hold? Does it run? The test tells you, not the teacher.</p></div>
+      <div class="sub snap"><span class="n">4</span><div class="frame"><img src="img/p-laptop-robot.jpg" alt="Over-the-shoulder view of students coding at a laptop with a half-built robot in front." loading="lazy"></div>
+        <div class="t"><h3>Change one thing</h3><span class="time">~15 MIN</span></div><p>Second sprint. Fix the link that failed and run it again.</p>
+        <svg class="arrow" viewBox="0 0 46 30"><path d="M2 15 H36 M28 6 L40 15 L28 24" stroke="#15171E" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="sub snap"><span class="n">5</span><div class="frame"><img src="img/p-girls-tablet.jpg" alt="A student explains her project to a classmate at a table with a tablet." loading="lazy"></div>
+        <div class="t"><h3>Show it off</h3><span class="time">~10 MIN</span></div><p>Every build ends in a share: a demo, a gallery walk, a race, a listening party.</p>
+        <svg class="arrow" viewBox="0 0 46 30"><path d="M2 15 H36 M28 6 L40 15 L28 24" stroke="#15171E" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="sub done snap"><span class="n">✓</span><div class="frame"><div class="inner"><img id="doneKids" class="cut" src="img/cut-two-girls-machine.webp" alt="Two girls building a tall machine together." loading="lazy"></div></div>
+        <div class="t"><h3>Model complete</h3><span class="time">THEIRS</span></div><p>They made it, they tested it, and they can tell you how it works.</p></div>
+    </div>
+
+    <div class="tip snap"><b>ASSEMBLY TIP</b><p>We never cut the last ten minutes. That's when kids explain what they built, and it's often the best part.</p></div>
+  </div>
+
+  <div class="marquee" aria-label="Things students make">
+    <div class="track" id="track">
+      <span>a floor-sized chain reaction <i class="dot"></i> an arcade game with a boss level <i class="dot"></i> a tiny drone you built and flew <i class="dot"></i> a beat made from a stairwell <i class="dot"></i> a box that survives the drop test <i class="dot"></i> a pixel self-portrait <i class="dot"></i> a robot that solves a maze <i class="dot"></i> a drawing you can hear <i class="dot"></i></span>
+      <span aria-hidden="true">a floor-sized chain reaction <i class="dot"></i> an arcade game with a boss level <i class="dot"></i> a tiny drone you built and flew <i class="dot"></i> a beat made from a stairwell <i class="dot"></i> a box that survives the drop test <i class="dot"></i> a pixel self-portrait <i class="dot"></i> a robot that solves a maze <i class="dot"></i> a drawing you can hear <i class="dot"></i></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP 3: PICK YOUR BAGS (programs explorer, driven by programs.json) ============ -->
+<section class="step bags" id="bags" data-page="Step 3">
+  <div class="wrap">
+    <div class="step-head">
+      <div class="step-num"><span>STEP</span><b>3</b></div>
+      <div>
+        <h2>Pick your bags.</h2>
+        <p>Every program comes packed like a kit: the thing kids make, what's in the bag, and how long the build takes. Pick a grade, pick a bag, add it to your site's kit.</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ruler-wrap">
+        <span class="kicker">1:1 grade ruler: who's in the room?</span>
+        <div class="ruler" role="group" aria-label="Filter by grade">
+          <button type="button" data-band="-1,2" style="--ticks:4" aria-pressed="false">Pre-K – 2<small>PRE-K · K · 1 · 2</small></button>
+          <button type="button" data-band="3,5" style="--ticks:3" aria-pressed="false">Grades 3–5<small>3 · 4 · 5</small></button>
+          <button type="button" data-band="6,8" style="--ticks:3" aria-pressed="false">Grades 6–8<small>6 · 7 · 8</small></button>
+          <button type="button" data-band="9,12" style="--ticks:4" aria-pressed="false">Grades 9–12<small>9 · 10 · 11 · 12</small></button>
+          <button type="button" data-band="all" aria-pressed="true">All<small>PRE-K–12</small></button>
+        </div>
+      </div>
+      <div class="bagrow" role="group" aria-label="Filter by subject bag" id="bagrow"></div>
+      <div class="bagrow">
+        <span class="count" id="count" aria-live="polite"></span>
+        <label class="switch"><input type="checkbox" id="free"> Can run with no screens</label>
+      </div>
+    </div>
+
+    <div class="kits" id="kits"></div>
+    <div class="more"><button class="btn ghost" id="moreBtn" type="button">Unpack every bag <span class="arr">↓</span></button></div>
+
+    <div class="tray" id="tray">
+      <span class="kicker">Your site's kit</span>
+      <div class="picked" id="picked"><span class="empty">Add a bag or two. We'll plan the rest with you.</span></div>
+      <a class="btn" id="request" href="mailto:info@creatempls.org?subject=Kit%20request%20for%20our%20site">Request this kit <span class="arr">→</span></a>
+    </div>
+  </div>
+  <script type="application/json" id="programs-data">[{"id":"scratch-arcade-adventure","t":"Scratch Arcade Adventure","m":"An arcade game with a boss level","w":"a polished arcade game: enemy patterns, a power-up, three stages, a boss, and a win screen","d":"code-games","g0":3,"g1":5,"plus":false,"s":3,"free":false,"time":"12 weeks × 1 hr (plus an optional 2-session starter bridge)","tools":["Scratch"],"pilot":false,"f":4},{"id":"idea-to-3d-print","t":"From Idea to 3D Print","m":"A wiggly 3D-printed critter","w":"a printed nametag, a wiggly chain critter, and a design made for a real partner","d":"fabrication-3d","g0":3,"g1":5,"plus":false,"s":2,"free":false,"time":"11 weeks × 90 min","tools":["Design software (Tinkercad / OpenSCAD)","3D printers","Calipers & measuring tools"],"pilot":false,"f":5},{"id":"build-your-block","t":"Build Your Block","m":"A neighborhood invention that lights up","w":"a neighborhood invention that lights up, moves, or responds, shown at a public showcase","d":"civic-data","g0":3,"g1":7,"plus":false,"s":2,"free":true,"time":"28 sessions × 1.75 hr (7 weeks, 4 a week)","tools":["Cardboard & found materials","LEDs, coin cells & copper tape","Motors & buzzers","Sensors"],"pilot":false,"f":6},{"id":"robotics-to-fpv","t":"Robotics to FPV","m":"A tiny FPV drone you built and flew","w":"a tiny FPV drone you built, a pilot logbook, and a team demo","d":"flight-drones","g0":6,"g1":12,"plus":false,"s":3,"free":false,"time":"15 weeks × 90 min","tools":["Arduino","Soldering","FPV simulator & radios","Tiny FPV drones"],"pilot":false,"f":9},{"id":"lo-fi-beat-laboratory","t":"Lo-Fi Beat Laboratory","m":"A beat made from a stairwell","w":"a 30–60 second beat built from found sounds and real rooms","d":"sound-music","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"8 sessions × 90 min","tools":["Audio editor (BandLab / Audacity)","Phones & recorders"],"pilot":false,"f":10},{"id":"engineering-challenge-lab","t":"Engineering Challenge Lab","m":"A claw gripper that has to pass the test","w":"working mechanisms like speed reducers, lifters, claw grippers, and walkers","d":"robots-machines","g0":6,"g1":12,"plus":false,"s":2,"free":false,"time":"10–12 weeks, two work blocks per session","tools":["Design software (Tinkercad / OpenSCAD)","3D printers"],"pilot":false,"f":7},{"id":"spike-prime-robotics","t":"SPIKE Prime Robotics","m":"A robot that solves a maze by itself","w":"an autonomous maze-solving robot ready for a tournament","d":"robots-machines","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"12 sessions × 1 hr","tools":["LEGO SPIKE Prime"],"pilot":false,"f":8},{"id":"digital-imaging-lab","t":"Digital Imaging Lab","m":"A pixel self-portrait for a gallery wall","w":"a pixel self-portrait, a poster campaign, and a small exhibition","d":"media-light","g0":6,"g1":9,"plus":false,"s":3,"free":false,"time":"12 sessions × 90 min","tools":["Cameras & photo editor"],"pilot":false,"f":12},{"id":"physical-sound-drawing","t":"Physical Sound Drawing","m":"A drawing you can hear","w":"a 60–120 second sound piece played on one string, with a gesture map","d":"sound-music","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"8 sessions × 90 min","tools":["String instruments","Phones & recorders"],"pilot":false,"f":11},{"id":"chain-reaction-playground-k2","t":"Chain-Reaction Playground","m":"A floor-sized chain reaction","w":"a group chain-reaction machine that visitors can watch run","d":"robots-machines","g0":-1,"g1":2,"plus":false,"s":0,"free":true,"time":"4 sessions × 60 min","tools":["Ramps, balls & blocks","Cardboard & found materials"],"pilot":true,"f":1},{"id":"light-color-shadow-lab-k2","t":"Light, Color and Shadow Lab","m":"A shadow scene with color windows","w":"a tabletop shadow scene with color windows","d":"media-light","g0":-1,"g1":2,"plus":false,"s":1,"free":true,"time":"4 sessions × 60 min","tools":["Flashlights & color film","Paper, markers & prototypes"],"pilot":true,"f":2},{"id":"energy-electronics-circuits","t":"Energy, Electronics and Circuits","m":"A paper circuit that lights up","w":"a light-up paper circuit with a switch, plus a tiny buzzing or spinning invention","d":"circuits-electronics","g0":3,"g1":5,"plus":false,"s":2,"free":true,"time":"4 sessions × 75 min","tools":["LEDs, coin cells & copper tape","Motors & buzzers","Cardboard & found materials"],"pilot":true,"f":3},{"id":"scratch-stories-games","t":"Scratch Stories and Games","m":"A two-level game with cutscenes","w":"a published two-level Scratch game with cutscenes and a win screen","d":"code-games","g0":3,"g1":5,"plus":false,"s":3,"free":false,"time":"12 weeks × 1 hr","tools":["Scratch"],"pilot":false,"f":99},{"id":"design-for-printability","t":"Design for Printability","m":"A locking box that survives the drop test","w":"a locking box that passes drop and shake tests","d":"fabrication-3d","g0":6,"g1":8,"plus":false,"s":3,"free":false,"time":"10 weeks, two work blocks per session","tools":["Design software (Tinkercad / OpenSCAD)","3D printers","Calipers & measuring tools"],"pilot":false,"f":99},{"id":"digital-manufacturing","t":"Digital Manufacturing Studio","m":"A CNC-engraved nameplate","w":"a CNC-engraved nameplate, a custom keychain, and an assembly of cut and printed parts","d":"fabrication-3d","g0":6,"g1":12,"plus":false,"s":3,"free":false,"time":"12 sessions × 2 hr","tools":["Design software (Tinkercad / OpenSCAD)","CNC router","3D printers"],"pilot":false,"f":99},{"id":"debugging-studio","t":"Debugging Studio","m":"A portfolio of bugs you squashed","w":"a debugging portfolio built from tough puzzles","d":"code-games","g0":6,"g1":12,"plus":false,"s":3,"free":true,"time":"8 sessions × 60–90 min","tools":["Paper, markers & prototypes"],"pilot":false,"f":99},{"id":"parametric-sculpture-3d-print","t":"Parametric Sculpture & 3D Print","m":"A printed sculpture with an artist statement","w":"a gallery-ready 3D-printed sculpture with an artist statement","d":"fabrication-3d","g0":8,"g1":11,"plus":false,"s":3,"free":false,"time":"8 weeks, two work blocks per session","tools":["Design software (Tinkercad / OpenSCAD)","3D printers"],"pilot":false,"f":99},{"id":"sound-design-engineering","t":"Sound Design and Engineering","m":"A sound piece built from your own recordings","w":"a polished sound mini-project made from recorded sound effects and synth sounds","d":"sound-music","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"22 sessions × 60 min","tools":["Phones & recorders","Audio editor (BandLab / Audacity)","Snap-together synth blocks","Everyday sound objects (Foley)"],"pilot":false,"f":99},{"id":"digital-music-control","t":"Digital Music Control","m":"A hand-built music controller","w":"a hand-built music controller with knobs, buttons, and lights","d":"sound-music","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"4 weekly 2-hr sessions per level (3 levels)","tools":["Arduino","Breadboards & chips","MIDI"],"pilot":false,"f":99},{"id":"game-tech-intensive","t":"Game Tech Intensive","m":"A game controller in a cardboard shell","w":"a remixed Scratch game or a micro:bit controller in a cardboard shell","d":"code-games","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"6 sessions × 60 min per track","tools":["Scratch","micro:bit","Cardboard & found materials"],"pilot":false,"f":99},{"id":"high-school-drone-racing-league","t":"High School Drone Racing League","m":"Race-ready FPV pilot skills","w":"race-ready pilots: a 4-week bootcamp, time trials, and a mini-meet","d":"flight-drones","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"4-week bootcamp, 12-week season, then summer league","tools":["FPV simulator & radios","Tiny FPV drones"],"pilot":false,"f":99},{"id":"sound-design-for-theater","t":"Sound Design for Theater","m":"Live sound cues for a real show","w":"a cue sheet and original sound cues played live at a showcase","d":"sound-music","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"8 sessions × 90 min","tools":["Phones & recorders","Audio editor (BandLab / Audacity)","Small PA & speakers"],"pilot":false,"f":99},{"id":"tiny-whoop-tuning-racing","t":"Tiny Whoop Tuning & Racing","m":"A tuned racing drone and a class race","w":"a tuned racing whoop, a tune log, and a class race","d":"flight-drones","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"10 weeks, 20 sessions × 90 min","tools":["FPV simulator & radios","Tiny FPV drones"],"pilot":false,"f":99},{"id":"robotics-vibe-coding","t":"Robotics & Vibe Coding","m":"A robot that performs with sound and light","w":"a sensing robot that performs with sound and light","d":"robots-machines","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"8 sessions × 2 hr","tools":["LEGO SPIKE Prime","Arduino","Sensors"],"pilot":false,"f":99},{"id":"advanced-digital-fabrication-lab","t":"Advanced Digital Fabrication Lab","m":"A multi-material capstone print","w":"a multi-material capstone print and the scan and queue logs behind it","d":"fabrication-3d","g0":11,"g1":12,"plus":false,"s":3,"free":false,"time":"14–16 week semester","tools":["3D printers","3D scanning","Design software (Tinkercad / OpenSCAD)"],"pilot":false,"f":99},{"id":"foundations-signals-systems","t":"Foundations of Signals & Systems","m":"Working filters on real audio","w":"labeled plots, working filters, and a reproducible final project on real audio or sensor data","d":"sound-music","g0":11,"g1":12,"plus":true,"s":4,"free":false,"time":"12 weeks","tools":["Python notebooks"],"pilot":false,"f":99},{"id":"ethics-accessibility-long-term-thinking","t":"Ethics, Accessibility & Long-Term Thinking","m":"A tested accessibility fix","w":"a Responsibility Pack: an audit, a tested accessibility fix, and a repair plan","d":"civic-data","g0":11,"g1":12,"plus":true,"s":3,"free":true,"time":"12 weeks","tools":["Paper, markers & prototypes"],"pilot":false,"f":99},{"id":"digital-tools-platforms","t":"Digital Tools & Platforms","m":"A physical controller, wired and coded","w":"a reliable physical controller with documented wiring and code","d":"circuits-electronics","g0":11,"g1":12,"plus":true,"s":3,"free":false,"time":"12 weeks","tools":["Arduino","Breadboards & chips","Sensors"],"pilot":false,"f":99},{"id":"tiny-machines","t":"Tiny Machines","m":"A cardboard creature that cranks and rolls","w":"a moving cardboard creature with flaps, sliders, wheels, and a crank","d":"robots-machines","g0":-1,"g1":2,"plus":false,"s":1,"free":true,"time":"4 sessions × 60 min","tools":["Cardboard & found materials","LEGO & building blocks"],"pilot":true,"f":99},{"id":"build-a-neighborhood-k2","t":"Build a Neighborhood","m":"A cardboard neighborhood, with a tour","w":"a shared cardboard neighborhood with a visitor tour","d":"civic-data","g0":-1,"g1":2,"plus":false,"s":1,"free":true,"time":"4 sessions × 60 min","tools":["Cardboard & found materials","LEGO & building blocks","Paper, markers & prototypes"],"pilot":true,"f":99},{"id":"sound-hunters-k2","t":"Sound Hunters","m":"A live sound story from everyday stuff","w":"a 30–60 second live sound story with a picture cue strip","d":"sound-music","g0":-1,"g1":2,"plus":false,"s":1,"free":true,"time":"4 sessions × 60 min","tools":["Everyday sound objects (Foley)"],"pilot":true,"f":99},{"id":"code-with-your-body-k2","t":"Code With Your Body","m":"A dance-move program a friend can run","w":"a 3–5 card movement routine another pair can follow","d":"code-games","g0":-1,"g1":2,"plus":false,"s":0,"free":true,"time":"4 sessions × 60 min","tools":["Picture-command cards & floor tape"],"pilot":true,"f":99},{"id":"machines-that-move","t":"Machines That Move","m":"A toy powered by a mechanism you built","w":"a moving toy, sculpture, or story object driven by a mechanism you built","d":"robots-machines","g0":3,"g1":5,"plus":false,"s":1,"free":true,"time":"4 sessions × 75 min","tools":["Cardboard & found materials"],"pilot":true,"f":99},{"id":"friendly-city-lab","t":"Friendly City Lab","m":"A sign or map tested on real people","w":"a clearer sign, map, or label system, tested on real users","d":"civic-data","g0":3,"g1":5,"plus":false,"s":1,"free":true,"time":"4 sessions × 75 min","tools":["Paper, markers & prototypes"],"pilot":true,"f":99},{"id":"build-your-block-advanced-studio","t":"Build Your Block: Advanced Studio","m":"A prototype for a real public space","w":"an interactive prototype for a real public space, tested with users","d":"civic-data","g0":6,"g1":8,"plus":false,"s":3,"free":false,"time":"28 sessions × 105 min","tools":["Cardboard & found materials","Block or text coding (site's choice)","Sensors"],"pilot":true,"f":99},{"id":"repair-studio","t":"Repair Studio: Devices, Diagnostics & Reuse","m":"A fixed device, with before-and-after proof","w":"a repair dossier with before-and-after evidence, or an honest postmortem","d":"circuits-electronics","g0":9,"g1":12,"plus":false,"s":1,"free":true,"time":"4 sessions × 90 min","tools":["Multimeters & hand tools"],"pilot":true,"f":99},{"id":"public-data-sensors-civic-interfaces","t":"Public Data, Sensors & Civic Interfaces","m":"A public sign or dashboard for your block","w":"a public-facing sign, map, or dashboard, a user test, and a plain-language privacy memo","d":"civic-data","g0":9,"g1":12,"plus":false,"s":2,"free":true,"time":"4 sessions × 90 min","tools":["Paper, markers & prototypes","Sensors"],"pilot":true,"f":99},{"id":"live-media-lab","t":"Live Media Lab: Sound, Projection & Generative Performance","m":"A live visual-and-sound performance","w":"a timed visual-and-sound piece and a run sheet","d":"media-light","g0":9,"g1":12,"plus":false,"s":3,"free":false,"time":"4 sessions × 90 min","tools":["Projector & screens","Small PA & speakers"],"pilot":true,"f":99}]</script>
+</section>
+
+<!-- ===================== REMOVABLE: IMPACT MODULE (5,657 since 2019) — START =====================
+     Self-contained: markup, styles and script live only inside this <section>.
+     Delete everything between START and END to remove the metric from the site. -->
+<section id="impact-5657" data-page="Inventory" aria-labelledby="imp-h">
+  <style>
+    #impact-5657{padding:90px 0 40px}
+    #impact-5657 .imp{position:relative;display:grid;grid-template-columns:1fr 1.15fr;gap:0;overflow:visible;padding:0}
+    #impact-5657 .imp-l{padding:34px 36px 40px;border-right:3px solid #15171E}
+    #impact-5657 .imp-k{font:700 13px/1 "Space Mono",monospace;letter-spacing:.14em;text-transform:uppercase;display:flex;justify-content:space-between;margin-bottom:26px}
+    #impact-5657 .inv{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+    #impact-5657 .inv svg{width:100%;height:auto;background:#FFFDF8;border:2px solid #15171E;border-radius:10px;padding:6px}
+    #impact-5657 .imp-r{position:relative;padding:40px 40px 44px;display:flex;flex-direction:column;justify-content:flex-end;min-height:440px;background:#FFC21A;border-radius:0 19px 19px 0}
+    #impact-5657 .big{font:800 clamp(96px,13vw,200px)/.8 "Bricolage Grotesque",sans-serif;font-stretch:76%;letter-spacing:-.03em;color:#15171E;display:flex;align-items:baseline;gap:.04em}
+    #impact-5657 .big small{font-size:.42em;color:#1E46D2}
+    #impact-5657 h2{font:800 clamp(28px,2.6vw,40px)/1 "Bricolage Grotesque",sans-serif;font-stretch:80%;margin:16px 0 8px;max-width:520px}
+    #impact-5657 p{margin:0;font:400 13px/1.5 "Space Mono",monospace;color:#3A3E4A}
+    #impact-5657 .kids{position:absolute;right:28px;top:-96px;width:min(58%,460px);z-index:3}
+    @media (max-width:900px){
+      #impact-5657 .imp{grid-template-columns:1fr}
+      #impact-5657 .imp-l{border-right:0;border-bottom:3px solid #15171E;padding:24px}
+      #impact-5657 .imp-r{border-radius:0 0 19px 19px;padding:150px 24px 30px;min-height:0}
+      #impact-5657 .kids{top:-40px;right:12px;width:72%}
+      #impact-5657 .inv{grid-template-columns:repeat(4,1fr)}
+      #impact-5657 .inv svg:nth-child(n+13){display:none}
+    }
+  </style>
+  <div class="wrap">
+    <div class="imp panel bp">
+      <div class="imp-l">
+        <div class="imp-k"><span>Parts inventory</span><span>p. 05</span></div>
+        <div class="inv" id="impInv" aria-hidden="true"></div>
+      </div>
+      <div class="imp-r">
+        <img class="kids cut" src="img/cut-four-kids.webp" alt="Four young kids sitting on the floor laughing with building blocks." loading="lazy">
+        <div class="big" aria-hidden="true"><span id="impNum" data-to="5657">5,657</span><small>x</small></div>
+        <h2 id="imp-h"><span class="sr">5,657 </span>students have built with createMPLS since 2019.</h2>
+        <p>The one number we keep: the sum of our yearly student counts, 2019–2023.</p>
+      </div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var C=['#1E46D2','#FFC21A','#E5412D','#15A06A','#7948CB','#19A7CE','#FF7A1A','#D9447C'];
+    var inv=document.getElementById('impInv'); if(!inv) return;
+    var shapes=[[1,2],[2,2],[1,4],[2,3],[1,1],[2,4]], out='';
+    for(var i=0;i<24;i++){var s=shapes[i%shapes.length],c=C[(i*3)%C.length],w=s[1]*14,x=(64-w)/2,st='';
+      for(var k=0;k<s[1];k++) st+='<rect x="'+(x+3+k*14)+'" y="14" width="8" height="6" rx="2" fill="'+c+'" stroke="#15171E" stroke-width="2"/>';
+      out+='<svg viewBox="0 0 64 52">'+st+'<rect x="'+x+'" y="19" width="'+w+'" height="'+(s[0]*12+6)+'" rx="3" fill="'+c+'" stroke="#15171E" stroke-width="2.5"/></svg>';}
+    inv.innerHTML=out;
+    var el=document.getElementById('impNum'); var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.dataset.motion==='reduce';
+    if(reduce||!('IntersectionObserver' in window)) return;
+    var to=+el.dataset.to, done=false;
+    new IntersectionObserver(function(es,ob){es.forEach(function(e){ if(e.isIntersecting&&!done){done=true;ob.disconnect();
+      var t0=performance.now(),d=1600; (function f(t){var p=Math.min(1,(t-t0)/d),v=Math.round(to*(1-Math.pow(1-p,4))); el.textContent=v.toLocaleString('en-US'); if(p<1) requestAnimationFrame(f);})(t0);
+    }});},{threshold:.4}).observe(el);
+  })();
+  </script>
+</section>
+<!-- ===================== REMOVABLE: IMPACT MODULE — END ===================== -->
+
+<!-- ============ STEP 4: ADD THE MISSING PIECE (get involved) ============ -->
+<section class="step" id="join" data-page="Step 4">
+  <div class="wrap">
+    <div class="step-head">
+      <div class="step-num"><span>STEP</span><b>4</b></div>
+      <div>
+        <h2>Add your piece.</h2>
+        <p>The model isn't finished. Three slots are still open, and each one is shaped like someone in this city.</p>
+      </div>
+    </div>
+
+    <div class="join-grid">
+      <svg class="city" id="city" viewBox="-110 -195 520 465" aria-hidden="true"></svg>
+      <div class="join-copy">
+        <h3 class="statement">A city full of kits needs <mark>more builders</mark>.</h3>
+        <p>Schools and community sites bring the room and the students. Volunteers bring an afternoon and some patience. Donors keep every part free. Snap one in.</p>
+      </div>
+    </div>
+
+    <div class="asks">
+      <article class="ask a panel snap">
+        <span class="slot">A</span>
+        <div class="bd">
+          <span class="kicker">For schools &amp; community sites</span>
+          <h3 style="margin-top:10px">Host a lab at your site.</h3>
+          <p>Tell us your grades, your schedule and your space. We'll bring the program, the tools and the people, during the school day or after it.</p>
+          <div class="slip" aria-hidden="true">
+            <div>KIT REQUEST · FOR: ____________</div>
+            <div><span class="box x"></span> in-school <span class="box x"></span> after-school <span class="box"></span> summer</div>
+            <span class="stampy">NO COST TO STUDENTS &amp; FAMILIES</span>
+          </div>
+          <a class="btn blue" href="mailto:info@creatempls.org?subject=Hosting%20a%20createMPLS%20lab">Start a kit request <span class="arr">→</span></a>
+        </div>
+        <img class="pop cut" src="img/cut-boy-baseplate.webp" alt="" loading="lazy">
+      </article>
+      <article class="ask b panel snap">
+        <span class="slot">B</span>
+        <div class="ph"><img src="img/p-mentor-girl.jpg" alt="A volunteer mentor in a cap talks through a robot with a student." loading="lazy" style="object-position:60% 40%"></div>
+        <div class="bd">
+          <span class="kicker" style="color:#FFC21A">Volunteers</span>
+          <h3 style="margin-top:10px">Be the 1x mentor.</h3>
+          <p>Sit beside a build team for an afternoon. You don't need to know robotics. You need to ask good questions.</p>
+          <a class="btn" href="mailto:info@creatempls.org?subject=Volunteering">Volunteer with us <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="ask c panel snap">
+        <span class="slot">C</span>
+        <div class="ph"><img src="img/p-two-girls-machine.jpg" alt="Two girls building a tall machine from building parts." loading="lazy" style="object-position:50% 40%"></div>
+        <div class="bd">
+          <span class="kicker">Donors</span>
+          <h3 style="margin-top:10px">Fund the parts.</h3>
+          <p>Gifts buy kits, printers, drones and facilitator time, so no student or family ever gets a bill.</p>
+          <a class="btn" href="https://givebutter.com/" rel="noopener">Donate on Givebutter <span class="arr">→</span></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ BACK COVER ============ -->
+<footer class="back" data-page="Back cover">
+  <div class="wrap">
+    <div class="back-grid">
+      <div>
+        <h2>Build complete.<br><span>Now make something.</span></h2>
+        <p>createMPLS brings hands-on STEM into Minneapolis schools and community sites, free for every student and family. Building with Minneapolis kids since 2015.</p>
+        <div class="sticker-photo"><img src="img/p-sticker.jpg" alt="An old CREATE MPLS sticker on a student's laptop." loading="lazy"></div>
+        <div class="cap2">Fig. 9 — the original sticker, 2019, still on a laptop.</div>
+      </div>
+      <div>
+        <h4>The kit</h4>
+        <ul>
+          <li><a href="#build">What kids make</a></li>
+          <li><a href="#bags">Programs</a></li>
+          <li><a href="#join">Host a lab</a></li>
+          <li><a href="#join">Volunteer</a></li>
+          <li><a href="#join">Donate</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Talk to a human</h4>
+        <ul>
+          <li><a href="mailto:info@creatempls.org">info@creatempls.org</a></li>
+          <li><a href="https://www.facebook.com/MPLScreate" rel="noopener">Facebook · @MPLScreate</a></li>
+          <li><a href="https://www.linkedin.com/company/mplscreate" rel="noopener">LinkedIn · @MPLScreate</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fine">
+      <div>createMPLS is a 501(c)(3) nonprofit · EIN 47-5122723 · Minneapolis, MN<br>CAUTION: contents may cause sudden urges to build things.</div>
+      <button class="motion-toggle" id="motionToggle" type="button">Reduce motion: off</button>
+      <div class="barcode"><svg id="barcode" viewBox="0 0 170 46" preserveAspectRatio="none" aria-hidden="true"></svg>SET 612 · MPLS</div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
+<script>
+(function(){
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.motion === 'reduce';
+const HAS_GSAP = typeof gsap !== 'undefined';
+if (HAS_GSAP) { gsap.registerPlugin(ScrollTrigger); if (typeof Flip !== 'undefined') gsap.registerPlugin(Flip); }
+
+/* ---------- iso brick generator (generic bricks, drawn from scratch) ---------- */
+const CO = Math.cos(Math.PI/6), SI = 0.5;
+function shade(hex, amt){ const n=parseInt(hex.slice(1),16); let r=n>>16,g=n>>8&255,b=n&255;
+  const f=v=>Math.max(0,Math.min(255,Math.round(amt>0? v+(255-v)*amt : v*(1+amt))));
+  return '#'+((1<<24)+(f(r)<<16)+(f(g)<<8)+f(b)).toString(16).slice(1); }
+function brick(o){ const {w,d,h=1.2,x=0,y=0,z=0,c='#1E46D2',u=30,studs=true,dash=false}=o;
+  const P=(X,Y,Z)=>[((X-Y)*CO*u).toFixed(1), ((X+Y)*SI*u - Z*u).toFixed(1)];
+  const poly=(pts,fill,extra='')=>`<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="${fill}" stroke="#15171E" stroke-width="${dash?2.5:3}" stroke-linejoin="round" ${dash?'stroke-dasharray="7 6"':''} ${extra}/>`;
+  const top=dash?'rgba(255,255,255,.35)':shade(c,.22), lf=dash?'rgba(255,255,255,.2)':c, rt=dash?'rgba(21,23,30,.06)':shade(c,-.22);
+  let s=poly([P(x,y+d,z),P(x+w,y+d,z),P(x+w,y+d,z+h),P(x,y+d,z+h)],lf)+poly([P(x+w,y,z),P(x+w,y+d,z),P(x+w,y+d,z+h),P(x+w,y,z+h)],rt)+poly([P(x,y,z+h),P(x+w,y,z+h),P(x+w,y+d,z+h),P(x,y+d,z+h)],top);
+  if(studs){ const r=.3, rx=1.2247*r*u, ry=.7071*r*u, sh=.2*u, list=[];
+    for(let i=0;i<w;i++) for(let j=0;j<d;j++) list.push([i,j]); list.sort((a,b)=>(a[0]+a[1])-(b[0]+b[1]));
+    for(const [i,j] of list){ const [cx,cy]=P(x+i+.5,y+j+.5,z+h).map(Number);
+      s+=`<path d="M${cx-rx},${cy-sh} L${cx-rx},${cy} A${rx},${ry} 0 0 0 ${cx+rx},${cy} L${cx+rx},${cy-sh} Z" fill="${dash?'rgba(255,255,255,.3)':shade(c,-.12)}" stroke="#15171E" stroke-width="2.5" ${dash?'stroke-dasharray="4 4"':''}/>`+
+         `<ellipse cx="${cx}" cy="${cy-sh}" rx="${rx}" ry="${ry}" fill="${dash?'rgba(255,255,255,.5)':shade(c,.35)}" stroke="#15171E" stroke-width="2.5" ${dash?'stroke-dasharray="4 4"':''}/>`; } }
+  return s; }
+const isoP=(X,Y,Z,u)=>[(X-Y)*CO*u,(X+Y)*SI*u-Z*u];
+
+/* ---------- hero exploded stack ---------- */
+const hb=document.getElementById('heroBricks');
+const U=30, H=1.2;
+const STACK=[ // bottom to top
+  {w:2,d:4,c:'#1E46D2', q:'1x', t:['room you','already have']},
+  {w:2,d:4,c:'#FFC21A', q:'1x', t:['kit of','real tools']},
+  {w:2,d:2,x:0,y:1,c:'#E5412D', q:'1x', t:['mentor who','leans in']},
+  {w:1,d:2,x:.5,y:1,c:'#15A06A', q:'1x', t:['curious','kid']},
+  {w:1,d:1,x:.5,y:1.5,c:'#fff', dash:true, q:'0x', t:['cost to','families'], zero:true},
+];
+const GAP=56;
+let hs='';
+STACK.forEach((b,i)=>{ const z=i*H; const lp=isoP((b.x||0), (b.y||0)+b.d, z+H*.5, U);
+  const lx=-268, ly=lp[1];
+  hs+=`<g class="hb" data-i="${i}">${brick({...b,z,u:U})}
+    <g class="hl-lab"><path d="M${lp[0]-6},${ly} L${lx+120},${ly}" stroke="#15171E" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round" fill="none"/>
+    <circle cx="${lp[0]-6}" cy="${ly}" r="4" fill="#15171E"/>
+    <text class="qty ${b.zero?'zero':''}" x="${lx}" y="${ly+8}">${b.q}</text>
+    <text x="${lx+40}" y="${ly-3}">${b.t[0]}</text><text x="${lx+40}" y="${ly+13}">${b.t[1]}</text></g></g>`; });
+hb.innerHTML=hs;
+hb.setAttribute('viewBox','-276 -330 426 560');
+const hbG=[...hb.querySelectorAll('.hb')];
+function explode(f){ hbG.forEach((g,i)=>g.setAttribute('transform',`translate(0 ${-i*GAP*f})`)); }
+explode(1);
+
+/* ---------- iso room for parts list ---------- */
+document.getElementById('isoRoom').innerHTML = brick({w:3,d:2,h:1.6,c:'#19A7CE',u:18,studs:false}) + brick({w:3,d:2,h:.5,z:1.6,c:'#E5412D',u:18,studs:true});
+
+/* ---------- city / final model ---------- */
+const city=document.getElementById('city');
+(function(){ const u=24; let s=brick({w:15,d:4,h:.35,x:-1,y:-1,c:'#15A06A',u,studs:false});
+  // skyline row: [x, w, height in bricks, color, slot label|null, slot color]
+  const T=[[0,2,3,'#1E46D2','A','#FFC21A'],[3,2,5,'#7948CB',null],[6,2,2,'#FF7A1A','B','#1E46D2'],[9,2,7,'#19A7CE',null],[12,1,1,'#E5412D','C','#15A06A']];
+  let slots='';
+  T.forEach(t=>{ const [x,w,n,c,lab,sc]=t, y=0, d=2; for(let k=0;k<n;k++) s+=brick({w,d,x,y,z:.35+k*1.2,c:k%2?shade(c,.14):c,u});
+    if(lab){ const z=.35+n*1.2; s+=brick({w,d,x,y,z,c:'#fff',u,dash:true});
+      const [lx,ly]=isoP(x+w/2,y+d/2,z+1.2+2.2,u);
+      s+=`<g class="slotfill" data-slot="${lab}">${brick({w,d,x,y,z,c:sc,u})}</g>`;
+      slots+=`<g class="slotlab"><path d="M${lx},${ly+20} L${lx},${ly+44}" stroke="#15171E" stroke-width="3" stroke-dasharray="2 6" stroke-linecap="round"/><circle cx="${lx}" cy="${ly}" r="20" fill="#FFFDF8" stroke="#15171E" stroke-width="3"/><text x="${lx}" y="${ly+8}" text-anchor="middle">${lab}</text></g>`; } });
+  const [mx,my]=isoP(14,3,0,u);
+  s+=`<text x="${mx-260}" y="${my+52}" style="font:700 13px 'Space Mono';letter-spacing:.14em" fill="#15171E">FIG. 4 — MPLS SKYLINE, IN PROGRESS</text>`;
+  city.innerHTML=s+slots; })();
+
+/* ---------- bursts ---------- */
+function burstAt(el, x, y){ if(REDUCE||!HAS_GSAP) return; const host=el; const b=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  b.setAttribute('viewBox','0 0 64 64'); b.classList.add('burst'); b.style.left=(x-32)+'px'; b.style.top=(y-32)+'px';
+  b.innerHTML=[0,60,120,180,240,300].map(a=>`<line x1="32" y1="32" x2="32" y2="32" transform="rotate(${a} 32 32)"/>`).join('');
+  host.appendChild(b);
+  const ls=b.querySelectorAll('line');
+  gsap.set(b,{opacity:1}); gsap.fromTo(ls,{attr:{y1:20,y2:20}},{attr:{y1:6,y2:14},duration:.35,ease:'power2.out'});
+  gsap.to(b,{opacity:0,duration:.25,delay:.3,onComplete:()=>b.remove()}); }
+
+/* ---------- programs explorer ---------- */
+const BAGS={
+ 'robots-machines':{n:1,name:'Robots & Machines',short:'Robots',c:'#E5412D',img:'img/obj-robot-car.webp'},
+ 'code-games':{n:2,name:'Code & Games',short:'Code',c:'#1E46D2',img:'img/obj-microbit-car.webp'},
+ 'fabrication-3d':{n:3,name:'Fabrication & 3D Printing',short:'3D Print',c:'#FFC21A',img:'img/obj-gears.webp'},
+ 'circuits-electronics':{n:4,name:'Circuits & Electronics',short:'Circuits',c:'#15A06A',img:'img/obj-arduino.webp'},
+ 'sound-music':{n:5,name:'Sound & Music Tech',short:'Sound',c:'#7948CB',img:null,svg:'<svg class="kit-part" viewBox="0 0 120 100" style="height:96px"><rect x="18" y="20" width="50" height="62" rx="8" fill="#FFFDF8" stroke="#15171E" stroke-width="4"/><circle cx="43" cy="60" r="15" fill="#7948CB" stroke="#15171E" stroke-width="4"/><circle cx="43" cy="60" r="5" fill="#15171E"/><circle cx="43" cy="33" r="6" fill="#FFC21A" stroke="#15171E" stroke-width="3"/><path d="M80 38 q10 12 0 24 M92 30 q18 20 0 40 M104 22 q26 28 0 56" fill="none" stroke="#15171E" stroke-width="5" stroke-linecap="round"/></svg>'},
+ 'flight-drones':{n:6,name:'Flight & Drones',short:'Flight',c:'#19A7CE',img:'img/obj-drone.webp'},
+ 'media-light':{n:7,name:'Media & Light',short:'Light',c:'#FF7A1A',img:null,svg:'<svg class="kit-part" viewBox="0 0 130 100" style="height:96px"><path d="M60 40 L124 12 L124 88 L60 60 Z" fill="#FFC21A" stroke="#15171E" stroke-width="4" stroke-linejoin="round" opacity=".9"/><rect x="8" y="34" width="56" height="32" rx="7" fill="#FFFDF8" stroke="#15171E" stroke-width="4"/><circle cx="26" cy="50" r="7" fill="#15171E"/><rect x="40" y="42" width="14" height="16" rx="3" fill="#FF7A1A" stroke="#15171E" stroke-width="3"/></svg>'},
+ 'civic-data':{n:8,name:'Civic Design',short:'Civic',c:'#D9447C',img:'img/obj-cardboard-house.webp'},
+};
+const SCREEN=['Unplugged','Glimpse','Tool bursts','Mixed studio','Screen studio'];
+let PROGRAMS=[]; try{ PROGRAMS=JSON.parse(document.getElementById('programs-data').textContent); }catch(e){ console.warn('programs data missing'); }
+const gLabel=g=>g<0?'Pre-K':g===0?'K':String(g);
+const kitsEl=document.getElementById('kits');
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+kitsEl.innerHTML=PROGRAMS.map(p=>{ const b=BAGS[p.d]; const age=(p.g0<=0&&p.g1<=2)?'Pre-K–2':`${gLabel(p.g0)}–${p.g1}${p.plus?'+':''}`;
+  const part=b.img?`<img class="kit-part" src="${b.img}" alt="" loading="lazy">`:b.svg;
+  return `<article class="kit" data-id="${p.id}" data-d="${p.d}" data-g0="${p.g0}" data-g1="${p.g1}" data-free="${p.free}" style="--c:${b.c}">
+    <div class="kit-top"><span class="lab">Bag 0${b.n}</span><span class="lab">${esc(b.short)}</span>${part}</div>
+    ${p.pilot?'<span class="stamp">Prototype<br>piloting now</span>':''}
+    <div class="kit-body">
+      <div class="kit-row"><div class="kit-age"><small>GRADES</small><b>${age}</b></div><div class="kgr" aria-hidden="true">${Array.from({length:14},(_,k)=>`<i class="${(k-1>=p.g0&&k-1<=p.g1)?'on':''}"></i>`).join('')}<span>P</span><span>12</span></div></div>
+      <h3>${esc(p.m)}</h3>
+      <p class="nm">${esc(p.t)}</p>
+      <div class="inbag"><span class="kicker">In the bag</span><ul>${p.tools.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+      <dl><div><dt>Build time</dt><dd>${esc(p.time)}</dd></div>
+          <div><dt>Hands ↔ Screens</dt><dd><span class="dial" aria-hidden="true">${[0,1,2,3,4].map(k=>`<i class="${k<=p.s?'on':''}"></i>`).join('')}</span>${SCREEN[p.s]}${p.free&&p.s>0?' · can go screen-free':''}</dd></div></dl></div>
+    </div>
+    <button class="kit-add" type="button" aria-pressed="false" data-name="${esc(p.t)}">+ Add to our kit</button>
+  </article>`; }).join('');
+const bagrow=document.getElementById('bagrow');
+bagrow.innerHTML=`<button class="bagbtn" type="button" data-bag="all" aria-pressed="true" style="--c:#FFFDF8"><span class="sw"></span>All bags</button>`+
+  Object.entries(BAGS).map(([k,b])=>`<button class="bagbtn" type="button" data-bag="${k}" aria-pressed="false" style="--c:${b.c}"><span class="sw"></span><b>0${b.n}</b>${esc(b.name)}</button>`).join('');
+
+const state={band:'all',bag:'all',free:false,all:false};
+const LIMIT=6;
+const cards=[...kitsEl.querySelectorAll('.kit')];
+function match(c){ const g0=+c.dataset.g0,g1=+c.dataset.g1;
+  if(state.band!=='all'){ const [lo,hi]=state.band.split(',').map(Number); if(!(g0<=hi&&g1>=lo)) return false; }
+  if(state.bag!=='all'&&c.dataset.d!==state.bag) return false;
+  if(state.free&&c.dataset.free!=='true') return false; return true; }
+function apply(animate){
+  const st=(animate&&!REDUCE&&HAS_GSAP&&typeof Flip!=='undefined')?Flip.getState(cards):null;
+  let shown=0,total=0;
+  cards.forEach(c=>{ const m=match(c); if(m) total++; const vis=m&&(state.all||shown<LIMIT); if(vis) shown++; c.hidden=!vis; });
+  document.getElementById('count').textContent=`Showing ${shown} of ${total} builds`;
+  const mb=document.getElementById('moreBtn'); mb.parentElement.style.display=(total>shown)?'':'none';
+  mb.firstChild.textContent=`Unpack all ${total} builds `;
+  if(st) Flip.from(st,{duration:.55,ease:'back.out(1.4)',absolute:true,scale:true,
+    onEnter:els=>gsap.fromTo(els,{opacity:0,y:-60,rotate:-4},{opacity:1,y:0,rotate:0,duration:.5,ease:'back.out(2)',stagger:.04}),
+    onLeave:els=>gsap.to(els,{opacity:0,scale:.8,duration:.25})});
+  if(HAS_GSAP) ScrollTrigger.refresh();
+}
+document.querySelectorAll('.ruler button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('.ruler button').forEach(x=>x.setAttribute('aria-pressed',x===b)); state.band=b.dataset.band; apply(true); }));
+bagrow.addEventListener('click',e=>{ const b=e.target.closest('.bagbtn'); if(!b) return; bagrow.querySelectorAll('.bagbtn').forEach(x=>x.setAttribute('aria-pressed',x===b)); state.bag=b.dataset.bag; apply(true); });
+document.getElementById('free').addEventListener('change',e=>{ state.free=e.target.checked; apply(true); });
+document.getElementById('moreBtn').addEventListener('click',()=>{ state.all=true; apply(true); });
+apply(false);
+
+/* tray */
+const picked=new Map(); const pickedEl=document.getElementById('picked'), req=document.getElementById('request'), tray=document.getElementById('tray');
+function renderTray(){ tray.classList.toggle('has',picked.size>0); if(!picked.size){ pickedEl.innerHTML='<span class="empty">Add a bag or two. We\'ll plan the rest with you.</span>'; }
+  else pickedEl.innerHTML=[...picked.entries()].map(([n,c])=>`<span style="--c:${c}"><i></i>${esc(n)}</span>`).join('');
+  const body=encodeURIComponent(`Hi createMPLS,\n\nWe'd like to talk about bringing these programs to our site:\n${[...picked.keys()].map(n=>'- '+n).join('\n')}\n\nGrades:\nSchool or community site:\nIn-school / after-school / summer:\n`);
+  req.href=`mailto:info@creatempls.org?subject=${encodeURIComponent('Kit request for our site')}&body=${body}`; }
+kitsEl.addEventListener('click',e=>{ const b=e.target.closest('.kit-add'); if(!b) return; const card=b.closest('.kit'); const n=b.dataset.name; const c=getComputedStyle(card).getPropertyValue('--c').trim();
+  const on=b.getAttribute('aria-pressed')!=='true'; b.setAttribute('aria-pressed',on); b.textContent=on?'✓ In your kit':'+ Add to our kit';
+  if(on) picked.set(n,c); else picked.delete(n); renderTray();
+  if(on&&!REDUCE&&HAS_GSAP){ const r=b.getBoundingClientRect(), t=tray.getBoundingClientRect(); const f=document.createElement('div'); f.className='flybrick'; f.style.background=c; f.style.left=(r.left+r.width/2-17)+'px'; f.style.top=(r.top)+'px'; document.body.appendChild(f);
+    gsap.timeline({onComplete:()=>{f.remove(); gsap.fromTo(tray,{y:0},{y:-8,duration:.12,yoyo:true,repeat:1,ease:'power2.out'});}})
+      .to(f,{x:(t.left+60)-(r.left+r.width/2),duration:.6,ease:'power1.inOut'},0)
+      .to(f,{y:(t.top+20)-r.top,duration:.6,ease:'back.in(1.6)'},0)
+      .to(f,{rotate:200,scale:.6,duration:.6},0); } });
+renderTray();
+
+/* ---------- barcode ---------- */
+(function(){ let x=0,s='',seed=612; const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
+  while(x<168){ const w=1+Math.floor(rnd()*3.2); if(rnd()>.4) s+=`<rect x="${x}" y="0" width="${w}" height="46" fill="#15171E"/>`; x+=w+1; }
+  document.getElementById('barcode').innerHTML=s; })();
+
+/* ---------- motion toggle ---------- */
+const mt=document.getElementById('motionToggle');
+mt.textContent='Reduce motion: '+(document.documentElement.dataset.motion==='reduce'?'on':'off');
+mt.addEventListener('click',()=>{ const on=document.documentElement.dataset.motion!=='reduce'; try{ localStorage.setItem('cm-motion', on?'reduce':'full'); }catch(e){} location.reload(); });
+
+/* ---------- pager + stud progress (works with or without motion) ---------- */
+const pages=[...document.querySelectorAll('[data-page]')];
+pages.forEach((p,i)=>{ if(p.classList.contains('step')){ const t=document.createElement('span'); t.className='pgtab'; t.setAttribute('aria-hidden','true'); t.textContent=`P. ${String(i+1).padStart(2,'0')} · ${p.dataset.page.toUpperCase()}`; p.appendChild(t);} });
+document.getElementById('pgt').textContent=String(pages.length).padStart(2,'0');
+const studsEl=document.querySelector('.studs'); const NS=Math.max(10,Math.min(28,Math.floor(innerWidth/52))); studsEl.innerHTML='<i></i>'.repeat(NS); const studs=[...studsEl.children];
+function onScroll(){ const y=scrollY+innerHeight*.45; let idx=0; pages.forEach((p,i)=>{ if(p.offsetTop<=y) idx=i; });
+  document.getElementById('pg').textContent=String(idx+1).padStart(2,'0'); document.getElementById('pgl').textContent=pages[idx].dataset.page;
+  const pr=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight); const on=Math.round(pr*NS); studs.forEach((s,i)=>s.classList.toggle('on',i<on)); }
+addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+/* ================= MOTION (only when allowed) ================= */
+if(HAS_GSAP){ let rt; const rf=()=>{clearTimeout(rt); rt=setTimeout(()=>ScrollTrigger.refresh(),120);}; document.querySelectorAll('img').forEach(i=>{ if(!i.complete) i.addEventListener('load',rf); }); addEventListener('load',rf); }
+if(!HAS_GSAP||REDUCE){ explode(REDUCE?0:1); document.querySelectorAll('#city .slotfill').forEach(g=>g.style.display='none'); return; }
+
+/* intro: words drop like bricks and snap */
+const words=gsap.utils.toArray('#h1 .w');
+const hl=document.getElementById('hlPath'); const hlLen=hl.getTotalLength(); gsap.set(hl,{strokeDasharray:hlLen,strokeDashoffset:hlLen});
+const intro=gsap.timeline({delay:.15});
+intro.from(words,{y:-140,rotate:()=>gsap.utils.random(-12,12),opacity:0,duration:.7,ease:'back.out(2.2)',stagger:.07})
+     .to(hl,{strokeDashoffset:0,duration:.5,ease:'power2.out'},'-=.2')
+     .from('.kit-meta .chip',{y:20,opacity:0,stagger:.06,duration:.4,ease:'back.out(2)'},0.1)
+     .from('.lede,.ctas,.in-set',{y:24,opacity:0,stagger:.08,duration:.5,ease:'power3.out'},.5)
+     .from('.cover-art .stage',{scale:.9,opacity:0,duration:.6,ease:'back.out(1.6)'},.2)
+     .from('.cover-kids',{yPercent:30,opacity:0,duration:.8,ease:'back.out(1.5)'},.45)
+     .from(hbG,{y:-300,opacity:0,duration:.7,stagger:.09,ease:'back.out(1.8)'},.35)
+     .from('.zoom',{scale:0,duration:.5,ease:'back.out(2.5)'},.9)
+     .from('.age',{scale:0,rotate:-90,duration:.6,ease:'back.out(2)'},1.0);
+gsap.to('.age svg',{rotate:360,duration:24,repeat:-1,ease:'none',transformOrigin:'50% 50%'});
+/* idle bob in exploded state */
+hbG.forEach((g,i)=>gsap.to(g.querySelector('polygon')?g:g,{y:'+=4',duration:1.6+i*.15,yoyo:true,repeat:-1,ease:'sine.inOut',delay:1.6}));
+
+/* hero scrub: stack snaps together as you scroll */
+const ex={f:1}; let snapped=false;
+gsap.to(ex,{f:0,ease:'none',scrollTrigger:{trigger:'.cover',start:'top top',end:'+=55%',scrub:.6,
+  onUpdate:self=>{ if(self.progress>.97&&!snapped){ snapped=true; const r=hb.getBoundingClientRect(); const art=document.querySelector('.cover-art').getBoundingClientRect(); burstAt(document.querySelector('.cover-art'), r.left-art.left+r.width*.62, r.top-art.top+r.height*.42); } if(self.progress<.9) snapped=false; }},
+  onUpdate:()=>explode(ex.f)});
+gsap.to('.hl-lab',{opacity:.25,scrollTrigger:{trigger:'.cover',start:'top top',end:'+=55%',scrub:true}});
+gsap.to('.cover-kids',{yPercent:-6,scrollTrigger:{trigger:'.cover',start:'top top',end:'bottom top',scrub:true}});
+
+/* step numbers flip in */
+gsap.utils.toArray('.step-num').forEach(n=>gsap.from(n,{rotateX:-95,y:30,opacity:0,duration:.8,ease:'back.out(2)',scrollTrigger:{trigger:n,start:'top 85%'}}));
+gsap.utils.toArray('.step-head h2').forEach(h=>gsap.from(h,{x:-60,opacity:0,duration:.7,ease:'back.out(1.8)',scrollTrigger:{trigger:h,start:'top 85%'}}));
+
+/* snap-in panels: come in from an exploded offset, overshoot, click */
+gsap.utils.toArray('.snap').forEach((el,i)=>{
+  const dir=i%2?1:-1;
+  gsap.from(el,{x:40*dir,y:70,rotate:3*dir,opacity:0,duration:.75,ease:'back.out(2)',
+    scrollTrigger:{trigger:el,start:'top 88%'},
+    onComplete:()=>burstAt(el, dir>0? el.offsetWidth-10 : 10, -6)}); });
+gsap.utils.toArray('.part').forEach((p,i)=>gsap.from(p,{y:-50,opacity:0,duration:.5,delay:i*.07,ease:'back.out(2.4)',scrollTrigger:{trigger:'.partsbox',start:'top 75%'}}));
+gsap.utils.toArray('.statement mark').forEach(m=>gsap.from(m,{'--u':0,scrollTrigger:{trigger:m,start:'top 85%'}}));
+gsap.from('#doneKids',{yPercent:40,scale:.85,duration:.9,ease:'back.out(1.8)',scrollTrigger:{trigger:'#doneKids',start:'top 90%'}});
+gsap.utils.toArray('.sub .arrow').forEach(a=>gsap.fromTo(a,{x:-6},{x:4,duration:.8,yoyo:true,repeat:-1,ease:'sine.inOut'}));
+
+/* marquee: velocity-reactive */
+const track=document.getElementById('track'); let mx=0, vel=0;
+ScrollTrigger.create({onUpdate:s=>{ vel=gsap.utils.clamp(-14,14,s.getVelocity()/220); }});
+gsap.ticker.add(()=>{ mx-=1.2+Math.abs(vel); vel*=.92; const w=track.firstElementChild.offsetWidth; if(-mx>=w) mx+=w; track.style.transform=`translateX(${mx}px)`; });
+
+/* kit cards: drop out of the bag */
+ScrollTrigger.batch('.kit:not([hidden])',{start:'top 92%',once:true,onEnter:els=>gsap.from(els,{y:-80,rotate:()=>gsap.utils.random(-6,6),opacity:0,duration:.6,stagger:.08,ease:'back.out(2)'})});
+
+/* city: slot bricks drop into place on scroll */
+const fills=gsap.utils.toArray('#city .slotfill');
+gsap.set(fills,{y:-220,opacity:0});
+const ct=gsap.timeline({scrollTrigger:{trigger:'#city',start:'top 70%',end:'bottom 35%',scrub:.6}});
+fills.forEach((f,i)=>ct.to(f,{y:0,opacity:1,ease:'back.out(1.6)',duration:1},i*.8));
+
+})();
+</script>
+</body>
+</html>

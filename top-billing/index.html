@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>createMPLS · Top Billing</title>
+<meta name="description" content="createMPLS brings hands-on STEM programs into Minneapolis schools and community sites, free for students and families.">
+<script>
+  // Motion preference: OS setting OR the footer toggle (stored per viewer).
+  (function(){
+    var d=document.documentElement; d.classList.add('js');
+    var stored=null; try{ stored=localStorage.getItem('cm-motion'); }catch(e){}
+    var reduce = stored==='reduce' || (stored!=='full' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    d.dataset.motion = reduce ? 'reduce' : 'full';
+  })();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect x=%224%22 y=%224%22 width=%2256%22 height=%2246%22 rx=%228%22 fill=%22%23C8321F%22/%3E%3Cpath d=%22M24 50l8 10 8-10z%22 fill=%22%23C8321F%22/%3E%3Ccircle cx=%2232%22 cy=%2227%22 r=%2210%22 fill=%22%23FFC83D%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Inline&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#17122E; --night-2:#221A45; --night-3:#2E2560;
+  --bulb:#FFC83D; --bulb-hot:#FFE9A8; --bulb-dim:#8A6A1E;
+  --cream:#FFF3DC; --paper:#FFFBF2; --ink:#17122E; --ink-soft:#4A4166;
+  --red:#E5412D; --red-deep:#C8321F; --velvet:#8E1B2C;
+  --robots:#FF8A3D; --code:#7CE0C3; --fab:#B9A6FF; --circuits:#C6F05A;
+  --sound:#FF7EB6; --flight:#6FC3FF; --media:#FFD84D; --civic:#FF9F8A;
+  --f-sign:'Bungee', 'Arial Black', system-ui, sans-serif;
+  --f-sign-inline:'Bungee Inline', 'Bungee', 'Arial Black', sans-serif;
+  --f-body:'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono:'DM Mono', ui-monospace, Consolas, monospace;
+  --gutter:clamp(16px, 4vw, 64px);
+  --max:1320px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+html[data-motion="reduce"]{scroll-behavior:auto}
+body{margin:0; background:var(--night); color:var(--cream); font-family:var(--f-body); font-size:18px; line-height:1.55; overflow-x:hidden}
+img{max-width:100%; display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--bulb); outline-offset:3px; border-radius:4px}
+.sr{position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.wrap{max-width:var(--max); margin:0 auto; padding:0 var(--gutter)}
+.eyebrow{font-family:var(--f-mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; font-weight:500}
+.sign{font-family:var(--f-sign); font-weight:400; letter-spacing:.01em; line-height:.98; text-transform:uppercase}
+
+/* ---------- bulbs (SVG frames built by JS) ---------- */
+[data-bulbs]{position:relative}
+svg.bulbs{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index:3}
+svg.bulbs .dim{fill:none; stroke:var(--bulb-dim); stroke-linecap:round}
+svg.bulbs .lit{fill:none; stroke:var(--bulb-hot); stroke-linecap:round; filter:drop-shadow(0 0 4px var(--bulb)) drop-shadow(0 0 10px rgba(255,200,61,.55))}
+html[data-motion="full"]:not(.paused) svg.bulbs .lit{animation:chase var(--speed,.9s) steps(3) infinite}
+@keyframes chase{to{stroke-dashoffset:calc(var(--g) * -3)}}
+html[data-motion="reduce"] svg.bulbs .lit, html.paused svg.bulbs .lit{stroke-dasharray:0 var(--g) !important}
+
+/* ---------- buttons: ticket-shaped ---------- */
+.btn{--bg:var(--bulb); --fg:var(--ink); position:relative; display:inline-flex; align-items:center; gap:.6em; padding:16px 26px; background:var(--bg); color:var(--fg); font-family:var(--f-sign); font-size:15px; letter-spacing:.03em; text-decoration:none; border:0; cursor:pointer;
+  -webkit-mask:radial-gradient(circle 9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+          mask:radial-gradient(circle 9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+  transition:transform .25s cubic-bezier(.3,1.6,.5,1), background .2s}
+.btn:hover{transform:translateY(-3px) rotate(-1.5deg)}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn .arr{transition:transform .25s}
+.btn:hover .arr{transform:translateX(4px)}
+.btn.ghost{--bg:transparent; --fg:var(--cream); box-shadow:inset 0 0 0 2px var(--cream); -webkit-mask:none; mask:none; border-radius:999px}
+.btn.red{--bg:var(--red-deep); --fg:var(--cream)}
+.btn.ink{--bg:var(--ink); --fg:var(--cream)}
+
+/* ---------- nav ---------- */
+.nav{position:fixed; inset:0 0 auto 0; z-index:50; transition:background .3s, box-shadow .3s}
+.nav.solid{background:rgba(23,18,46,.96); box-shadow:0 1px 0 rgba(255,200,61,.25)}
+.nav .wrap{display:flex; align-items:center; gap:28px; height:78px}
+.wm{display:block; width:176px; height:auto}
+.wm text{font-family:var(--f-sign)}
+.nav-links{display:flex; gap:26px; margin-left:auto; list-style:none; padding:0; margin-top:0; margin-bottom:0}
+.nav-links a{text-decoration:none; font-weight:600; font-size:16px; opacity:.9}
+.nav-links a:hover{color:var(--bulb)}
+.nav .btn{padding:12px 20px; font-size:13px}
+.nav .give{font-family:var(--f-sign); font-size:13px; text-decoration:none; color:var(--bulb); white-space:nowrap}
+@media (max-width:900px){ .nav-links,.nav .give{display:none} .nav .btn{margin-left:auto} .wm{width:140px} }
+
+/* ---------- hero ---------- */
+.hero{position:relative; min-height:100vh; padding:120px 0 0; overflow:hidden; background:
+  radial-gradient(1200px 600px at 75% 30%, rgba(142,27,44,.55), transparent 60%),
+  radial-gradient(900px 500px at 10% 90%, rgba(46,37,96,.9), transparent 70%), var(--night)}
+.beam{position:absolute; top:-10%; width:46vw; height:130%; transform-origin:50% 0; pointer-events:none; mix-blend-mode:screen; opacity:.5;
+  background:conic-gradient(from 168deg at 50% 0, transparent 0deg, rgba(255,233,168,.35) 10deg, rgba(255,233,168,.0) 24deg, transparent 360deg)}
+.beam.b1{left:2%; transform:rotate(-14deg)} .beam.b2{right:-8%; transform:rotate(16deg)}
+html[data-motion="full"]:not(.paused) .beam.b1{animation:sway1 9s ease-in-out infinite alternate}
+html[data-motion="full"]:not(.paused) .beam.b2{animation:sway2 11s ease-in-out infinite alternate}
+@keyframes sway1{to{transform:rotate(10deg)}} @keyframes sway2{to{transform:rotate(-12deg)}}
+.skyline{position:absolute; left:0; right:0; bottom:0; width:100%; height:auto; color:rgba(255,243,220,.16); pointer-events:none}
+.hero-grid{position:relative; z-index:2; display:grid; grid-template-columns:1.02fr 1fr; gap:clamp(24px,4vw,64px); align-items:center}
+.admit{display:inline-flex; align-items:center; gap:10px; background:var(--cream); color:var(--ink); padding:8px 16px 8px 12px; font-family:var(--f-mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:500;
+  -webkit-mask:radial-gradient(circle 6px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat, radial-gradient(circle 6px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat; mask:radial-gradient(circle 6px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat, radial-gradient(circle 6px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
+.admit b{font-family:var(--f-sign); font-weight:400; color:var(--red-deep); letter-spacing:.04em}
+.hero h1{font-family:var(--f-sign); font-weight:400; font-size:clamp(46px,6.1vw,96px); line-height:.92; margin:22px 0 22px; letter-spacing:-.005em}
+.hero h1 .line{display:block}
+.hero h1 .hot{color:var(--bulb); text-shadow:0 0 18px rgba(255,200,61,.55), 0 0 2px var(--bulb-hot)}
+.hero .lede{font-size:clamp(18px,1.45vw,21px); max-width:34em; color:#EDE3F7; margin:0 0 30px}
+.hero .lede strong{color:var(--cream)}
+.cta-row{display:flex; flex-wrap:wrap; gap:14px; align-items:center}
+.since{margin-top:26px; font-family:var(--f-mono); font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:#CFC4E6}
+
+/* marquee board */
+.stage-set{position:relative; padding-bottom:clamp(150px,17vw,250px)}
+.board{position:relative; background:linear-gradient(180deg,#D53A26,#A82617); border-radius:22px; padding:30px; box-shadow:0 30px 80px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,255,255,.18)}
+.board-panel{position:relative; container-type:inline-size; background:
+   radial-gradient(120% 90% at 50% 40%, #FFFDF6 0%, #FFF2D4 60%, #F6DFB0 100%); border-radius:8px; padding:4cqi 3cqi 3.4cqi; text-align:center; color:var(--ink);
+   box-shadow:inset 0 0 0 3px #1c1530, inset 0 0 40px rgba(255,190,80,.6), 0 0 60px rgba(255,220,150,.35)}
+.board-panel::before{content:""; position:absolute; inset:0; border-radius:8px; pointer-events:none;
+   background:repeating-linear-gradient(180deg, transparent 0 calc(33.33% - 2px), rgba(23,18,46,.18) calc(33.33% - 2px) 33.33%)}
+.row{display:flex; justify-content:center; gap:.08em; min-height:1.15em; position:relative; z-index:1; perspective:600px}
+.row.small{font-family:var(--f-sign); font-size:5.4cqi; color:var(--red-deep); letter-spacing:.06em}
+.row.big{font-family:var(--f-sign); font-size:12.5cqi; line-height:1.05; margin:1.6cqi 0 1.4cqi; color:var(--ink)}
+.ltr{display:inline-block; transform-origin:50% 0; text-shadow:0 2px 0 rgba(23,18,46,.15)}
+.ltr.sp{width:.4em}
+.board-legs{position:absolute; left:18%; right:18%; bottom:-42px; height:42px; display:flex; justify-content:space-between; z-index:-1}
+.board-legs i{width:16px; background:linear-gradient(90deg,#2a2150,#120d26)}
+.headliners{position:absolute; left:50%; bottom:0; width:min(118%, 760px); transform:translateX(-50%); z-index:5; filter:drop-shadow(0 24px 30px rgba(0,0,0,.55))}
+.headliners img{width:100%}
+.floor-glow{position:absolute; left:50%; bottom:-30px; width:120%; height:90px; transform:translateX(-50%); background:radial-gradient(50% 50% at 50% 50%, rgba(255,200,61,.35), transparent 70%); z-index:4}
+.prop{position:absolute; z-index:6; pointer-events:none}
+.prop img{width:100%; filter:drop-shadow(0 18px 18px rgba(0,0,0,.5))}
+.prop.drone{width:clamp(130px,15vw,230px); right:-4%; top:-14%}
+.prop.car{width:clamp(110px,12vw,190px); left:-9%; bottom:22%}
+.hero-tag{position:absolute; z-index:7; background:var(--cream); color:var(--ink); font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; padding:6px 10px; transform:rotate(-4deg); box-shadow:3px 3px 0 var(--ink); white-space:nowrap}
+.hero-tag.t1{left:-2%; bottom:6%}
+.hero-tag.t2{right:2%; bottom:2%; transform:rotate(3deg); background:var(--bulb)}
+.pause{position:absolute; z-index:8; right:var(--gutter); bottom:22px; display:inline-flex; gap:8px; align-items:center; background:rgba(23,18,46,.75); color:var(--cream); border:1px solid rgba(255,243,220,.35); border-radius:999px; padding:8px 14px; font-family:var(--f-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; cursor:pointer}
+.pause:hover{border-color:var(--bulb); color:var(--bulb)}
+@media (max-width:900px){
+  .hero{padding-top:100px; min-height:0}
+  .hero-grid{grid-template-columns:1fr; gap:30px}
+  .hero h1{font-size:clamp(40px,11.4vw,64px); margin:16px 0 16px}
+  .hero .lede{font-size:17px; margin-bottom:22px}
+  .cta-row .btn{padding:14px 18px; font-size:13px}
+  .cta-row .btn .long{display:none}
+  .since{display:none}
+  .stage-set{margin:0 6px; padding-bottom:52vw}
+  .headliners{width:104%}
+  .hero-tag.t2{display:none}
+  .pause{position:relative; right:auto; bottom:auto; display:flex; margin:18px var(--gutter) 20px auto; width:max-content}
+  .board{padding:20px; border-radius:16px}
+  .prop.drone{right:-2%; top:-12%} .prop.car{left:-4%; bottom:30%}
+  .pause{bottom:14px}
+  .hero-tag.t1{left:0}
+}
+
+/* ---------- ticker ---------- */
+.ticker{position:relative; background:var(--red-deep); color:var(--bulb); overflow:hidden; padding:26px 0; border-block:6px solid var(--night)}
+.ticker::before,.ticker::after{content:""; position:absolute; left:0; right:0; height:8px; background:radial-gradient(circle 3px at 8px 4px, var(--bulb-hot) 92%, transparent) 0 0/22px 8px repeat-x; filter:drop-shadow(0 0 4px var(--bulb))}
+.ticker::before{top:6px} .ticker::after{bottom:6px}
+.ticker-track{display:flex; width:max-content; white-space:nowrap; font-family:var(--f-sign); font-size:clamp(26px,3.4vw,46px); line-height:1.1}
+.ticker-track span{padding-right:.6em}
+.ticker-track .star{color:var(--cream)}
+html[data-motion="reduce"] .ticker-track{width:auto; white-space:normal; flex-wrap:wrap; padding:0 var(--gutter); font-size:22px}
+html[data-motion="reduce"] .ticker-track .dupe{display:none}
+
+/* ---------- how it works ---------- */
+.how{background:var(--cream); color:var(--ink); padding:clamp(80px,10vw,140px) 0 clamp(70px,8vw,120px); position:relative}
+.how-head{display:grid; grid-template-columns:1.1fr 1fr; gap:clamp(24px,5vw,80px); align-items:end; margin-bottom:clamp(40px,6vw,72px)}
+.how h2,.makes h2,.join h2{font-family:var(--f-sign); font-weight:400; font-size:clamp(40px,5.4vw,84px); line-height:.94; margin:14px 0 0}
+.how h2 em,.makes h2 em,.join h2 em{font-style:normal; color:var(--red-deep)}
+.how .eyebrow,.makes .eyebrow,.join .eyebrow{color:var(--red-deep)}
+.how-copy p{margin:0 0 18px; font-size:19px; color:var(--ink-soft)}
+.how-copy p strong{color:var(--ink)}
+.quote{display:inline-flex; align-items:center; gap:12px; background:var(--ink); color:var(--cream); padding:12px 18px; transform:rotate(-1.5deg); box-shadow:6px 6px 0 var(--bulb)}
+.quote q{font-family:var(--f-sign); font-size:22px; quotes:"\201C" "\201D"}
+.quote span{font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; opacity:.8}
+.stage{position:relative; background:linear-gradient(180deg, var(--night) 0%, var(--night-2) 78%, #3a2a1c 78%, #241811 100%); border-radius:28px; padding:clamp(48px,6vw,90px) clamp(18px,3vw,48px) clamp(40px,5vw,70px); overflow:hidden; color:var(--cream)}
+.stage::before{content:""; position:absolute; left:0; right:0; top:0; height:56px; background:
+  radial-gradient(60px 46px at 30px 0, var(--velvet) 98%, transparent) 0 0/60px 56px repeat-x; opacity:.95}
+.spot{position:absolute; top:0; left:16.66%; width:70%; height:100%; transform:translateX(-50%); pointer-events:none; z-index:1;
+  background:radial-gradient(46% 14% at 50% 90%, rgba(255,233,168,.45), transparent 70%), conic-gradient(from 160deg at 50% -2%, transparent 0deg, rgba(255,233,168,.10) 6deg, rgba(255,233,168,.26) 16deg, rgba(255,233,168,.26) 24deg, rgba(255,233,168,.10) 34deg, transparent 40deg); mix-blend-mode:screen}
+html[data-motion="reduce"] .spot{display:none}
+.acts{position:relative; z-index:2; display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(16px,2.4vw,36px)}
+.act{position:relative; background:var(--paper); color:var(--ink); border-radius:6px; padding:14px 14px 22px; box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.act:nth-child(1){transform:rotate(-1.2deg)} .act:nth-child(3){transform:rotate(1.2deg)}
+.act figure{margin:0; aspect-ratio:4/3; overflow:hidden; border-radius:3px; background:#ddd}
+.act figure img{width:100%; height:100%; object-fit:cover}
+.act .num{font-family:var(--f-sign-inline); font-size:15px; color:var(--red-deep); letter-spacing:.08em; margin:16px 4px 2px; display:block}
+.act h3{font-family:var(--f-sign); font-weight:400; font-size:clamp(34px,3.4vw,52px); line-height:1; margin:0 4px 10px}
+.act p{margin:0 4px; font-size:16.5px; color:var(--ink-soft)}
+.act .shade{position:absolute; inset:0; background:var(--night); opacity:0; border-radius:6px; pointer-events:none; z-index:2}
+html[data-motion="full"] .act .shade{opacity:.62}
+.facts{position:relative; z-index:2; display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-top:clamp(36px,4vw,56px)}
+.fact{display:flex; align-items:center; gap:10px; background:var(--bulb); color:var(--ink); padding:10px 18px; font-weight:800; font-size:16px; border-radius:3px}
+.fact svg{width:20px; height:20px; flex:none}
+@media (max-width:900px){
+  .how-head{grid-template-columns:1fr}
+  .acts{grid-template-columns:1fr; gap:28px}
+  .act:nth-child(n){transform:none}
+  .spot{display:none}
+}
+
+/* ---------- lobby / makes ---------- */
+.makes{background:var(--cream); color:var(--ink); padding:0 0 clamp(90px,10vw,150px)}
+.makes-head{display:flex; justify-content:space-between; align-items:end; gap:30px; flex-wrap:wrap; margin-bottom:clamp(70px,8vw,110px)}
+.makes-head p{max-width:30em; margin:0; color:var(--ink-soft); font-size:19px}
+.cases{display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(18px,2.2vw,32px)}
+.case{position:relative; background:var(--night); border-radius:14px; padding:16px; box-shadow:0 16px 0 -6px var(--red-deep), 0 26px 40px rgba(23,18,46,.35)}
+.case:nth-child(even){margin-top:46px}
+.case .frame{position:relative; aspect-ratio:3/4; border-radius:6px; overflow:hidden}
+.case .frame>img{width:100%; height:100%; object-fit:cover}
+.case .frame::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, transparent 50%, rgba(23,18,46,.85))}
+.case .pop{position:absolute; z-index:2; pointer-events:none; filter:drop-shadow(0 16px 14px rgba(0,0,0,.45))}
+.case .label{position:absolute; left:16px; right:16px; bottom:16px; padding:60px 14px 16px; z-index:3; color:var(--cream); border-radius:0 0 6px 6px; background:linear-gradient(180deg, transparent, rgba(23,18,46,.88) 45%)}
+.case .label .eyebrow{color:var(--bulb); font-size:11px}
+.case .label h3{font-family:var(--f-sign); font-weight:400; font-size:clamp(19px,1.6vw,24px); line-height:1.02; margin:6px 0 8px}
+.chip{display:inline-block; font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:4px 8px; border-radius:3px; background:var(--cream); color:var(--ink)}
+@media (max-width:900px){
+  .cases{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:18px; margin:0 calc(-1 * var(--gutter)); padding:70px var(--gutter) 34px}
+  .case{flex:0 0 74%; scroll-snap-align:center}
+  .case:nth-child(even){margin-top:0}
+  .makes-head{margin-bottom:10px}
+}
+
+/* ---------- lineup ---------- */
+.lineup{position:relative; background:
+  radial-gradient(900px 500px at 50% 0, rgba(142,27,44,.45), transparent 70%), var(--night); padding:clamp(110px,12vw,170px) 0 clamp(30px,4vw,60px); overflow:clip}
+.curtain{position:absolute; top:0; height:min(100vh,1000px); width:51%; z-index:20; pointer-events:none;
+  background:repeating-linear-gradient(90deg, #6d1222 0 18px, #9b2133 30px, #b52a3d 40px, #8a1a2b 56px, #6d1222 70px); box-shadow:inset 0 -40px 60px rgba(0,0,0,.4)}
+.curtain.l{left:0; transform:translateX(-100%)} .curtain.r{right:0; transform:translateX(100%)}
+.valance{position:absolute; top:0; left:0; right:0; height:46px; z-index:21; background:radial-gradient(70px 46px at 35px 0, #9b2133 98%, transparent) 0 0/70px 46px repeat-x}
+.lineup-head{text-align:center; max-width:900px; margin:0 auto 40px}
+.lineup-head .eyebrow{color:var(--bulb)}
+.lineup h2{font-family:var(--f-sign); font-weight:400; font-size:clamp(38px,5.2vw,80px); line-height:.94; margin:14px 0 16px}
+.lineup h2 .hot{color:var(--bulb); text-shadow:0 0 18px rgba(255,200,61,.5)}
+.lineup-head p{color:#D9CEEE; margin:0 auto; max-width:36em}
+.nights{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; max-width:980px; margin:0 auto 18px}
+.night{background:var(--night-2); color:var(--cream); border:2px solid rgba(255,243,220,.18); border-radius:12px; padding:14px 10px; cursor:pointer; text-align:center; transition:border-color .2s, background .2s, transform .2s}
+.night small{display:block; font-family:var(--f-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; opacity:.75; margin-bottom:4px}
+.night b{font-family:var(--f-sign); font-weight:400; font-size:clamp(16px,1.6vw,22px)}
+.night:hover{border-color:var(--bulb)}
+.night[aria-pressed="true"]{background:var(--bulb); color:var(--ink); border-color:var(--bulb); transform:translateY(-3px); box-shadow:0 0 30px rgba(255,200,61,.35)}
+.stages{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; max-width:1100px; margin:0 auto 14px}
+.stg{display:inline-flex; align-items:center; gap:7px; background:transparent; color:var(--cream); border:1.5px solid rgba(255,243,220,.3); border-radius:999px; padding:8px 14px 8px 10px; font:600 15px/1 var(--f-body); cursor:pointer; transition:background .2s, color .2s, border-color .2s}
+.stg svg{width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+.stg .dot{width:10px; height:10px; border-radius:50%; background:var(--c)}
+.stg:hover{border-color:var(--c, var(--bulb))}
+.stg[aria-pressed="true"]{background:var(--c, var(--bulb)); color:var(--ink); border-color:var(--c, var(--bulb))}
+.stg[aria-pressed="true"] .dot{background:var(--ink)}
+.filters-foot{display:flex; justify-content:center; align-items:center; gap:22px; flex-wrap:wrap; margin:6px 0 34px; color:#D9CEEE; font-size:15px}
+.switch{display:inline-flex; align-items:center; gap:10px; cursor:pointer}
+.switch input{appearance:none; width:46px; height:26px; border-radius:99px; background:var(--night-3); position:relative; cursor:pointer; transition:background .2s; border:1.5px solid rgba(255,243,220,.3)}
+.switch input::after{content:""; position:absolute; top:3px; left:3px; width:17px; height:17px; border-radius:50%; background:var(--cream); transition:transform .2s}
+.switch input:checked{background:var(--circuits)} .switch input:checked::after{transform:translateX(20px); background:var(--ink)}
+.count{font-family:var(--f-mono); font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--bulb)}
+.tix-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:22px 26px; position:relative}
+.tix{--c:var(--bulb); position:relative; display:grid; grid-template-columns:1fr 150px; background:var(--paper); color:var(--ink); border-radius:12px; min-height:236px; transition:transform .3s cubic-bezier(.3,1.5,.5,1), box-shadow .3s; box-shadow:0 10px 0 -4px rgba(0,0,0,.35)}
+.tix:hover{transform:translateY(-4px) rotate(-.6deg); box-shadow:0 18px 30px rgba(0,0,0,.45)}
+.tix::before,.tix::after{content:""; position:absolute; right:139px; width:22px; height:22px; border-radius:50%; background:var(--night); z-index:2}
+.tix::before{top:-11px} .tix::after{bottom:-11px}
+.tix-main{padding:16px 20px 18px; border-radius:12px 0 0 12px; position:relative; overflow:hidden}
+.tix-main::before{content:""; position:absolute; left:0; top:0; bottom:0; width:8px; background:var(--c)}
+.tix-top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px}
+.tix-stage{display:inline-flex; align-items:center; gap:7px; background:var(--c); padding:5px 10px 5px 8px; border-radius:3px; font-family:var(--f-mono); font-size:11.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase}
+.tix-stage svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.tix-no{font-family:var(--f-mono); font-size:11px; letter-spacing:.12em; color:#6a6080}
+.tix-bill{font-family:var(--f-sign); font-weight:400; font-size:clamp(20px,1.9vw,27px); line-height:1.02; margin:0 0 6px}
+.tix-prog{margin:0 0 12px; font-size:15px; color:var(--ink-soft)}
+.tix-prog b{color:var(--ink)}
+.tix-meta{display:grid; grid-template-columns:auto auto 1fr; gap:4px 18px; margin:0; font-size:14px}
+.tix-meta div{min-width:0} .tix-meta dt{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#6a6080} .tix-meta dd{margin:0; font-weight:600; line-height:1.3}
+.meter{display:flex; align-items:center; gap:8px; margin-top:12px; font-family:var(--f-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#5a5070}
+.meter i{width:11px; height:11px; border-radius:50%; background:#E6DCC8; box-shadow:inset 0 0 0 1.5px #c9bda3}
+.meter i.on{background:var(--ink); box-shadow:none}
+.meter .bulbs5{display:flex; gap:4px}
+.tix-stub{position:relative; border-left:2.5px dashed rgba(23,18,46,.35); background:var(--c); border-radius:0 12px 12px 0; padding:18px 14px; display:flex; flex-direction:column; align-items:center; justify-content:space-between; text-align:center; gap:8px}
+.stub-adm{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase}
+.stub-price{font-family:var(--f-sign); font-size:46px; line-height:1}
+.stub-note{font-size:12.5px; font-weight:600; line-height:1.25}
+.stub-add{width:100%; background:var(--ink); color:var(--cream); border:0; border-radius:6px; padding:10px 6px; font-family:var(--f-sign); font-size:12px; letter-spacing:.03em; cursor:pointer; transition:transform .2s, background .2s}
+.stub-add:hover{transform:scale(1.04)}
+.stub-add[aria-pressed="true"]{background:var(--paper); color:var(--ink); box-shadow:inset 0 0 0 2px var(--ink)}
+.stamp{flex:none; transform:rotate(-6deg); white-space:nowrap; font-family:var(--f-sign); font-size:12px; letter-spacing:.06em; color:var(--red-deep); border:2.5px solid var(--red-deep); padding:3px 8px; border-radius:4px; background:rgba(255,251,242,.85)}
+.tix.is-pilot .tix-no{display:none}
+.tix-top{flex-wrap:wrap}
+.previews-note{margin:30px auto 0; text-align:center; color:#CFC4E6; font-size:15px; max-width:44em}
+.previews-note b{color:var(--cream)}
+.tray{position:relative; bottom:14px; z-index:15; margin:40px auto 0; max-width:980px; display:flex; align-items:center; gap:16px; background:var(--cream); color:var(--ink); border-radius:14px; padding:12px 12px 12px 20px; box-shadow:0 18px 40px rgba(0,0,0,.5), 0 0 0 3px var(--bulb)}
+.tray.has{position:sticky}
+.tray-label{font-family:var(--f-sign); font-size:15px; white-space:nowrap}
+.tray-picks{display:flex; gap:6px; flex-wrap:wrap; flex:1; min-width:0; font-size:14px; color:var(--ink-soft)}
+.tray-picks .pick{background:var(--ink); color:var(--cream); padding:4px 10px; border-radius:99px; font-weight:600; font-size:13px; white-space:nowrap}
+.tray .btn{padding:13px 18px; font-size:13px; white-space:nowrap}
+@media (max-width:1000px){ .tix-grid{grid-template-columns:1fr} }
+@media (max-width:900px){
+  .nights{grid-template-columns:repeat(2,1fr)}
+  .stages{flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start; margin:0 calc(-1 * var(--gutter)) 14px; padding:4px var(--gutter) 8px; scrollbar-width:none}
+  .stg{flex:none}
+}
+@media (max-width:560px){
+  .tix{grid-template-columns:1fr 104px}
+  .tix::before,.tix::after{right:93px}
+  .stamp{font-size:10.5px}
+  .stub-price{font-size:34px}
+  .tix-meta{grid-template-columns:1fr 1fr}
+  .tix-meta div:last-child{grid-column:1 / -1}
+  .tix-no{display:none}
+  .meter{flex-wrap:wrap; gap:6px 8px} .meter span:last-child{flex-basis:100%}
+  .tix-main{padding:14px 14px 16px 18px}
+  .tix-stage{font-size:10.5px}
+  .stub-note{font-size:11.5px}
+  .tray{flex-wrap:wrap; padding:12px}
+  .tray-label{font-size:13px}
+  .tray .btn{width:100%; justify-content:center}
+}
+
+/* ---------- join ---------- */
+.join{background:var(--cream); color:var(--ink); padding:clamp(90px,10vw,150px) 0}
+.join-head{max-width:860px; margin-bottom:clamp(40px,5vw,64px)}
+.join-head p{color:var(--ink-soft); font-size:19px; max-width:34em}
+.join-grid{display:grid; grid-template-columns:1.35fr 1fr; grid-template-rows:auto auto; gap:26px}
+.jt{position:relative; display:grid; border-radius:16px; overflow:visible; background:var(--paper); box-shadow:0 0 0 2px var(--ink), 10px 10px 0 var(--ink); transition:transform .3s cubic-bezier(.3,1.5,.5,1), box-shadow .3s}
+.jt:hover{transform:translate(-3px,-3px) rotate(-.4deg); box-shadow:0 0 0 2px var(--ink), 14px 14px 0 var(--ink)}
+.jt-body{padding:clamp(22px,2.6vw,36px); display:flex; flex-direction:column; gap:12px; position:relative; z-index:2}
+.jt h3{font-family:var(--f-sign); font-weight:400; font-size:clamp(30px,3.3vw,50px); line-height:.95; margin:0}
+.jt p{margin:0; color:var(--ink-soft)}
+.jt .eyebrow{color:var(--red-deep)}
+.jt .btn{align-self:flex-start; margin-top:auto}
+.jt.host{grid-row:1 / span 2; grid-template-rows:1fr auto; background:var(--bulb)}
+.jt.host .jt-photo{min-height:320px; overflow:hidden; border-radius:16px 16px 0 0; border-bottom:2px solid var(--ink); position:relative}
+.jt.host .jt-photo img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.jt.host p{color:var(--ink)}
+.jt.host .perks{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 8px; padding:0; list-style:none}
+.jt.host .perks li{background:var(--ink); color:var(--cream); font-size:14px; font-weight:600; padding:6px 12px; border-radius:99px}
+.jt.crew{grid-template-columns:42% 1fr}
+.jt.crew .jt-photo{border-radius:16px 0 0 16px; overflow:hidden; border-right:2px solid var(--ink)}
+.jt.crew .jt-photo img{width:100%; height:100%; object-fit:cover; object-position:72% 50%}
+.jt.give{background:var(--red-deep); color:var(--cream); grid-template-columns:1fr 34%}
+.jt.give p{color:#FFE9DE} .jt.give .eyebrow{color:var(--bulb)}
+.jt.give .rocket{position:relative}
+.jt.give .rocket img{position:absolute; right:-4%; bottom:-4%; width:128%; max-width:none; filter:drop-shadow(0 16px 16px rgba(0,0,0,.4))}
+.stub-strip{position:absolute; top:22px; right:-1px; background:var(--ink); color:var(--bulb); font-family:var(--f-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; padding:6px 12px; border-radius:4px 0 0 4px; z-index:3}
+@media (max-width:900px){
+  .join-grid{grid-template-columns:1fr}
+  .jt.host{grid-row:auto} .jt.host .jt-photo{min-height:230px}
+  .jt.crew{grid-template-columns:1fr} .jt.crew .jt-photo{border-radius:16px 16px 0 0; border-right:0; border-bottom:2px solid var(--ink); aspect-ratio:16/9}
+  .jt.give{grid-template-columns:1fr 30%}
+}
+
+/* ---------- footer ---------- */
+.foot{position:relative; background:var(--night); padding:clamp(90px,10vw,130px) 0 40px; overflow:hidden}
+.foot .skyline{opacity:.55}
+.foot-top{display:flex; justify-content:space-between; align-items:center; gap:40px; flex-wrap:wrap}
+.foot-sign{display:flex; flex-direction:column; align-items:flex-start; gap:18px}
+.next-show{position:relative; background:var(--cream); color:var(--ink); border-radius:12px; padding:22px 26px; max-width:380px; transform:rotate(2deg); box-shadow:10px 10px 0 var(--bulb)}
+.next-show::before,.next-show::after{content:""; position:absolute; top:50%; width:22px; height:22px; margin-top:-11px; border-radius:50%; background:var(--night)}
+.next-show::before{left:-11px} .next-show::after{right:-11px}
+.next-show .eyebrow{color:var(--red-deep); font-size:12px}
+.next-show h3{font-family:var(--f-sign); font-weight:400; font-size:30px; line-height:1; margin:8px 0 10px}
+.foot .next-show p{color:var(--ink-soft); margin:0 0 16px; font-size:15.5px}
+.big-sign{position:relative; display:inline-block; background:linear-gradient(180deg,#D53A26,#A82617); border-radius:18px; padding:26px 34px 22px}
+.big-sign .t{font-family:var(--f-sign); font-size:clamp(40px,6.2vw,100px); line-height:.9; color:var(--cream); display:block; position:relative; z-index:2}
+.big-sign .t b{font-weight:400; color:var(--bulb); text-shadow:0 0 22px rgba(255,200,61,.6)}
+.big-sign .pointer{position:absolute; left:50%; bottom:-34px; width:52px; height:36px; transform:translateX(-50%); background:#A82617; clip-path:polygon(0 0,100% 0,50% 100%)}
+.foot .right-here{font-family:var(--f-sign); font-size:clamp(20px,2.2vw,30px); color:var(--bulb); margin:30px 0 0 0; letter-spacing:.02em}
+.foot-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:36px; margin-top:70px; padding-top:40px; border-top:1px solid rgba(255,243,220,.18)}
+.foot h4{font-family:var(--f-mono); font-weight:500; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--bulb); margin:0 0 14px}
+.foot ul{list-style:none; margin:0; padding:0; display:grid; gap:8px}
+.foot a{text-decoration:none; color:#E9E0F5} .foot a:hover{color:var(--bulb)}
+.foot p{margin:0 0 10px; color:#CFC4E6; font-size:15px}
+.legal{display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-top:56px; font-size:13px; color:#B9AED3; font-family:var(--f-mono); letter-spacing:.04em}
+.toggles{display:flex; gap:10px; flex-wrap:wrap}
+.toggles button{background:transparent; color:var(--cream); border:1px solid rgba(255,243,220,.35); border-radius:99px; padding:7px 14px; font-family:var(--f-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; cursor:pointer}
+.toggles button:hover{border-color:var(--bulb); color:var(--bulb)}
+@media (max-width:900px){ .foot-grid{grid-template-columns:1fr 1fr} .foot-grid>div:first-child{grid-column:1 / -1} }
+</style>
+</head>
+<body>
+
+<a class="sr" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a href="#top" aria-label="createMPLS home">
+      <svg class="wm" viewBox="0 0 184 62" role="img" aria-label="createMPLS">
+        <rect x="3" y="3" width="178" height="46" rx="9" fill="#C8321F"/>
+        <rect x="3" y="3" width="178" height="46" rx="9" fill="none" stroke="#FFE9A8" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0 8.9" style="filter:drop-shadow(0 0 3px #FFC83D)"/>
+        <path d="M82 49 L92 60 L102 49 Z" fill="#C8321F"/>
+        <text x="16" y="34" font-size="19" fill="#FFF3DC" textLength="88" lengthAdjust="spacingAndGlyphs">CREATE</text>
+        <text x="110" y="34" font-size="19" fill="#FFC83D" textLength="58" lengthAdjust="spacingAndGlyphs">MPLS</text>
+      </svg>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#lineup">Programs</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#join">Volunteer</a></li>
+    </ul>
+    <a class="give" href="https://givebutter.com/creatempls">Keep the lights on</a>
+    <a class="btn" href="#join">Book a program <span class="arr" aria-hidden="true">&rarr;</span></a>
+  </div>
+</header>
+
+<main id="main">
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="beam b1" aria-hidden="true"></div>
+  <div class="beam b2" aria-hidden="true"></div>
+  <svg class="skyline" viewBox="0 0 1440 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M0 220V196H36V182H64V196H96V170H132V188H160V200H196V150H228V200H246L252 78L262 54L272 78L278 200H316V140H352V200H380V96H414V200H446V120H470V60H520V200H540V30L547 24V16L554 10V6H612V10L619 16V24L626 30V200H648V64L656 56V44L668 32L680 44V56L688 64V200H720V110H760V200H780V132H808V170H836V200H860"/><path d="M860 172H1440M860 166H1440"/><path d="M860 220V196A26 26 0 0 1 912 196V220 M924 220V196A26 26 0 0 1 976 196V220 M988 220V196A26 26 0 0 1 1040 196V220 M1052 220V196A26 26 0 0 1 1104 196V220 M1116 220V196A26 26 0 0 1 1168 196V220 M1180 220V196A26 26 0 0 1 1232 196V220 M1244 220V196A26 26 0 0 1 1296 196V220 M1308 220V196A26 26 0 0 1 1360 196V220 M1372 220V196A26 26 0 0 1 1424 196V220 M1436 220V196A26 26 0 0 1 1488 196V220"/><circle cx="397" cy="78" r="16"/></g></svg>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="admit"><b>ADMIT ALL</b> Free for students &amp; families</span>
+      <h1 id="hero-title" class="sign"><span class="line">Every kid</span> <span class="line">gets <span class="hot">top</span></span> <span class="line hot">billing.</span></h1>
+      <p class="lede">createMPLS brings hands-on robotics, coding, engineering, sound, and flight programs <strong>right into Minneapolis schools and community sites.</strong> Students build it, test it, and take a bow. Families pay nothing.</p>
+      <div class="cta-row">
+        <a class="btn" href="#join"><span>Bring a program<span class="long"> to your school</span></span> <span class="arr" aria-hidden="true">&rarr;</span></a>
+        <a class="btn ghost" href="#lineup">See the lineup</a>
+      </div>
+      <p class="since">A Minneapolis nonprofit &middot; making things with kids since 2015</p>
+    </div>
+
+    <div class="stage-set" aria-hidden="true">
+      <div class="prop drone" data-depth="1.6"><div class="bob"><img src="img/cut-drone.webp" alt=""></div></div>
+      <div class="board" data-bulbs data-gap="24" data-inset="13" data-r="16">
+        <div class="board-panel">
+          <div class="row small" data-row="top">NOW MAKING</div>
+          <div class="row big" id="boardWord">ROBOTS</div>
+          <div class="row small">AT YOUR SCHOOL &middot; FREE</div>
+        </div>
+        <div class="board-legs"><i></i><i></i></div>
+      </div>
+      <div class="prop car" data-depth="1.2"><img src="img/cut-car.webp" alt=""></div>
+      <div class="floor-glow"></div>
+      <div class="headliners" data-depth="0.5"><img src="img/cut-org-four-kids.webp" alt="" fetchpriority="high"></div>
+      <span class="hero-tag t1">Real createMPLS students</span>
+      <span class="hero-tag t2">Starring: you</span>
+    </div>
+  </div>
+  <p class="sr">Now making: robots, beats, drones, games, circuits, 3D prints, machines and shadow theaters.</p>
+  <button class="pause" id="pauseBtn" type="button" aria-pressed="false"><span aria-hidden="true">&#10074;&#10074;</span> <span class="lbl">Pause the lights</span></button>
+</section>
+
+<!-- ===================== TICKER ===================== -->
+<div class="ticker" aria-label="Things students make in createMPLS programs">
+  <div class="ticker-track" id="tickerTrack"><span>A floor-sized chain reaction</span><span class="star" aria-hidden="true">&#9733;</span><span>A beat made from a stairwell</span><span class="star" aria-hidden="true">&#9733;</span><span>A robot that solves a maze alone</span><span class="star" aria-hidden="true">&#9733;</span><span>A boss-level arcade game</span><span class="star" aria-hidden="true">&#9733;</span><span>A tiny drone you built and flew</span><span class="star" aria-hidden="true">&#9733;</span><span>A paper circuit that lights up</span><span class="star" aria-hidden="true">&#9733;</span><span>A drawing you can hear</span><span class="star" aria-hidden="true">&#9733;</span><span>A claw that has to hit a number</span><span class="star" aria-hidden="true">&#9733;</span><span>An invention for your block</span><span class="star" aria-hidden="true">&#9733;</span><span>A pixel self-portrait</span><span class="star" aria-hidden="true">&#9733;</span></div>
+</div>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section class="how" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <div class="how-head">
+      <div>
+        <p class="eyebrow">How it works &middot; it comes to you</p>
+        <h2 id="how-title">The show comes <em>to&nbsp;you.</em></h2>
+      </div>
+      <div class="how-copy">
+        <p>We bring the instructors, the kits, and a ready-to-run program into your building, during the school day or after it. <strong>For a few weeks your room becomes the studio.</strong></p>
+        <p>Students make something real in the first session, test it, change one thing, explain it, and close with a show. <strong>Students and families pay nothing.</strong></p>
+        <div class="quote"><q>It comes to us!</q><span>A createMPLS parent</span></div>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="spot" id="spot" aria-hidden="true"></div>
+      <div class="acts">
+        <article class="act">
+          <figure><img src="img/org-girl-boy-building.jpg" alt="Two students build a LEGO robot together at a classroom table" loading="lazy"></figure>
+          <span class="num">Act I</span>
+          <h3>Make</h3>
+          <p>Hands on parts in the first ten minutes. Short demo, long build sprint, real tools.</p>
+          <div class="shade"></div>
+        </article>
+        <article class="act">
+          <figure><img src="img/org-two-girls-robot.jpg" alt="Two students adjust their robot while classmates work nearby" loading="lazy"></figure>
+          <span class="num">Act II</span>
+          <h3>Test</h3>
+          <p>Run it, watch it fail, change one thing, run it again. That loop is the lesson.</p>
+          <div class="shade"></div>
+        </article>
+        <article class="act">
+          <figure><img src="img/org-paper-tower.jpg" alt="Students and a volunteer mentor measure a paper tower they built" loading="lazy"></figure>
+          <span class="num">Act III</span>
+          <h3>Show</h3>
+          <p>Every program ends with a share: a show night, a listening party, a tournament, a gallery walk.</p>
+          <div class="shade"></div>
+        </article>
+      </div>
+      <div class="facts">
+        <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>On site, in your space</span>
+        <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M14 8v10" stroke-dasharray="2 2"/></svg>$0 for students &amp; families</span>
+        <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>School day, after school &amp; summer</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHAT KIDS MAKE ===================== -->
+<section class="makes" id="makes" aria-labelledby="makes-title">
+  <div class="wrap">
+    <div class="makes-head">
+      <div>
+        <p class="eyebrow">Coming attractions</p>
+        <h2 id="makes-title">What kids walk out <em>having&nbsp;made.</em></h2>
+      </div>
+      <p>Every program ends with something you can hold, play, fly, or hear, and a kid who can tell you exactly how it works.</p>
+    </div>
+    <div class="cases">
+      <article class="case" data-bulbs data-gap="18" data-inset="6" data-r="12" data-speed="1.4s">
+        <div class="frame"><img src="img/org-lego-machine.jpg" alt="Two students build a LEGO simple machine" loading="lazy"></div>
+        <div class="label"><span class="eyebrow">Now making</span><h3>A machine that moves on its own gears</h3><span class="chip">Grades 3&ndash;5</span></div>
+      </article>
+      <article class="case" data-bulbs data-gap="18" data-inset="6" data-r="12" data-speed="1.4s">
+        <div class="frame"><img src="img/stock-drone-reach.jpg" alt="Kids reach up toward a small flying drone" loading="lazy" style="object-position:50% 30%"></div>
+        <div class="pop" data-depth="1.4" style="width:78%; left:30%; top:-16%"><img src="img/cut-drone.webp" alt=""></div>
+        <div class="label"><span class="eyebrow">Now making</span><h3>A tiny drone you built and flew</h3><span class="chip">Grades 6&ndash;12</span></div>
+      </article>
+      <article class="case" data-bulbs data-gap="18" data-inset="6" data-r="12" data-speed="1.4s">
+        <div class="frame"><img src="img/stock-3d-printer.jpg" alt="Students gather around a desktop 3D printer" loading="lazy"></div>
+        <div class="pop" style="width:92%; left:4%; bottom:16px"><img src="img/cut-3dpen.webp" alt=""></div>
+        <div class="label"><span class="eyebrow">Now making</span><h3>A wiggly 3D-printed critter</h3><span class="chip">Grades 3&ndash;5</span></div>
+      </article>
+      <article class="case" data-bulbs data-gap="18" data-inset="6" data-r="12" data-speed="1.4s">
+        <div class="frame"><img src="img/stock-headphones.jpg" alt="A student in headphones works on a laptop" loading="lazy" style="object-position:40% 50%"></div>
+        <div class="label"><span class="eyebrow">Now making</span><h3>A beat made from a stairwell</h3><span class="chip">Grades 9&ndash;12</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LINEUP (programs) ===================== -->
+<section class="lineup" id="lineup" aria-labelledby="lineup-title">
+  <div class="valance" aria-hidden="true"></div>
+  <div class="curtain l" aria-hidden="true"></div>
+  <div class="curtain r" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="lineup-head">
+      <p class="eyebrow">The lineup &middot; programs we bring to you</p>
+      <h2 id="lineup-title">Pick a grade. Pick a stage. <span class="hot">Book the show.</span></h2>
+      <p>Each ticket is a real program from our catalog, headlined by the thing students make. Add the ones you like and send us your lineup.</p>
+    </div>
+    <div class="nights" role="group" aria-label="Grade band"><button class="night" type="button" data-night="prek" aria-pressed="false"><small>Matinee</small><b>Pre-K–2</b></button><button class="night" type="button" data-night="g35" aria-pressed="true"><small>Early show</small><b>Grades 3–5</b></button><button class="night" type="button" data-night="g68" aria-pressed="false"><small>Evening</small><b>Grades 6–8</b></button><button class="night" type="button" data-night="g912" aria-pressed="false"><small>Late show</small><b>Grades 9–12</b></button></div>
+    <div class="stages" role="group" aria-label="Stage (subject)" id="stages"></div>
+    <div class="filters-foot">
+      <label class="switch"><input type="checkbox" id="screenFree"> Can run screen-free</label>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <div class="tix-grid" id="tixGrid"></div>
+    <p class="previews-note"><b>&ldquo;In previews&rdquo;</b> means a new program getting its first runs with partner sites. Ask us about hosting one.</p>
+    <div class="tray" id="tray">
+      <span class="tray-label">Your lineup</span>
+      <div class="tray-picks" id="trayPicks"><span>Tap &ldquo;+ Add&rdquo; on any ticket to build a request.</span></div>
+      <a class="btn" id="trayBtn" href="mailto:info@creatempls.org?subject=Bringing%20createMPLS%20to%20our%20site">Send to createMPLS <span class="arr" aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== IMPACT MODULE (removable) =====================
+     Self-contained: markup + scoped <style> + <script>. Delete from here to
+     "END IMPACT MODULE" to remove the only metric on the site. Nothing else
+     references it. -->
+<section id="impact-since-2019" aria-labelledby="impact-title">
+  <style>
+    #impact-since-2019{position:relative; padding:clamp(70px,9vw,140px) 0 clamp(80px,10vw,150px); overflow:hidden; text-align:center; color:var(--cream);
+      background:linear-gradient(180deg, var(--night) 0%, rgba(23,18,46,.82) 30%, rgba(23,18,46,.82) 70%, var(--night) 100%), url(img/org-classroom-wide.jpg) center/cover no-repeat}
+    #impact-since-2019 .im-sign{position:relative; display:inline-block; background:var(--night); border-radius:22px; padding:clamp(28px,4vw,52px) clamp(22px,5vw,72px) clamp(26px,3.4vw,44px); box-shadow:0 0 0 10px var(--red-deep), 0 40px 90px rgba(0,0,0,.6)}
+    #impact-since-2019 .im-eyebrow{font-family:var(--f-mono); font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--bulb); margin:0 0 18px}
+    #impact-since-2019 .im-num{display:flex; justify-content:center; gap:clamp(5px,.8vw,10px); margin:0}
+    #impact-since-2019 .im-d{position:relative; display:inline-grid; place-items:center; width:clamp(54px,9vw,128px); height:clamp(78px,13vw,180px); background:linear-gradient(180deg,#FFFBF2 0 49.5%, #EFE3C8 50.5% 100%); color:var(--ink); border-radius:10px; font-family:var(--f-sign); font-size:clamp(50px,9vw,128px); line-height:1; box-shadow:0 6px 0 #0c0919, inset 0 0 0 2px rgba(23,18,46,.15); overflow:hidden}
+    #impact-since-2019 .im-d::after{content:""; position:absolute; left:0; right:0; top:50%; height:2px; background:rgba(23,18,46,.35)}
+    #impact-since-2019 .im-comma{font-family:var(--f-sign); font-size:clamp(50px,9vw,128px); color:var(--bulb); align-self:flex-end; line-height:.9; width:.35em}
+    #impact-since-2019 h2{font-family:var(--f-sign); font-weight:400; font-size:clamp(24px,3.4vw,50px); line-height:1; margin:26px 0 8px}
+    #impact-since-2019 h2 span{color:var(--bulb)}
+    #impact-since-2019 .im-note{font-size:14px; color:#CFC4E6; margin:0; font-family:var(--f-mono); letter-spacing:.04em}
+  </style>
+  <div class="wrap">
+    <div class="im-sign" data-bulbs data-gap="26" data-inset="-18" data-r="34">
+      <p class="im-eyebrow">The house count</p>
+      <p class="im-num" aria-hidden="true" id="imNum"><span class="im-d">5</span><span class="im-comma">,</span><span class="im-d">6</span><span class="im-d">5</span><span class="im-d">7</span></p>
+      <h2 id="impact-title"><span class="sr">5,657 </span>students served <span>since 2019</span></h2>
+      <p class="im-note">Combined yearly counts, 2019&ndash;2023.</p>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var root=document.getElementById('impact-since-2019');
+    if(!root || !window.gsap || document.documentElement.dataset.motion==='reduce') return;
+    var digits=[].slice.call(root.querySelectorAll('.im-d')), finals=digits.map(function(d){return +d.textContent});
+    ScrollTrigger.create({trigger:root, start:'top 65%', once:true, onEnter:function(){
+      digits.forEach(function(d,i){
+        var o={v:0}, spins=10+i*6;
+        gsap.to(o,{v:spins+finals[i], duration:1.4+i*.25, ease:'power3.out', onUpdate:function(){ d.textContent=Math.floor(o.v)%10; }, onComplete:function(){ d.textContent=finals[i]; }});
+        gsap.fromTo(d,{rotateX:-80},{rotateX:0, duration:.6, delay:i*.08, ease:'back.out(2)'});
+      });
+    }});
+  })();
+  </script>
+</section>
+<!-- ===================== END IMPACT MODULE ===================== -->
+
+<!-- ===================== GET INVOLVED ===================== -->
+<section class="join" id="join" aria-labelledby="join-title">
+  <div class="wrap">
+    <div class="join-head">
+      <p class="eyebrow">Get in the show</p>
+      <h2 id="join-title">Three ways to <em>get involved.</em></h2>
+      <p>Most of what we do starts with a school or community site saying &ldquo;yes, here.&rdquo; Volunteers and donors keep it running.</p>
+    </div>
+    <div class="join-grid">
+      <article class="jt host">
+        <div class="jt-photo"><img src="img/org-fll-table.jpg" alt="Students and coaches gather around a LEGO robotics competition table" loading="lazy"></div>
+        <div class="jt-body">
+          <span class="eyebrow">For schools &amp; community sites</span>
+          <h3>Host a show</h3>
+          <p>We bring instructors, kits, and a ready-to-run program to your building, in the school day, after school, or in summer. You bring the room and the students.</p>
+          <ul class="perks"><li>No cost to students &amp; families</li><li>Pre-K through Grade 12</li><li>Screen-free options</li></ul>
+          <a class="btn ink" href="mailto:info@creatempls.org?subject=Partnering%20with%20createMPLS">Book a program <span class="arr" aria-hidden="true">&rarr;</span></a>
+        </div>
+      </article>
+      <article class="jt crew">
+        <div class="jt-photo"><img src="img/org-mentor-ev3.jpg" alt="A volunteer mentor works on a robot with a student" loading="lazy"></div>
+        <div class="jt-body">
+          <span class="eyebrow">Volunteers</span>
+          <h3>Join the crew</h3>
+          <p>Mentors and build-day helpers keep every session running. Bring patience and curiosity; we&rsquo;ll bring the plan.</p>
+          <a class="btn" href="mailto:info@creatempls.org?subject=Volunteering%20with%20createMPLS">Volunteer with us <span class="arr" aria-hidden="true">&rarr;</span></a>
+        </div>
+      </article>
+      <article class="jt give">
+        <div class="jt-body">
+          <span class="eyebrow">Donors</span>
+          <h3>Keep the lights on</h3>
+          <p>Gifts keep kits stocked, printers fed, and every program free for students and families.</p>
+          <a class="btn" href="https://givebutter.com/creatempls">Give on Givebutter <span class="arr" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="rocket" aria-hidden="true"><img src="img/cut-rocket.webp" alt="" data-depth="0.8"></div>
+      </article>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="foot">
+  <svg class="skyline" viewBox="0 0 1440 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M0 220V196H36V182H64V196H96V170H132V188H160V200H196V150H228V200H246L252 78L262 54L272 78L278 200H316V140H352V200H380V96H414V200H446V120H470V60H520V200H540V30L547 24V16L554 10V6H612V10L619 16V24L626 30V200H648V64L656 56V44L668 32L680 44V56L688 64V200H720V110H760V200H780V132H808V170H836V200H860"/><path d="M860 172H1440M860 166H1440"/><path d="M860 220V196A26 26 0 0 1 912 196V220 M924 220V196A26 26 0 0 1 976 196V220 M988 220V196A26 26 0 0 1 1040 196V220 M1052 220V196A26 26 0 0 1 1104 196V220 M1116 220V196A26 26 0 0 1 1168 196V220 M1180 220V196A26 26 0 0 1 1232 196V220 M1244 220V196A26 26 0 0 1 1296 196V220 M1308 220V196A26 26 0 0 1 1360 196V220 M1372 220V196A26 26 0 0 1 1424 196V220 M1436 220V196A26 26 0 0 1 1488 196V220"/><circle cx="397" cy="78" r="16"/></g></svg>
+  <div class="wrap">
+    <div class="foot-top">
+    <div class="foot-sign">
+      <div class="big-sign" data-bulbs data-gap="26" data-inset="10" data-r="12">
+        <span class="t" aria-label="createMPLS">CREATE<b>MPLS</b></span>
+        <span class="pointer" aria-hidden="true"></span>
+      </div>
+      <p class="right-here">Right here in Minneapolis.</p>
+    </div>
+    <div class="next-show">
+      <span class="eyebrow">Admit one &middot; next show</span>
+      <h3>Yours.</h3>
+      <p>Tell us your grades, your space, and your schedule. We&rsquo;ll bring the rest.</p>
+      <a class="btn ink" href="mailto:info@creatempls.org?subject=Partnering%20with%20createMPLS">Start a conversation <span class="arr" aria-hidden="true">&rarr;</span></a>
+    </div>
+    </div>
+    <div class="foot-grid">
+      <div>
+        <h4>Say hello</h4>
+        <p><a href="mailto:info@creatempls.org">info@creatempls.org</a></p>
+        <p>Hands-on STEM programs for Minneapolis students, delivered with schools and community partners. Free for students and families.</p>
+      </div>
+      <div><h4>Programs</h4><ul><li><a href="#lineup">The lineup</a></li><li><a href="#how">How it works</a></li><li><a href="#makes">What kids make</a></li></ul></div>
+      <div><h4>Get involved</h4><ul><li><a href="#join">Host a program</a></li><li><a href="#join">Volunteer</a></li><li><a href="https://givebutter.com/creatempls">Donate</a></li></ul></div>
+      <div><h4>Follow @MPLScreate</h4><ul><li><a href="https://www.facebook.com/MPLScreate/">Facebook</a></li><li><a href="https://www.linkedin.com/company/creatempls">LinkedIn</a></li></ul></div>
+    </div>
+    <div class="legal">
+      <span>createMPLS is a 501(c)(3) nonprofit &middot; EIN 47-5122723</span>
+      <div class="toggles"><button type="button" id="motionBtn"></button></div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
+<script>
+const PROGRAMS = [{"id":"chain-reaction-playground-k2","t":"Chain-Reaction Playground","g0":-1,"g1":2,"d":"robots-machines","pilot":true,"s":0,"sf":true,"run":"4 sessions × 60 min","make":"a group chain-reaction machine that visitors can watch run","fr":1},{"id":"light-color-shadow-lab-k2","t":"Light, Color and Shadow Lab","g0":-1,"g1":2,"d":"media-light","pilot":true,"s":1,"sf":true,"run":"4 sessions × 60 min","make":"a tabletop shadow scene with color windows","fr":2},{"id":"tiny-machines","t":"Tiny Machines","g0":-1,"g1":2,"d":"robots-machines","pilot":true,"s":1,"sf":true,"run":"4 sessions × 60 min","make":"a moving cardboard creature with flaps, sliders, wheels, and a crank","fr":null},{"id":"sound-hunters-k2","t":"Sound Hunters","g0":-1,"g1":2,"d":"sound-music","pilot":true,"s":1,"sf":true,"run":"4 sessions × 60 min","make":"a 30–60 second live sound story with a picture cue strip","fr":null},{"id":"code-with-your-body-k2","t":"Code With Your Body","g0":-1,"g1":2,"d":"code-games","pilot":true,"s":0,"sf":true,"run":"4 sessions × 60 min","make":"a 3–5 card movement routine another pair can follow","fr":null},{"id":"build-a-neighborhood-k2","t":"Build a Neighborhood","g0":-1,"g1":2,"d":"civic-data","pilot":true,"s":1,"sf":true,"run":"4 sessions × 60 min","make":"a shared cardboard neighborhood with a visitor tour","fr":null},{"id":"scratch-arcade-adventure","t":"Scratch Arcade Adventure","g0":3,"g1":5,"d":"code-games","pilot":false,"s":3,"sf":false,"run":"12 weeks × 1 hr (plus an optional 2-session starter bridge)","make":"a polished arcade game: enemy patterns, a power-up, three stages, a boss, and a win screen","fr":4},{"id":"idea-to-3d-print","t":"From Idea to 3D Print","g0":3,"g1":5,"d":"fabrication-3d","pilot":false,"s":2,"sf":false,"run":"11 weeks × 90 min","make":"a printed nametag, a wiggly chain critter, and a design made for a real partner","fr":5},{"id":"build-your-block","t":"Build Your Block","g0":3,"g1":7,"d":"civic-data","pilot":false,"s":2,"sf":true,"run":"28 sessions × 1.75 hr (7 weeks, 4 a week)","make":"a neighborhood invention that lights up, moves, or responds, shown at a public showcase","fr":6},{"id":"energy-electronics-circuits","t":"Energy, Electronics and Circuits","g0":3,"g1":5,"d":"circuits-electronics","pilot":true,"s":2,"sf":true,"run":"4 sessions × 75 min","make":"a light-up paper circuit with a switch, plus a tiny buzzing or spinning invention","fr":3},{"id":"scratch-stories-games","t":"Scratch Stories and Games","g0":3,"g1":5,"d":"code-games","pilot":false,"s":3,"sf":false,"run":"12 weeks × 1 hr","make":"a published two-level Scratch game with cutscenes and a win screen","fr":null},{"id":"machines-that-move","t":"Machines That Move","g0":3,"g1":5,"d":"robots-machines","pilot":true,"s":1,"sf":true,"run":"4 sessions × 75 min","make":"a moving toy, sculpture, or story object driven by a mechanism you built","fr":null},{"id":"friendly-city-lab","t":"Friendly City Lab","g0":3,"g1":5,"d":"civic-data","pilot":true,"s":1,"sf":true,"run":"4 sessions × 75 min","make":"a clearer sign, map, or label system, tested on real users","fr":null},{"id":"engineering-challenge-lab","t":"Engineering Challenge Lab","g0":6,"g1":12,"d":"robots-machines","pilot":false,"s":2,"sf":false,"run":"10–12 weeks, two work blocks per session","make":"working mechanisms like speed reducers, lifters, claw grippers, and walkers","fr":7},{"id":"robotics-to-fpv","t":"Robotics to FPV","g0":6,"g1":12,"d":"flight-drones","pilot":false,"s":3,"sf":false,"run":"15 weeks × 90 min","make":"a tiny FPV drone you built, a pilot logbook, and a team demo","fr":9},{"id":"digital-imaging-lab","t":"Digital Imaging Lab","g0":6,"g1":9,"d":"media-light","pilot":false,"s":3,"sf":false,"run":"12 sessions × 90 min","make":"a pixel self-portrait, a poster campaign, and a small exhibition","fr":12},{"id":"design-for-printability","t":"Design for Printability","g0":6,"g1":8,"d":"fabrication-3d","pilot":false,"s":3,"sf":false,"run":"10 weeks, two work blocks per session","make":"a locking box that passes drop and shake tests","fr":null},{"id":"debugging-studio","t":"Debugging Studio","g0":6,"g1":12,"d":"code-games","pilot":false,"s":3,"sf":true,"run":"8 sessions × 60–90 min","make":"a debugging portfolio built from tough puzzles","fr":null},{"id":"digital-manufacturing","t":"Digital Manufacturing Studio","g0":6,"g1":12,"d":"fabrication-3d","pilot":false,"s":3,"sf":false,"run":"12 sessions × 2 hr","make":"a CNC-engraved nameplate, a custom keychain, and an assembly of cut and printed parts","fr":null},{"id":"parametric-sculpture-3d-print","t":"Parametric Sculpture & 3D Print","g0":8,"g1":11,"d":"fabrication-3d","pilot":false,"s":3,"sf":false,"run":"8 weeks, two work blocks per session","make":"a gallery-ready 3D-printed sculpture with an artist statement","fr":null},{"id":"spike-prime-robotics","t":"SPIKE Prime Robotics","g0":9,"g1":12,"d":"robots-machines","pilot":false,"s":3,"sf":false,"run":"12 sessions × 1 hr","make":"an autonomous maze-solving robot ready for a tournament","fr":8},{"id":"lo-fi-beat-laboratory","t":"Lo-Fi Beat Laboratory","g0":9,"g1":12,"d":"sound-music","pilot":false,"s":3,"sf":false,"run":"8 sessions × 90 min","make":"a 30–60 second beat built from found sounds and real rooms","fr":10},{"id":"physical-sound-drawing","t":"Physical Sound Drawing","g0":9,"g1":12,"d":"sound-music","pilot":false,"s":3,"sf":false,"run":"8 sessions × 90 min","make":"a 60–120 second sound piece played on one string, with a gesture map","fr":11},{"id":"high-school-drone-racing-league","t":"High School Drone Racing League","g0":9,"g1":12,"d":"flight-drones","pilot":false,"s":3,"sf":false,"run":"4-week bootcamp, 12-week season, then summer league","make":"race-ready pilots: a 4-week bootcamp, time trials, and a mini-meet","fr":null},{"id":"digital-music-control","t":"Digital Music Control","g0":9,"g1":12,"d":"sound-music","pilot":false,"s":3,"sf":false,"run":"4 weekly 2-hr sessions per level (3 levels)","make":"a hand-built music controller with knobs, buttons, and lights","fr":null},{"id":"sound-design-for-theater","t":"Sound Design for Theater","g0":9,"g1":12,"d":"sound-music","pilot":false,"s":3,"sf":false,"run":"8 sessions × 90 min","make":"a cue sheet and original sound cues played live at a showcase","fr":null},{"id":"tiny-whoop-tuning-racing","t":"Tiny Whoop Tuning & Racing","g0":9,"g1":12,"d":"flight-drones","pilot":false,"s":3,"sf":false,"run":"10 weeks, 20 sessions × 90 min","make":"a tuned racing whoop, a tune log, and a class race","fr":null},{"id":"game-tech-intensive","t":"Game Tech Intensive","g0":9,"g1":12,"d":"code-games","pilot":false,"s":3,"sf":false,"run":"6 sessions × 60 min per track","make":"a remixed Scratch game or a micro:bit controller in a cardboard shell","fr":null},{"id":"robotics-vibe-coding","t":"Robotics & Vibe Coding","g0":9,"g1":12,"d":"robots-machines","pilot":false,"s":3,"sf":false,"run":"8 sessions × 2 hr","make":"a sensing robot that performs with sound and light","fr":null},{"id":"repair-studio","t":"Repair Studio: Devices, Diagnostics & Reuse","g0":9,"g1":12,"d":"circuits-electronics","pilot":true,"s":1,"sf":true,"run":"4 sessions × 90 min","make":"a repair dossier with before-and-after evidence, or an honest postmortem","fr":null}];
+
+// Voice pass: the marquee "bill" headline per program (proposal; source text = what_kids_make).
+const BILL = {
+  'chain-reaction-playground-k2':'A floor-sized chain reaction',
+  'light-color-shadow-lab-k2':'A shadow theater with color windows',
+  'tiny-machines':'A cardboard creature that cranks',
+  'sound-hunters-k2':'A sound story from everyday stuff',
+  'code-with-your-body-k2':'A dance another team can run like code',
+  'build-a-neighborhood-k2':'A cardboard neighborhood, with tours',
+  'scratch-arcade-adventure':'A boss-level arcade game',
+  'idea-to-3d-print':'A wiggly 3D-printed critter',
+  'build-your-block':'An invention for your block',
+  'energy-electronics-circuits':'A paper circuit that lights up',
+  'scratch-stories-games':'A two-level game with cutscenes',
+  'machines-that-move':'A toy that moves on its own mechanism',
+  'friendly-city-lab':'A sign that actually helps people',
+  'engineering-challenge-lab':'A claw that has to hit a number',
+  'robotics-to-fpv':'A tiny drone you built and flew',
+  'digital-imaging-lab':'A pixel self-portrait, wall-sized',
+  'design-for-printability':'A locking box that survives the drop test',
+  'debugging-studio':'A portfolio of bugs you beat',
+  'digital-manufacturing':'A CNC-engraved nameplate',
+  'parametric-sculpture-3d-print':'A 3D-printed sculpture for a gallery',
+  'spike-prime-robotics':'A robot that solves a maze alone',
+  'lo-fi-beat-laboratory':'A beat made from a stairwell',
+  'physical-sound-drawing':'A drawing you can hear',
+  'high-school-drone-racing-league':'Race-ready pilots, gate by gate',
+  'digital-music-control':'A music controller with your own knobs',
+  'sound-design-for-theater':'Live sound cues for a real show',
+  'tiny-whoop-tuning-racing':'A tuned racing whoop',
+  'game-tech-intensive':'A micro:bit controller in a cardboard shell',
+  'robotics-vibe-coding':'A robot that performs with sound and light',
+  'repair-studio':'A fix, with before-and-after proof'
+};
+// "Curtain call": how the program ends, where the package documents it.
+const CURTAIN = {
+  'chain-reaction-playground-k2':'A run for visitors','light-color-shadow-lab-k2':'A 20-second shadow story','build-a-neighborhood-k2':'A visitor tour',
+  'sound-hunters-k2':'A live sound story','code-with-your-body-k2':'Another pair runs your code','scratch-arcade-adventure':'Playtest by real players',
+  'idea-to-3d-print':'A design for a real partner','build-your-block':'A public show night','energy-electronics-circuits':'A 30-second demo',
+  'friendly-city-lab':'A test with real users','engineering-challenge-lab':'The test rig','robotics-to-fpv':'A team demo','digital-imaging-lab':'A small exhibition',
+  'design-for-printability':'Drop &amp; shake tests','parametric-sculpture-3d-print':'An artist statement','spike-prime-robotics':'A ring tournament',
+  'lo-fi-beat-laboratory':'A listening party','high-school-drone-racing-league':'A mini-meet','sound-design-for-theater':'Live cues at a showcase',
+  'tiny-whoop-tuning-racing':'A class race','robotics-vibe-coding':'A robot performance','digital-music-control':'Play it live'
+};
+const STAGES = {
+  'robots-machines':{l:'Robots & Machines', c:'var(--robots)', i:'<rect x="5" y="8" width="14" height="11" rx="2"/><path d="M12 8V5M9.5 13h.01M14.5 13h.01M3 12v4M21 12v4"/><circle cx="12" cy="3.5" r="1.3"/>'},
+  'code-games':{l:'Code & Games', c:'var(--code)', i:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>'},
+  'fabrication-3d':{l:'3D Printing & Fab', c:'var(--fab)', i:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>'},
+  'circuits-electronics':{l:'Circuits', c:'var(--circuits)', i:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>'},
+  'sound-music':{l:'Sound & Music', c:'var(--sound)', i:'<path d="M2 12h3l2-6 3 12 3-15 3 15 2-6h4"/>'},
+  'flight-drones':{l:'Flight & Drones', c:'var(--flight)', i:'<circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8 8l8 8M16 8l-8 8"/>'},
+  'media-light':{l:'Media & Light', c:'var(--media)', i:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'},
+  'civic-data':{l:'Civic Design', c:'var(--civic)', i:'<path d="M3 21V10l5-4 5 4v11M13 21V6l4-3 4 3v15M2 21h20M6 14h4M16 10h2M16 14h2"/>'}
+};
+const NIGHTS = { prek:[-1,2,'Pre-K–Grade 2'], g35:[3,5,'Grades 3–5'], g68:[6,8,'Grades 6–8'], g912:[9,12,'Grades 9–12'] };
+const SCREENS = ['Screen-free','Screen-light','Short screen bursts','Screens as a tool','Screen studio'];
+
+const root = document.documentElement;
+const motionOK = () => root.dataset.motion === 'full';
+if (window.gsap) { gsap.registerPlugin(ScrollTrigger, Flip); }
+
+/* ---------- bulb frames ---------- */
+function buildBulbs(el){
+  let svg = el.querySelector(':scope > svg.bulbs');
+  if(!svg){ svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('class','bulbs'); svg.setAttribute('aria-hidden','true');
+    svg.innerHTML = '<rect class="dim"/><rect class="lit"/>'; el.appendChild(svg); }
+  const w = el.offsetWidth, h = el.offsetHeight, ins = +(el.dataset.inset||12), r = +(el.dataset.r||12), want = +(el.dataset.gap||22);
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  const rw = w-2*ins, rh = h-2*ins, per = 2*(rw+rh) - (8-2*Math.PI)*r;
+  const n = Math.max(12, Math.round(per/want)), g = per/n;
+  const size = Math.max(5, Math.min(9, want*.33));
+  svg.style.setProperty('--g', g+'px'); if(el.dataset.speed) svg.style.setProperty('--speed', el.dataset.speed);
+  svg.querySelectorAll('rect').forEach(rc=>{ rc.setAttribute('x',ins); rc.setAttribute('y',ins); rc.setAttribute('width',rw); rc.setAttribute('height',rh); rc.setAttribute('rx',r); rc.setAttribute('stroke-width', size); });
+  svg.querySelector('.dim').setAttribute('stroke-dasharray', `0 ${g}`);
+  svg.querySelector('.lit').setAttribute('stroke-dasharray', `0 ${g*3}`);
+}
+const bulbEls = [...document.querySelectorAll('[data-bulbs]')];
+const ro = new ResizeObserver(entries => entries.forEach(e => buildBulbs(e.target)));
+bulbEls.forEach(el => { buildBulbs(el); ro.observe(el); });
+
+/* ---------- nav ---------- */
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('solid', window.scrollY > 40);
+addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+/* ---------- pause + motion toggles ---------- */
+const pauseBtn = document.getElementById('pauseBtn');
+let boardTl = null, tickerTween = null, bobTween = null;
+pauseBtn.addEventListener('click', () => {
+  const p = !root.classList.contains('paused'); root.classList.toggle('paused', p);
+  pauseBtn.setAttribute('aria-pressed', p); pauseBtn.querySelector('.lbl').textContent = p ? 'Play the lights' : 'Pause the lights';
+  [boardTl, tickerTween, bobTween].forEach(t => t && (p ? t.pause() : t.resume()));
+});
+if(!motionOK()) pauseBtn.hidden = true;
+const motionBtn = document.getElementById('motionBtn');
+motionBtn.textContent = motionOK() ? 'Reduce motion' : 'Allow motion';
+motionBtn.addEventListener('click', () => { try{ localStorage.setItem('cm-motion', motionOK() ? 'reduce' : 'full'); }catch(e){} location.reload(); });
+
+/* ---------- letter board ---------- */
+const WORDS = ['ROBOTS','BEATS','DRONES','GAMES','CIRCUITS','3D PRINTS','MACHINES','SHADOWS'];
+const wordEl = document.getElementById('boardWord');
+const toLetters = w => [...w].map(ch => ch === ' ' ? '<span class="ltr sp"></span>' : `<span class="ltr">${ch}</span>`).join('');
+wordEl.innerHTML = toLetters(WORDS[0]);
+document.querySelectorAll('.row.small').forEach(r => r.innerHTML = toLetters(r.textContent));
+
+/* ---------- ticker duplicate for loop ---------- */
+const track = document.getElementById('tickerTrack');
+const dupe = document.createElement('div'); dupe.className = 'dupe'; dupe.style.display = 'flex'; dupe.setAttribute('aria-hidden','true'); dupe.innerHTML = track.innerHTML; track.appendChild(dupe);
+
+/* ---------- lineup ---------- */
+const grid = document.getElementById('tixGrid'), stagesEl = document.getElementById('stages'), countEl = document.getElementById('count');
+const picks = new Map();
+let night = 'g35', stage = 'all', screenFree = false;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const gradeTxt = p => p.g0 < 0 ? 'Pre-K–Gr ' + p.g1 : (p.g0 === p.g1 ? 'Grade ' + p.g0 : `Grades ${p.g0}–${p.g1}`);
+const icon = (k, cls) => `<svg viewBox="0 0 24 24" aria-hidden="true" class="${cls||''}">${STAGES[k].i}</svg>`;
+stagesEl.innerHTML = `<button class="stg" type="button" data-stage="all" aria-pressed="true" style="--c:var(--bulb)"><span class="dot"></span>All stages</button>` +
+  Object.entries(STAGES).map(([k,s]) => `<button class="stg" type="button" data-stage="${k}" aria-pressed="false" style="--c:${s.c}">${icon(k)}${s.l}</button>`).join('');
+const order = p => (p.pilot ? 200 : 0) + (p.fr || 100);
+grid.innerHTML = PROGRAMS.slice().sort((a,b)=>order(a)-order(b)).map((p,idx) => {
+  const s = STAGES[p.d];
+  const meter = [0,1,2,3].map(i => `<i class="${i < p.s ? 'on':''}"></i>`).join('');
+  return `<article class="tix ${p.pilot?'is-pilot':''}" data-id="${p.id}" data-d="${p.d}" data-g0="${p.g0}" data-g1="${p.g1}" data-sf="${p.sf}" style="--c:${s.c}">
+    <div class="tix-main">
+      <div class="tix-top"><span class="tix-stage">${icon(p.d)}${esc(s.l)}</span><span class="tix-no">No. ${String(idx+1).padStart(4,'0')}</span>${p.pilot ? '<span class="stamp">In previews</span>' : ''}</div>
+      <h3 class="tix-bill">${esc(BILL[p.id] || p.make)}</h3>
+      <p class="tix-prog">Program: <b>${esc(p.t)}</b></p>
+      <dl class="tix-meta">
+        <div><dt>Admit</dt><dd>${gradeTxt(p)}</dd></div>
+        <div><dt>Run</dt><dd>${esc(p.run.replace(/\s*\(.*\)/,''))}</dd></div>
+        <div><dt>Curtain call</dt><dd>${CURTAIN[p.id] || 'A share with the group'}</dd></div>
+      </dl>
+      <div class="meter"><span>Screens</span><span class="bulbs5" aria-hidden="true">${meter}</span><span>${SCREENS[Math.min(p.s,4)]}${p.sf && p.s>0 ? ' · screen-free option':''}</span></div>
+    </div>
+    <div class="tix-stub">
+      <span class="stub-adm">Admission</span>
+      <span class="stub-price">$0</span>
+      <span class="stub-note">for students &amp; families</span>
+      <button class="stub-add" type="button" aria-pressed="false" aria-label="Add ${esc(p.t)} to your lineup">+ Add</button>
+    </div>
+  </article>`;
+}).join('');
+const tix = [...grid.querySelectorAll('.tix')];
+
+function matches(el){
+  const [lo,hi] = NIGHTS[night];
+  const g0 = +el.dataset.g0, g1 = +el.dataset.g1;
+  return g0 <= hi && g1 >= lo && (stage === 'all' || el.dataset.d === stage) && (!screenFree || el.dataset.sf === 'true');
+}
+function applyFilters(animate){
+  const state = (animate && motionOK() && window.Flip) ? Flip.getState(tix) : null;
+  let n = 0;
+  tix.forEach(el => { const m = matches(el); el.style.display = m ? '' : 'none'; if(m) n++; });
+  countEl.textContent = n ? `${n} show${n>1?'s':''} for ${NIGHTS[night][2]}` : `No shows match yet. Try another stage.`;
+  if(state){
+    Flip.from(state, {duration:.55, ease:'power3.inOut', stagger:.025, absolute:true, scale:true,
+      onEnter: els => gsap.fromTo(els, {opacity:0, y:40, rotation:-3}, {opacity:1, y:0, rotation:0, duration:.5, stagger:.05, ease:'back.out(1.6)'}),
+      onLeave: els => gsap.to(els, {opacity:0, scale:.9, duration:.3})});
+  }
+}
+document.querySelectorAll('.night').forEach(b => b.addEventListener('click', () => {
+  night = b.dataset.night; document.querySelectorAll('.night').forEach(x => x.setAttribute('aria-pressed', x === b)); applyFilters(true);
+}));
+stagesEl.addEventListener('click', e => { const b = e.target.closest('.stg'); if(!b) return;
+  stage = b.dataset.stage; stagesEl.querySelectorAll('.stg').forEach(x => x.setAttribute('aria-pressed', x === b)); applyFilters(true); });
+document.getElementById('screenFree').addEventListener('change', e => { screenFree = e.target.checked; applyFilters(true); });
+applyFilters(false);
+
+const tray = document.getElementById('tray'), trayPicks = document.getElementById('trayPicks'), trayBtn = document.getElementById('trayBtn');
+function renderTray(){
+  tray.classList.toggle('has', picks.size>0);
+  if(!picks.size){ trayPicks.innerHTML = '<span>Tap &ldquo;+ Add&rdquo; on any ticket to build a request.</span>'; trayBtn.href='mailto:info@creatempls.org?subject=Bringing%20createMPLS%20to%20our%20site'; return; }
+  trayPicks.innerHTML = [...picks.values()].map(t => `<span class="pick">${esc(t)}</span>`).join('');
+  const body = 'Hi createMPLS,\n\nWe would like to talk about bringing these programs to our site:\n- ' + [...picks.values()].join('\n- ') + '\n\nOur site:\nGrades:\nBest time of year:\n';
+  trayBtn.href = 'mailto:info@creatempls.org?subject=' + encodeURIComponent('Our lineup request') + '&body=' + encodeURIComponent(body);
+}
+grid.addEventListener('click', e => {
+  const b = e.target.closest('.stub-add'); if(!b) return;
+  const card = b.closest('.tix'), id = card.dataset.id, p = PROGRAMS.find(x => x.id === id);
+  if(picks.has(id)){ picks.delete(id); b.setAttribute('aria-pressed','false'); b.textContent = '+ Add'; }
+  else { picks.set(id, p.t); b.setAttribute('aria-pressed','true'); b.textContent = '✓ Added';
+    if(motionOK()) gsap.fromTo(card, {rotation:-1.5}, {rotation:0, duration:.6, ease:'elastic.out(1,.4)'}); }
+  renderTray();
+});
+
+/* ---------- motion ---------- */
+if (window.gsap && motionOK()) {
+  // Hero intro: letters drop onto the board, headline rises, headliners step up.
+  const intro = gsap.timeline({defaults:{ease:'power3.out'}});
+  intro.from('.hero h1 .line', {yPercent:60, opacity:0, duration:.8, stagger:.1})
+       .from('.hero .admit, .hero .lede, .hero .cta-row, .hero .since', {y:24, opacity:0, duration:.6, stagger:.08}, '-=.5')
+       .from('.board', {y:-60, rotation:-4, opacity:0, duration:.9, ease:'back.out(1.4)'}, 0.1)
+       .from('.board .ltr', {yPercent:-140, rotation:() => gsap.utils.random(-25,25), opacity:0, duration:.55, stagger:.035, ease:'back.out(2.2)'}, .45)
+       .from('.headliners', {yPercent:30, opacity:0, duration:1}, .5)
+       .from('.prop', {scale:.4, opacity:0, duration:.7, stagger:.15, ease:'back.out(1.8)'}, .8)
+       .from('.hero-tag', {scale:0, rotation:-20, duration:.5, stagger:.12, ease:'back.out(2)'}, 1.1);
+
+  // Changeable-letter swap: old letters drop off, new ones are hung one by one.
+  let wi = 0;
+  const swap = () => {
+    if(root.classList.contains('paused')){ boardTl = gsap.delayedCall(1, swap); return; }
+    const tl = gsap.timeline({onComplete: () => { boardTl = gsap.delayedCall(2.2, swap); }});
+    tl.to(wordEl.querySelectorAll('.ltr'), {yPercent:130, rotation:() => gsap.utils.random(-30,30), opacity:0, duration:.32, stagger:.03, ease:'power2.in'})
+      .add(() => { wi = (wi + 1) % WORDS.length; wordEl.innerHTML = toLetters(WORDS[wi]);
+        tl.from(wordEl.querySelectorAll('.ltr'), {yPercent:-140, rotation:() => gsap.utils.random(-22,22), opacity:0, duration:.6, stagger:.055, ease:'back.out(2.4)'}, '>'); });
+    boardTl = tl;
+  };
+  boardTl = gsap.delayedCall(3.4, swap);
+
+  bobTween = gsap.to('.prop.drone .bob', {y:-14, rotation:4, duration:2.2, yoyo:true, repeat:-1, ease:'sine.inOut'});
+
+  // Depth: cutouts and props move at different speeds than their frames.
+  gsap.utils.toArray('[data-depth]').forEach(el => {
+    const d = +el.dataset.depth;
+    gsap.fromTo(el, {y: 40*d}, {y: -60*d, ease:'none', scrollTrigger:{trigger: el.closest('section') || el, start:'top bottom', end:'bottom top', scrub:true}});
+  });
+
+  // Ticker: constant crawl, speeds up with scroll velocity.
+  tickerTween = gsap.to(track, {xPercent:-50, duration:46, ease:'none', repeat:-1});
+  ScrollTrigger.create({onUpdate: self => {
+    const v = Math.min(Math.abs(self.getVelocity())/300, 6);
+    tickerTween.timeScale(1 + v); gsap.to(tickerTween, {timeScale:1, duration:1.2, overwrite:true});
+  }});
+
+  // Three acts: the spotlight walks across the stage.
+  const mm = gsap.matchMedia();
+  mm.add('(min-width: 901px)', () => {
+    const tl = gsap.timeline({scrollTrigger:{trigger:'#stage', start:'top 10%', end:'+=1200', pin:true, scrub:.6}});
+    const shades = gsap.utils.toArray('.act .shade');
+    tl.to(shades[0], {opacity:0, duration:.4})
+      .to('#spot', {left:'50%', duration:1}, '+=.4').to(shades[0], {opacity:.45, duration:.5}, '<').to(shades[1], {opacity:0, duration:.5}, '<.3')
+      .to('#spot', {left:'83.33%', duration:1}, '+=.4').to(shades[1], {opacity:.45, duration:.5}, '<').to(shades[2], {opacity:0, duration:.5}, '<.3')
+      .to(shades, {opacity:0, duration:.4}, '+=.3');
+  });
+  mm.add('(max-width: 900px)', () => {
+    gsap.utils.toArray('.act').forEach(a => gsap.to(a.querySelector('.shade'), {opacity:0, scrollTrigger:{trigger:a, start:'top 70%', end:'top 35%', scrub:true}}));
+  });
+
+  // Curtain: closed as the lineup arrives, opens as you scroll in.
+  gsap.fromTo('.curtain.l', {xPercent:0}, {xPercent:-100, ease:'none', scrollTrigger:{trigger:'#lineup', start:'top 85%', end:'top -5%', scrub:true}});
+  gsap.fromTo('.curtain.r', {xPercent:0}, {xPercent:100, ease:'none', scrollTrigger:{trigger:'#lineup', start:'top 85%', end:'top -5%', scrub:true}});
+
+  // Lobby cases swing in like they were just hung.
+  gsap.utils.toArray('.case').forEach((c,i) => gsap.from(c, {rotation: i%2 ? 4 : -4, y:80, opacity:0, duration:.9, ease:'back.out(1.5)', scrollTrigger:{trigger:c, start:'top 92%'}}));
+  ScrollTrigger.batch('.tix', {start:'top 92%', once:true, onEnter: b => gsap.from(b, {y:50, opacity:0, rotation:-2, duration:.6, stagger:.07, ease:'back.out(1.6)'})});
+  gsap.utils.toArray('.jt').forEach((c,i) => gsap.from(c, {y:70, opacity:0, rotation: i%2 ? 2 : -2, duration:.8, ease:'back.out(1.4)', scrollTrigger:{trigger:c, start:'top 90%'}}));
+
+  // Micro-interaction: letters on the board swing when you brush past them.
+  document.querySelector('.board-panel').addEventListener('pointerover', e => {
+    const l = e.target.closest('.ltr'); if(!l || gsap.isTweening(l)) return;
+    gsap.fromTo(l, {rotation: gsap.utils.random([-14,14])}, {rotation:0, duration:1.1, ease:'elastic.out(1.2,.25)'});
+  });
+
+  document.fonts && document.fonts.ready.then(() => { bulbEls.forEach(buildBulbs); ScrollTrigger.refresh(); });
+}
+</script>
+</body>
+</html>

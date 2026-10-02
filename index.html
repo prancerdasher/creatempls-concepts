@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>createMPLS Website Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f6f1e6; --ink:#17122e; --muted:#5b5568; --card:#fffbf2; --line:#e3d9c4; --gold:#ffc83d; --red:#e5412d; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.55 "Bricolage Grotesque", system-ui, sans-serif; }
+  header { background:var(--ink); color:#fff3dc; padding:56px 16px 48px; }
+  .wrap { max-width:1160px; margin:0 auto; padding:0 16px; }
+  header .wrap { padding:0; max-width:1128px; }
+  .kicker { font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-weight:700; }
+  h1 { font-size:clamp(34px,5.4vw,64px); line-height:1.02; margin:10px 0 16px; letter-spacing:-.02em; font-weight:800; }
+  header p { max-width:720px; margin:0 0 10px; color:#e9dfcc; }
+  .note { margin-top:22px; display:inline-block; background:rgba(255,200,61,.12); border:1px solid rgba(255,200,61,.35); border-radius:12px; padding:12px 16px; font-size:15px; color:#fff3dc; max-width:760px; }
+  main { padding:44px 0 80px; }
+  .card { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:32px; background:var(--card); border:1px solid var(--line); border-radius:20px; padding:22px; margin-bottom:28px; }
+  .shots { position:relative; display:block; padding-right:70px; padding-bottom:30px; }
+  .shots img { display:block; border-radius:12px; box-shadow:0 10px 30px rgba(23,18,46,.18); transition:transform .3s; }
+  .shots .d { width:100%; }
+  .shots .m { position:absolute; right:0; bottom:0; width:24%; border:4px solid var(--ink); border-radius:18px; }
+  .shots:hover .d { transform:translateY(-4px); }
+  .shots:hover .m { transform:translateY(-8px) rotate(2deg); }
+  .eyebrow { font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700; display:flex; gap:8px; align-items:center; }
+  .new { background:var(--red); color:#fff; border-radius:999px; padding:1px 9px; letter-spacing:.06em; }
+  h2 { font-size:clamp(26px,3vw,34px); margin:4px 0 2px; line-height:1.1; }
+  .tag { font-style:italic; color:var(--muted); margin:0 0 12px; }
+  p { margin:0 0 14px; }
+  dl { margin:0 0 18px; font-size:15.5px; }
+  dt { font-weight:800; margin-top:8px; }
+  dd { margin:2px 0 0; color:#3b3548; }
+  .btn { display:inline-block; background:var(--gold); color:var(--ink); font-weight:800; text-decoration:none; padding:12px 20px; border-radius:12px; border:2px solid var(--ink); box-shadow:4px 4px 0 var(--ink); transition:transform .15s, box-shadow .15s; }
+  .btn:hover { transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--ink); }
+  .btn:focus-visible, .shots:focus-visible { outline:3px solid var(--red); outline-offset:3px; }
+  footer { color:var(--muted); font-size:14px; padding-bottom:40px; }
+  @media (max-width:820px) { .card { grid-template-columns:1fr; gap:18px; padding:16px; } }
+  @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="kicker">createMPLS &middot; new website &middot; board review</div>
+  <h1>Pick the look for the new createMPLS website</h1>
+  <p>Below are early theme concepts for the new site. Each one is a working homepage mockup you can scroll, so open each one, scroll all the way down, and try it on your phone too. The motion is part of the idea. We&#x27;re choosing a direction (the brand world, tone and feel), not final wording or photos.</p>
+  <div class="note">Heads up: copy is draft. Photos mix real createMPLS program photos from past years with placeholder stock images (some watermarked) that we&#x27;ll license or replace with our own.</div>
+</div></header>
+<main class="wrap">
+  <article class="card">
+    <a class="shots" href="top-billing/" aria-label="Open the Top Billing mockup">
+      <img class="d" src="thumbs/top-billing-desktop.jpg" alt="Top Billing homepage on desktop" loading="lazy">
+      <img class="m" src="thumbs/top-billing-mobile.jpg" alt="Top Billing homepage on a phone" loading="lazy">
+    </a>
+    <div class="body">
+      <div class="eyebrow">Concept 1 </div>
+      <h2>Top Billing</h2>
+      <p class="tag">&ldquo;Every kid gets top billing.&rdquo;</p>
+      <p>Every createMPLS program ends in a show: a robot tournament, a listening party, a gallery walk. So the brand is a Minneapolis theater marquee where the kids are the headliners. Tickets say &quot;Admission $0,&quot; and the logo&#x27;s pointer means &quot;right here, at your school.&quot;</p>
+      <dl>
+        <dt>Why it works</dt><dd>It&#x27;s the most ownable and the most local. No youth STEM group looks like this, and it carries into events, social posts, merch and signage.</dd>
+        <dt>Watch out for</dt><dd>Night-time palette, so keep it warm and family-friendly. On phones, the kids need to show up on the first screen.</dd>
+      </dl>
+      <a class="btn" href="top-billing/">Open the mockup &rarr;</a>
+    </div>
+  </article>
+  <article class="card">
+    <a class="shots" href="shop-zine/" aria-label="Open the Shop Zine mockup">
+      <img class="d" src="thumbs/shop-zine-desktop.jpg" alt="Shop Zine homepage on desktop" loading="lazy">
+      <img class="m" src="thumbs/shop-zine-mobile.jpg" alt="Shop Zine homepage on a phone" loading="lazy">
+    </a>
+    <div class="body">
+      <div class="eyebrow">Concept 2 </div>
+      <h2>Shop Zine</h2>
+      <p class="tag">&ldquo;We bring the workbench. Kids make the rest.&rdquo;</p>
+      <p>The site is a hand-made zine pasted up on the workbench: tape, marker notes, and sticker cutouts of real kids and the things they build. The cover price is &quot;$0 for students &amp; families.&quot;</p>
+      <dl>
+        <dt>Why it works</dt><dd>The most joyful and kid-made of the set. It looks made, not bought, which fits hands-on learning.</dd>
+        <dt>Watch out for</dt><dd>Can get noisy. The colorized hero photo hides the kids&#x27; faces, and the crossed-out headline is hard to read.</dd>
+      </dl>
+      <a class="btn" href="shop-zine/">Open the mockup &rarr;</a>
+    </div>
+  </article>
+  <article class="card">
+    <a class="shots" href="build-set/" aria-label="Open the Build Set 612 mockup">
+      <img class="d" src="thumbs/build-set-desktop.jpg" alt="Build Set 612 homepage on desktop" loading="lazy">
+      <img class="m" src="thumbs/build-set-mobile.jpg" alt="Build Set 612 homepage on a phone" loading="lazy">
+    </a>
+    <div class="body">
+      <div class="eyebrow">Concept 3 </div>
+      <h2>Build Set 612</h2>
+      <p class="tag">&ldquo;Some assembly required. Every part included.&rdquo;</p>
+      <p>The site reads like a step-by-step building instruction booklet (612 is the Minneapolis area code). Kids do the building; createMPLS brings every other part: tools, mentors, curriculum, and the trip to their school.</p>
+      <dl>
+        <dt>Why it works</dt><dd>Explains the model instantly and with humor: &quot;1x curious kid, 1x mentor, 0x cost.&quot;</dd>
+        <dt>Watch out for</dt><dd>The toy bricks read as LEGO, which is a trademark risk and skews young for teens. It would need original artwork.</dd>
+      </dl>
+      <a class="btn" href="build-set/">Open the mockup &rarr;</a>
+    </div>
+  </article>
+  <article class="card">
+    <a class="shots" href="circuit-city/" aria-label="Open the Circuit City mockup">
+      <img class="d" src="thumbs/circuit-city-desktop.jpg" alt="Circuit City homepage on desktop" loading="lazy">
+      <img class="m" src="thumbs/circuit-city-mobile.jpg" alt="Circuit City homepage on a phone" loading="lazy">
+    </a>
+    <div class="body">
+      <div class="eyebrow">Concept 4 </div>
+      <h2>Circuit City</h2>
+      <p class="tag">&ldquo;Kids light up this city. Plug in your school.&rdquo;</p>
+      <p>Minneapolis drawn as a glowing circuit board. The Mississippi is the main power line and each school is a node that lights up as you scroll.</p>
+      <dl>
+        <dt>Why it works</dt><dd>Strong scroll moments and a clear &#x27;we connect sites across the city&#x27; story.</dd>
+        <dt>Watch out for</dt><dd>It&#x27;s the most expected STEM look, and the dark, techy feel may not feel inviting to younger kids&#x27; families.</dd>
+      </dl>
+      <a class="btn" href="circuit-city/">Open the mockup &rarr;</a>
+    </div>
+  </article>
+  <article class="card">
+    <a class="shots" href="working-drawings/" aria-label="Open the Working Drawings mockup">
+      <img class="d" src="thumbs/working-drawings-desktop.jpg" alt="Working Drawings homepage on desktop" loading="lazy">
+      <img class="m" src="thumbs/working-drawings-mobile.jpg" alt="Working Drawings homepage on a phone" loading="lazy">
+    </a>
+    <div class="body">
+      <div class="eyebrow">Concept 5 </div>
+      <h2>Working Drawings</h2>
+      <p class="tag">&ldquo;What would you create?&rdquo;</p>
+      <p>Every section starts as a blueprint sketch and &#x27;prints&#x27; into a full-color photo as you scroll, the same idea-build-test-revise loop kids follow in class.</p>
+      <dl>
+        <dt>Why it works</dt><dd>A smart metaphor that acts out the name &quot;create.&quot;</dd>
+        <dt>Watch out for</dt><dd>The sketch effect makes kids&#x27; faces look muddy, and every photo would need a hand-drawn twin.</dd>
+      </dl>
+      <a class="btn" href="working-drawings/">Open the mockup &rarr;</a>
+    </div>
+  </article>
+</main>
+<footer class="wrap">Draft for internal review &middot; not for public distribution &middot; questions: info@creatempls.org</footer>
+</body>
+</html>

@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>createMPLS — What would you create?</title>
+<meta name="description" content="createMPLS brings hands-on robotics, coding, 3D printing, electronics, sound tech and drones into Minneapolis schools and community sites, at no cost to students and families.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%272%27 y=%276%27 width=%2728%27 height=%2724%27 fill=%27%23FBF8F1%27 stroke=%27%231A1718%27 stroke-width=%273%27/%3E%3Ctext x=%2716%27 y=%2726%27 font-family=%27Impact,sans-serif%27 font-size=%2717%27 text-anchor=%27middle%27 fill=%27%231A1718%27%3EM%3C/text%3E%3Ccircle cx=%277%27 cy=%277%27 r=%275%27 fill=%27%23FF48B0%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;700;800;900&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script>
+  /* motion preference: OS setting OR the footer toggle (stored per viewer) */
+  (function(){var off=false;try{off=localStorage.getItem('cm-motion')==='off'}catch(e){}
+  if(off)document.documentElement.setAttribute('data-motion','reduce');
+  document.documentElement.classList.add('js');})();
+</script>
+<style>
+:root{
+  --paper:#F3EEE2; --paper-2:#FBF8F1; --ink:#1A1718; --ink-soft:#4A4446;
+  --pink:#FF48B0; --blue:#0078BF; --yellow:#FFE800; --kraft:#C8A26E; --tape:rgba(236,226,190,.86);
+  --mat:#2E6B50; --mat-line:rgba(255,255,255,.16);
+  --orange:#FF6C2F; --green:#00A95C; --teal:#00838A; --purple:#765BA7; --red:#F15060;
+  --display:'Anton', 'Impact', sans-serif; --body:'Archivo', system-ui, sans-serif;
+  --hand:'Permanent Marker', 'Comic Sans MS', cursive; --mono:'Space Mono', ui-monospace, monospace;
+  --gutter:clamp(16px, 4vw, 56px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::after{content:"";position:fixed;inset:0;background:url(img/tex-grain.png);opacity:.55;pointer-events:none;z-index:200;mix-blend-mode:multiply}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mono{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.hand{font-family:var(--hand)}
+
+/* ---------- shared zine parts ---------- */
+.over{position:relative;display:inline-block;--mx:4px;--my:3px;color:var(--blue)}
+.over::after{content:attr(data-text);position:absolute;left:0;top:0;color:var(--pink);mix-blend-mode:multiply;transform:translate(var(--mx),var(--my));pointer-events:none;white-space:nowrap}
+.over.ink{color:var(--ink)}
+.tape{position:absolute;width:118px;height:32px;background:var(--tape);z-index:6;box-shadow:0 1px 1px rgba(0,0,0,.12);
+  clip-path:polygon(0 6%,3% 0,6% 14%,9% 2%,91% 0,94% 12%,97% 2%,100% 9%,100% 93%,97% 100%,94% 88%,91% 99%,9% 100%,6% 86%,3% 98%,0 92%);
+  background-image:linear-gradient(90deg,rgba(255,255,255,.18),rgba(0,0,0,.03) 40%,rgba(255,255,255,.12));transform-origin:left center}
+.tape.pink{background-color:rgba(255,72,176,.82)}
+.tape.blue{background-color:rgba(0,120,191,.78)}
+.taped{position:relative;background:#fff;padding:10px 10px 12px;box-shadow:0 2px 0 rgba(0,0,0,.06),0 14px 30px -12px rgba(26,23,24,.45)}
+.sticker{filter:drop-shadow(0 6px 6px rgba(26,23,24,.28)) drop-shadow(0 1px 0 rgba(26,23,24,.12));will-change:transform}
+.riso{mix-blend-mode:multiply}
+.stamp{display:inline-block;font-family:var(--display);text-transform:uppercase;letter-spacing:.05em;border:3px solid currentColor;padding:2px 10px;border-radius:4px;transform:rotate(-6deg);opacity:.92;
+  -webkit-mask:radial-gradient(circle at 30% 40%,#000 55%,transparent 56%) 0 0/7px 7px, linear-gradient(#000,#000);-webkit-mask-composite:source-over}
+.marker-note{font-family:var(--hand);font-size:22px;line-height:1.15;color:var(--ink);position:absolute;z-index:8}
+svg.scrawl{position:absolute;overflow:visible;pointer-events:none;z-index:8}
+svg.scrawl path{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;gap:.6em;font-family:var(--body);font-weight:900;font-size:18px;text-transform:uppercase;letter-spacing:.02em;text-decoration:none;
+  padding:16px 22px;border:3px solid var(--ink);background:var(--yellow);color:var(--ink);box-shadow:6px 6px 0 var(--ink);transition:transform .15s, box-shadow .15s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+.btn:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--ink)}
+.btn.ghost{background:var(--paper-2)}
+.btn.pinkb{background:var(--pink)}
+.btn.blueb{background:var(--blue);color:#fff}
+.btn .arr{font-family:var(--body);font-weight:900}
+.halftone{background-image:radial-gradient(circle,var(--pink) 32%,transparent 34%);background-size:9px 9px}
+.tear{display:block;width:100%;height:28px;position:relative;z-index:3}
+.section-label{font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;display:inline-flex;gap:10px;align-items:center}
+.section-label b{background:var(--ink);color:var(--paper);padding:3px 8px}
+
+/* ---------- NAV ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px var(--gutter);background:var(--paper);border-bottom:3px solid var(--ink)}
+.logo{display:inline-flex;align-items:flex-end;text-decoration:none;position:relative;padding-top:12px}
+.logo .lh{font-family:var(--hand);color:var(--pink);font-size:25px;position:absolute;left:-6px;top:-4px;transform:rotate(-8deg);z-index:2;text-shadow:2px 2px 0 var(--paper),-2px -2px 0 var(--paper),2px -2px 0 var(--paper),-2px 2px 0 var(--paper)}
+.logo .lb{font-family:var(--display);font-size:34px;line-height:1;letter-spacing:.02em;border:3px solid var(--ink);padding:10px 8px 2px 30px;color:var(--ink);background:var(--paper-2)}
+.nav ul{list-style:none;display:flex;gap:28px;align-items:center}
+.nav ul a{font-weight:800;text-decoration:none;font-size:16px;text-transform:uppercase;letter-spacing:.03em;position:relative}
+.nav ul a:not(.btn)::after{content:"";position:absolute;left:-4px;right:-4px;bottom:1px;height:9px;background:var(--yellow);z-index:-1;transform:scaleX(0);transform-origin:left;transition:transform .25s}
+.nav ul a:not(.btn):hover::after{transform:scaleX(1)}
+.nav .btn{padding:9px 16px;font-size:15px;box-shadow:4px 4px 0 var(--ink)}
+.nav .menu{display:none;border:3px solid var(--ink);background:var(--paper-2);padding:6px 8px;line-height:0;font-weight:900;text-transform:uppercase;font-size:14px}
+
+/* ---------- HERO / COVER ---------- */
+.cover{position:relative;min-height:max(100vh,860px);padding:96px var(--gutter) 40px;overflow:hidden}
+.mast{display:flex;flex-wrap:wrap;gap:6px 22px;border-top:3px solid var(--ink);border-bottom:1px solid var(--ink);padding:6px 0;margin-bottom:18px;position:relative;z-index:5;max-width:62%}
+.mast span:nth-child(4){background:var(--yellow);padding:0 6px}
+.cover h1{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(64px,9.4vw,158px);line-height:.9;letter-spacing:-.005em;position:relative;z-index:4;max-width:58%}
+.cover h1 .l{display:block}
+.verb{position:relative;display:inline-block}
+.verb .struck{position:relative;display:inline-block}
+.verb svg.strike{position:absolute;left:-4%;top:38%;width:108%;height:40%;overflow:visible;pointer-events:none}
+.verb svg.strike path{fill:none;stroke:var(--ink);stroke-width:12;stroke-linecap:round}
+.verb .alt{position:absolute;left:8%;top:-34%;font-family:var(--hand);text-transform:lowercase;color:var(--pink);font-size:.52em;line-height:1;transform:rotate(-7deg);white-space:nowrap;
+  text-shadow:3px 3px 0 var(--paper)}
+.verb .alt .caret{color:var(--ink);font-size:.8em;margin-right:.1em}
+.cover .lede{position:relative;z-index:6;max-width:560px;margin-top:30px;background:var(--paper-2);border:3px solid var(--ink);padding:18px 20px 20px;box-shadow:8px 8px 0 var(--blue);font-size:19px}
+.cover .lede strong{background:linear-gradient(transparent 55%,var(--yellow) 55%)}
+.cover .ctas{display:flex;flex-wrap:wrap;gap:14px 22px;margin-top:18px;align-items:center}
+.textlink{font-size:21px;text-decoration:none;border-bottom:3px solid var(--pink);line-height:1.2}
+.cover .print{position:absolute;right:calc(var(--gutter) - 6px);top:118px;width:min(43vw,660px);transform:rotate(2.5deg);z-index:1}
+.cover .print img{width:100%;aspect-ratio:1.42;object-fit:cover}
+.cover .print figcaption{position:absolute;top:26px;left:26px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;background:var(--paper-2);color:var(--ink);transform:rotate(-1.5deg)}
+.cover .kids{position:absolute;right:calc(var(--gutter) + 1vw);bottom:46px;width:min(40vw,600px);z-index:5;transform:rotate(-3deg)}
+.cover .drone{position:absolute;right:calc(var(--gutter) - 26px);top:84px;width:min(14vw,210px);z-index:7;transform:rotate(14deg)}
+.cover .micro{position:absolute;right:calc(var(--gutter) + min(37vw,560px) - 10px);bottom:28px;width:min(9vw,130px);z-index:6;transform:rotate(-10deg)}
+.cover .gears{position:absolute;right:calc(var(--gutter) + min(43vw,660px) - 30px);top:150px;width:min(4.4vw,64px);z-index:2;transform:rotate(-14deg)}
+.burst{position:absolute;z-index:9;width:150px;height:150px;display:grid;place-items:center;text-align:center}
+.burst svg{position:absolute;inset:0;width:100%;height:100%}
+.burst span{position:relative;font-family:var(--display);text-transform:uppercase;font-size:17px;line-height:1.02;transform:rotate(-10deg)}
+.burst span b{display:block;font-size:44px;font-weight:400;line-height:.95}
+.cover .burst{right:-78px;top:-70px}
+.cover .note1{right:calc(var(--gutter) + min(40vw,600px) + 10px);bottom:190px;transform:rotate(-6deg);width:190px;text-align:right}
+.cover svg.arrow1{right:calc(var(--gutter) + min(40vw,600px) - 30px);bottom:92px;width:120px;height:90px}
+
+/* ---------- MARQUEE ---------- */
+.bands{position:relative;height:215px;overflow:hidden;margin-top:-30px;z-index:10}
+.band{position:absolute;left:-5%;width:110%;white-space:nowrap;overflow:hidden;padding:10px 0}
+.band .track{display:inline-flex;will-change:transform}
+.band span{font-family:var(--display);text-transform:uppercase;font-size:54px;line-height:1;padding:0 18px;display:inline-flex;align-items:center;gap:36px}
+.band span i{font-style:normal;font-family:var(--hand);font-size:34px}
+.band.a{top:22px;z-index:2;background:var(--tape);transform:rotate(-2.2deg);box-shadow:0 2px 3px rgba(0,0,0,.12)}
+.band.b{top:132px;background:var(--pink);transform:rotate(1.4deg);padding:6px 0}
+.band.b span{font-size:40px}
+.band.b span{color:var(--ink)}
+
+/* ---------- MISSION ---------- */
+.mission{position:relative;padding:90px var(--gutter) 60px}
+.mission-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:start}
+.mission h2{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(52px,7.4vw,124px);line-height:.88;margin:18px 0 26px;position:relative}
+.mission h2 .hl{position:relative;display:inline-block}
+.mission h2 svg.scrawl{left:-3%;width:106%;height:100%;top:0}
+.mission h2 svg.scrawl path{stroke:var(--pink);stroke-width:7}
+.mission .intro{font-size:21px;max-width:560px}
+.mission .bigprint{position:relative;transform:rotate(-2deg);margin-top:40px}
+.mission .bigprint img{width:100%;aspect-ratio:1.5;object-fit:cover}
+.mission .bigprint .tape{top:-14px;left:40%}
+.mission .bigprint figcaption{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding-top:8px;color:var(--ink-soft)}
+.mission .pair{position:absolute;width:42%;right:-22px;bottom:-90px;z-index:5;transform:rotate(5deg)}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:110px}
+.note{position:relative;padding:30px 26px 28px;border:3px solid var(--ink);box-shadow:7px 7px 0 var(--ink);min-height:250px}
+.note:nth-child(1){background:var(--yellow);transform:rotate(-1.5deg)}
+.note:nth-child(2){background:var(--pink);transform:rotate(1deg)}
+.note:nth-child(3){background:var(--blue);color:#fff;transform:rotate(-.6deg)}
+.note .num{font-family:var(--display);font-size:72px;line-height:.8;position:absolute;right:18px;top:16px;opacity:.9}
+.note h3{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:40px;line-height:.95;margin-bottom:12px;max-width:80%}
+.note p{font-size:17px;font-weight:500}
+.note .tape{top:-16px;left:30px;transform:rotate(-4deg)}
+
+.manifesto{padding:110px var(--gutter) 120px;position:relative}
+.manifesto p{font-family:var(--body);font-weight:900;font-size:clamp(32px,4.6vw,72px);line-height:1.04;letter-spacing:-.01em;max-width:1240px;text-transform:none}
+.manifesto .w{opacity:1}
+.js .manifesto .w{opacity:.16}
+html[data-motion=reduce] .manifesto .w{opacity:1!important}
+.manifesto mark{background:none;color:inherit;position:relative;white-space:nowrap}
+.manifesto mark::before{content:"";position:absolute;left:-.08em;right:-.08em;top:.18em;bottom:.04em;background:var(--yellow);z-index:-1;transform-origin:left;transform:skewX(-6deg) scaleX(var(--hx,1))}
+.manifesto .k{position:relative;display:inline-block}
+.manifesto .sign{font-family:var(--hand);font-size:30px;margin-top:26px;transform:rotate(-2deg);display:inline-block;color:var(--blue)}
+.manifesto .st-house{position:absolute;right:var(--gutter);bottom:30px;width:min(14vw,190px);transform:rotate(7deg)}
+
+/* ---------- MADE HERE (rail) ---------- */
+.made{position:relative;background:var(--kraft) url(img/tex-cardboard.jpg);background-size:600px;overflow:hidden;color:var(--ink)}
+.made-head{padding:80px var(--gutter) 10px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap}
+.made-head h2{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(70px,11vw,180px);line-height:.82}
+.made-head h2 .over{color:var(--ink)}
+.made-head p{max-width:420px;font-size:19px;font-weight:600;background:var(--paper-2);padding:14px 16px;border:3px solid var(--ink);transform:rotate(1.5deg)}
+.rail-wrap{padding:30px 0 40px}
+.rail{display:flex;gap:42px;padding:30px var(--gutter) 30px;width:max-content;align-items:center}
+.clip{position:relative;width:360px;flex:none;background:var(--paper-2);padding:14px 14px 18px;box-shadow:0 18px 30px -16px rgba(26,23,24,.6)}
+.clip:nth-child(3n+1){transform:rotate(-2.5deg)}
+.clip:nth-child(3n+2){transform:rotate(1.8deg);margin-top:40px}
+.clip:nth-child(3n){transform:rotate(-.8deg);margin-top:-30px}
+.clip .vis{height:260px;display:grid;place-items:center;position:relative;overflow:hidden;background:var(--paper)}
+.clip .vis.pinkbg{background:var(--pink)} .clip .vis.bluebg{background:var(--blue)} .clip .vis.yelbg{background:var(--yellow)} .clip .vis.inkbg{background:var(--ink)}
+.clip .vis.dots{background-color:var(--paper);background-image:radial-gradient(circle,rgba(0,120,191,.35) 30%,transparent 33%);background-size:10px 10px}
+.clip .vis img{max-height:92%;width:auto;max-width:92%;object-fit:contain}
+.clip .vis img.fill{width:100%;height:100%;max-width:none;max-height:none;object-fit:cover}
+.clip .n{position:absolute;top:-16px;left:-12px;z-index:5;width:46px;height:46px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-family:var(--display);font-size:22px}
+.clip h3{font-family:var(--hand);font-weight:400;font-size:29px;line-height:1.08;margin:14px 2px 8px}
+.clip .meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border:2px solid var(--ink);background:var(--paper-2);font-weight:700}
+.chip.ink{background:var(--ink);color:var(--paper)}
+.chip.pilot{border-style:dashed}
+.clip .tape{top:-14px;right:30px;transform:rotate(6deg)}
+.railnote{flex:none;font-family:var(--hand);font-size:44px;line-height:1;width:230px;transform:rotate(-6deg);position:relative}
+.railnote small{display:block;font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-top:12px;background:var(--paper-2);padding:6px 8px;transform:rotate(3deg);width:max-content}
+.railnote.end{transform:rotate(4deg)}
+.measure{margin:0 var(--gutter) 60px;height:42px;background:var(--yellow);border:3px solid var(--ink);position:relative;overflow:hidden}
+.measure .ticks{position:absolute;inset:0;background:
+  repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 100px),
+  repeating-linear-gradient(90deg,var(--ink) 0 1px,transparent 1px 25px);
+  -webkit-mask:linear-gradient(#000 0 0) top/100% 50% no-repeat;mask:linear-gradient(#000 0 0) top/100% 50% no-repeat}
+.measure .fill{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--pink);transform-origin:left;transform:scaleX(var(--p,0));mix-blend-mode:multiply}
+.measure .lbl{position:absolute;right:10px;bottom:4px;font-family:var(--mono);font-size:12px;font-weight:700}
+
+/* ---------- PROGRAMS (parts bin) ---------- */
+.bin{position:relative;background:var(--mat);color:#fff;padding:90px var(--gutter) 100px;
+  background-image:linear-gradient(var(--mat-line) 1px,transparent 1px),linear-gradient(90deg,var(--mat-line) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);
+  background-size:120px 120px,120px 120px,24px 24px,24px 24px}
+.bin .section-label b{background:var(--yellow);color:var(--ink)}
+.bin h2{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(60px,9vw,150px);line-height:.85;margin:14px 0 26px}
+.bin h2 .over{color:#fff}
+.bin h2 .over::after{mix-blend-mode:normal;opacity:.85;z-index:-1}
+.madlib{font-family:var(--body);font-weight:800;font-size:clamp(24px,3vw,42px);line-height:1.45;max-width:1200px}
+.madlib label{position:relative;display:inline-block}
+.madlib select{appearance:none;-webkit-appearance:none;font-family:var(--hand);font-weight:400;font-size:1em;color:var(--yellow);background:transparent;border:none;border-bottom:4px solid var(--yellow);padding:0 34px 0 6px;cursor:pointer;line-height:1.1;
+  background-image:linear-gradient(45deg,transparent 50%,var(--yellow) 50%),linear-gradient(135deg,var(--yellow) 50%,transparent 50%);background-position:calc(100% - 16px) 55%,calc(100% - 6px) 55%;background-size:10px 10px;background-repeat:no-repeat}
+.madlib select option{color:var(--ink);font-family:var(--body)}
+.madlib .gradeword{font-family:var(--hand);font-weight:400;color:var(--yellow);border-bottom:4px solid var(--yellow);padding:0 6px}
+.ruler-box{margin:36px 0 10px;max-width:1240px}
+.ruler{position:relative;height:150px}
+.ruler .bars{position:absolute;left:0;right:0;bottom:62px;height:80px;display:grid;grid-template-columns:repeat(15,1fr);align-items:end;gap:0}
+.ruler .bar{display:flex;flex-direction:column-reverse;align-items:center;justify-self:center;width:58%}
+.ruler .bar i{display:block;width:100%;background:var(--yellow);border:2px solid var(--ink);border-bottom:none}
+.ruler .bar i.p{background:repeating-linear-gradient(45deg,var(--yellow) 0 3px,transparent 3px 7px);border-color:var(--yellow)}
+.ruler .bar.on i{background:var(--pink)}
+.ruler .bar.on i.p{background:repeating-linear-gradient(45deg,var(--pink) 0 3px,transparent 3px 7px);border-color:var(--pink)}
+.ruler .stick{position:absolute;left:0;right:0;bottom:0;height:62px;background:#F4D35E;border:3px solid var(--ink);color:var(--ink);display:grid;grid-template-columns:repeat(15,1fr);
+  background-image:repeating-linear-gradient(90deg,transparent 0 calc(100%/15 - 2px),var(--ink) calc(100%/15 - 2px) calc(100%/15));box-shadow:0 8px 0 rgba(0,0,0,.25)}
+.ruler .stick span{font-family:var(--mono);font-weight:700;font-size:14px;display:grid;place-items:end center;padding-bottom:6px;position:relative}
+.ruler .stick span::before{content:"";position:absolute;top:0;left:50%;width:2px;height:18px;background:var(--ink)}
+.ruler input[type=range]{position:absolute;left:0;right:0;bottom:0;width:100%;height:150px;opacity:0;cursor:grab;z-index:4;margin:0}
+.ruler .pencil{position:absolute;bottom:52px;width:calc(100%/15);display:grid;place-items:center;pointer-events:none;z-index:3;transition:left .25s cubic-bezier(.3,1.4,.5,1)}
+.ruler .pencil svg{width:30px;height:90px;filter:drop-shadow(2px 3px 0 rgba(0,0,0,.35))}
+.ruler-legend{display:flex;gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;margin-top:16px;color:rgba(255,255,255,.85)}
+.ruler-legend i{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:6px;background:var(--yellow);border:2px solid var(--ink)}
+.ruler-legend i.p{background:repeating-linear-gradient(45deg,var(--yellow) 0 3px,transparent 3px 6px);border-color:var(--yellow)}
+.controls{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;margin:26px 0 8px}
+.ink-chip{font-family:var(--mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px 7px 8px;border:2px solid var(--ink);background:var(--paper-2);color:var(--ink);display:inline-flex;gap:8px;align-items:center;box-shadow:3px 3px 0 var(--ink);transition:transform .12s}
+.ink-chip .sw{width:16px;height:16px;border-radius:50%;border:2px solid var(--ink)}
+.ink-chip[aria-pressed=true]{background:var(--yellow);transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.ink-chip small{font-size:11px;opacity:.7}
+.inks{display:flex;flex-wrap:wrap;gap:12px 14px}
+.switch{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;font-weight:700;text-transform:uppercase;cursor:pointer;margin-left:auto}
+.switch input{appearance:none;-webkit-appearance:none;width:54px;height:28px;border:3px solid var(--ink);background:var(--paper-2);position:relative;cursor:pointer;border-radius:4px}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;background:var(--ink);transition:left .2s}
+.switch input:checked{background:var(--yellow)}
+.switch input:checked::after{left:28px}
+.count{font-family:var(--mono);font-size:14px;margin:18px 0 18px;color:rgba(255,255,255,.9)}
+.count b{color:var(--yellow)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:26px}
+.pcard{background:var(--paper-2);color:var(--ink);border:3px solid var(--ink);box-shadow:7px 7px 0 rgba(0,0,0,.45);display:flex;flex-direction:column;position:relative;min-height:330px}
+.pcard .top{padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:3px solid var(--ink);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.pcard .top svg{width:22px;height:22px;flex:none}
+.pcard .body{padding:16px 16px 12px;flex:1;display:flex;flex-direction:column}
+.pcard .lbl{font-family:var(--hand);font-size:15px;color:var(--ink-soft)}
+.pcard h4{font-family:var(--body);font-weight:900;font-size:22px;line-height:1.08;margin:2px 0 10px;letter-spacing:-.01em}
+.pcard h4::first-letter{text-transform:uppercase}
+.pcard .title{font-family:var(--mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+.pcard dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13.5px;margin-top:auto}
+.pcard dt{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);padding-top:2px}
+.pcard dd{font-weight:600}
+.dial{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+.dial i{width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);display:inline-block}
+.dial i.f{background:var(--ink)}
+.pcard .foot{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 14px;gap:10px}
+.pcard .stamp{font-size:14px;color:var(--green);transform:rotate(-5deg)}
+.pcard .stamp.pilot{color:var(--purple);border-style:dashed}
+.pcard .add{font-family:var(--mono);font-size:12px;font-weight:700;text-transform:uppercase;border:2px solid var(--ink);background:var(--paper-2);padding:6px 9px}
+.pcard .add[aria-pressed=true]{background:var(--ink);color:var(--yellow)}
+.bin .more{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;margin-top:40px}
+.bin .more p{font-family:var(--hand);font-size:24px;transform:rotate(-1deg)}
+.empty{font-family:var(--hand);font-size:26px;padding:30px;border:3px dashed rgba(255,255,255,.5);grid-column:1/-1}
+
+/* ---------- GET INVOLVED (flyers) ---------- */
+.involved{position:relative;background:var(--kraft) url(img/tex-cardboard.jpg);background-size:600px;padding:90px var(--gutter) 110px;overflow:hidden}
+.involved h2{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(60px,9vw,150px);line-height:.85;margin:14px 0 40px;max-width:1100px}
+.flyers{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:34px;align-items:start}
+.flyer{position:relative;border:none;padding:34px 28px 0;box-shadow:0 22px 34px -18px rgba(26,23,24,.7);display:flex;flex-direction:column}
+.flyer.p{background:var(--yellow);transform:rotate(-1.2deg)}
+.flyer.v{background:var(--pink);transform:rotate(1.6deg);margin-top:50px}
+.flyer.d{background:var(--blue);color:#fff;transform:rotate(-.8deg);margin-top:16px}
+.flyer .pin{position:absolute;top:12px;left:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff8a8a,#c0161f 70%);box-shadow:2px 4px 3px rgba(0,0,0,.35);transform:translateX(-50%)}
+.flyer .kick{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.flyer h3{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(46px,4.6vw,78px);line-height:.88;margin:8px 0 14px}
+.flyer p{font-size:17px;font-weight:600}
+.flyer .ph{margin:16px -6px 6px;position:relative}
+.flyer .ph img{width:100%;aspect-ratio:1.4;object-fit:cover;border:8px solid #fff;transform:rotate(1.5deg)}
+.flyer .list{font-family:var(--hand);font-size:20px;line-height:1.25;margin:14px 0 4px;min-height:28px}
+.flyer .list li{list-style:none}
+.flyer .list li::before{content:"✓ "}
+.flyer .btn{margin:16px 0 22px;align-self:flex-start}
+.tabs{display:flex;margin:auto -28px 0;border-top:2px dashed currentColor}
+.tabs a{flex:1;height:118px;border-right:2px dashed currentColor;writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.04em;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:transform .2s;transform-origin:center;background:inherit}
+.tabs a:last-child{border-right:none}
+.tabs a:hover{transform:rotate(184deg) translateY(-4px)}
+.flyer.d .tabs a,.flyer.d{border-color:#fff}
+.involved .st-cheer{position:absolute;right:-10px;top:30px;width:min(17vw,250px);transform:rotate(8deg);z-index:2}
+.involved .note2{right:calc(var(--gutter) + 17vw);top:95px;transform:rotate(-5deg);width:240px;text-align:right}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--ink);color:var(--paper);padding:70px var(--gutter) 0;position:relative;overflow:hidden}
+.foot-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:36px;position:relative;z-index:2}
+footer h4{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pink);margin-bottom:12px}
+footer p,footer li{font-size:15px;list-style:none;line-height:1.7}
+footer a{text-decoration-color:var(--pink);text-underline-offset:3px}
+footer .bigline{font-family:var(--hand);font-size:30px;line-height:1.15;color:var(--yellow);transform:rotate(-2deg);display:inline-block;margin-bottom:12px}
+.motion-toggle{margin-top:12px;font-family:var(--mono);font-size:12px;text-transform:uppercase;font-weight:700;background:transparent;border:2px solid var(--paper);padding:6px 10px;color:var(--paper)}
+.wordmark{position:relative;margin-top:60px;line-height:.78;font-family:var(--display);text-transform:uppercase;font-size:clamp(120px,31vw,520px);letter-spacing:-.01em;white-space:nowrap;color:var(--pink);transform:translateY(12%)}
+.wordmark .h{font-family:var(--hand);text-transform:lowercase;font-size:.3em;color:var(--yellow);position:absolute;left:2%;top:-12%;transform:rotate(-8deg);z-index:2}
+.wordmark .o{position:relative;display:inline-block}
+.wordmark .o::after{content:"MPLS";position:absolute;left:0;top:0;color:var(--blue);mix-blend-mode:screen;transform:translate(-.03em,.02em)}
+.colophon{position:relative;z-index:3;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(243,238,226,.7);border-top:1px solid rgba(243,238,226,.25);padding:14px 0 18px;margin-top:40px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1100px){
+  .flyers{grid-template-columns:1fr 1fr}
+  .flyer.p{grid-column:1/-1}
+  .foot-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 860px){
+  body{font-size:17px}
+  .nav ul li:not(.keep){display:none}
+  .nav .menu{display:inline-block}
+  .logo .lb{font-size:28px}
+  .cover{padding-top:88px;min-height:auto}
+  .mast{max-width:none;font-size:11px}
+  .cover h1{max-width:none;font-size:19.5vw}
+  .cover .stage{position:relative;height:92vw;margin:34px -4px 0}
+  .cover .print{top:0;right:0;width:94%;left:3%}
+  .cover .print figcaption{top:16px;left:16px;font-size:10px}
+  .cover .kids{width:92%;right:2%;bottom:-4vw}
+  .cover .drone{top:-14vw;right:-2%;width:30vw}
+  .cover .micro{left:2%;right:auto;bottom:30vw;width:20vw}
+  .cover .gears{display:none}
+  .cover .burst{right:-10px;top:-64px;width:112px;height:112px}
+  .burst span{font-size:13px} .burst span b{font-size:34px}
+  .cover .note1{display:none}
+  .cover svg.arrow1{display:none}
+  .cover .lede{margin-top:20px;box-shadow:6px 6px 0 var(--blue)}
+  .bands{height:150px}
+  .band span{font-size:38px;gap:22px} .band span i{font-size:24px}
+  .band.a{top:20px}.band.b{top:80px}
+  .mission-grid{grid-template-columns:1fr;gap:20px}
+  .mission .pair{width:52%;right:-8px;bottom:-70px}
+  .cards3{grid-template-columns:1fr;gap:34px;margin-top:100px}
+  .note{min-height:0}
+  .manifesto{padding:80px var(--gutter)}
+  .manifesto .st-house{position:relative;right:auto;bottom:auto;width:110px;margin:26px 0 0 auto}
+  .rail-wrap{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .clip{width:76vw;scroll-snap-align:center}
+  .railnote{width:150px;font-size:30px}
+  .clip:nth-child(n){margin-top:0}
+  .measure{display:none}
+  .ruler .stick span{font-size:10px}
+  .ruler .bar{width:70%}
+  .switch{margin-left:0}
+  .inks{flex-wrap:nowrap;overflow-x:auto;margin:0 calc(-1 * var(--gutter));padding:4px var(--gutter) 10px;scrollbar-width:none}
+  .ink-chip{flex:none}
+  .nav ul{gap:10px}
+  .nav .btn{padding:8px 12px;font-size:14px}
+  .ruler{height:130px}.ruler .bars{height:64px}
+  .flyers{grid-template-columns:1fr}
+  .flyer.v,.flyer.d{margin-top:0}
+  .involved .st-cheer{width:150px;top:20px;right:-14px}
+  .involved .note2{display:none}
+  .foot-grid{grid-template-columns:1fr}
+}
+@media (min-width: 861px){ .cover .stage{position:static} }
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} .rail-wrap{overflow-x:auto;scroll-snap-type:x mandatory} .clip{scroll-snap-align:center} }
+html[data-motion=reduce] .rail-wrap{overflow-x:auto;scroll-snap-type:x mandatory}
+html[data-motion=reduce] .clip{scroll-snap-align:center}
+.drawer{display:none}
+@media (max-width:860px){ .nav.open .drawer{display:flex;flex-direction:column;gap:14px;position:absolute;top:100%;left:0;right:0;background:var(--paper);border-bottom:3px solid var(--ink);padding:18px var(--gutter)} .drawer a{font-family:var(--display);font-size:40px;text-transform:uppercase;text-decoration:none;line-height:1} }
+</style>
+</head>
+<body>
+
+<a class="sr" href="#main">Skip to content</a>
+
+<!-- ======================= NAV ======================= -->
+<header class="nav" role="banner">
+  <a class="logo" href="#top" aria-label="createMPLS home"><span class="lh" aria-hidden="true">create</span><span class="lb" aria-hidden="true">MPLS</span></a>
+  <nav aria-label="Main">
+    <ul>
+      <li><a href="#programs">Programs</a></li>
+      <li><a href="#partner">Partner</a></li>
+      <li><a href="#volunteer">Volunteer</a></li>
+      <li class="keep"><a class="btn" href="#donate">Donate</a></li>
+      <li class="keep"><button class="menu" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 18" width="22" height="16" aria-hidden="true"><path d="M1 2h22M1 9h22M1 16h22" stroke="currentColor" stroke-width="3"/></svg></button></li>
+    </ul>
+  </nav>
+  <div class="drawer" id="drawer"><a href="#programs">Programs</a><a href="#partner">Partner</a><a href="#volunteer">Volunteer</a><a href="#donate">Donate</a></div>
+</header>
+
+<main id="main">
+<!-- ======================= COVER ======================= -->
+<section class="cover" id="top" aria-labelledby="hero-h">
+  <div class="mast mono" aria-hidden="true"><span>Issue 11</span><span>Fall 2026</span><span>Minneapolis, MN</span><span>Price: $0 for students &amp; families</span></div>
+  <h1 id="hero-h" aria-label="What would you create?">
+    <span class="l reg"><span class="over ink" data-text="WHAT">WHAT</span></span>
+    <span class="l reg"><span class="over ink" data-text="WOULD YOU">WOULD YOU</span></span>
+    <span class="l"><span class="verb"><span class="struck over" data-text="CREATE?">CREATE?</span>
+      <svg class="strike" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true"><path d="M4 26 C 60 14, 120 30, 180 16 S 270 22, 296 12"/></svg>
+      <span class="alt" aria-hidden="true"><span class="caret">^</span><span class="altw">build</span></span></span></span>
+  </h1>
+
+  <div class="stage">
+    <figure class="print taped" data-depth="-0.08">
+      <span class="tape" style="top:-14px;left:12%;transform:rotate(-5deg)"></span>
+      <span class="tape pink" style="bottom:20px;right:-30px;transform:rotate(-38deg)"></span>
+      <img class="riso" src="img/riso-classroom.jpg" alt="Students building and programming LEGO robots in small teams in a bright Minneapolis classroom." width="1400" height="788" fetchpriority="high">
+      <figcaption>Robot build day, in a real Minneapolis classroom</figcaption>
+    </figure>
+    <img class="sticker drone slap" data-depth="0.35" src="img/st-drone.webp" alt="" width="758" height="427">
+    <img class="sticker gears slap" data-depth="0.2" src="img/st-gears.webp" alt="" width="234" height="515">
+    <img class="sticker kids slap" data-depth="0.14" src="img/st-four-kids.webp" alt="Four kids sitting on the floor with LEGO and DUPLO, laughing." width="1249" height="643">
+    <img class="sticker micro slap" data-depth="0.26" src="img/st-microbit.webp" alt="" width="628" height="523">
+    <p class="marker-note note1" aria-hidden="true">this is what hands-on looks like</p>
+    <svg class="scrawl arrow1 draw" viewBox="0 0 110 110" aria-hidden="true"><path d="M10 6 C 20 60, 60 80, 108 70"/><path d="M92 56 L 110 70 L 92 84"/></svg>
+  </div>
+
+  <div class="lede">
+    <div class="burst spin" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><polygon fill="var(--yellow)" stroke="var(--ink)" stroke-width="2.5" points="50,2 57,17 73,8 73,26 91,24 83,40 98,50 83,60 91,76 73,74 73,92 57,83 50,98 43,83 27,92 27,74 9,76 17,60 2,50 17,40 9,24 27,26 27,8 43,17"/></svg>
+      <span>Always<b>$0</b>for kids<br>&amp; families</span>
+    </div>
+
+    <p>createMPLS brings <strong>hands-on robotics, coding, 3D printing, electronics, sound tech and drones</strong> into Minneapolis schools and community sites. Kids build real things with real tools, at <strong>no cost to students or families.</strong></p>
+    <div class="ctas">
+      <a class="btn" href="#partner">Bring a lab to your school <span class="arr">→</span></a>
+      <a class="textlink hand" href="#made">or see what kids make ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= VERB BANDS ======================= -->
+<div class="bands" aria-hidden="true">
+  <div class="band a"><div class="track"><span>Build <i>✶</i> Wire <i>✶</i> Code <i>✶</i> Print <i>✶</i> Fly <i>✶</i> Mix <i>✶</i> Test <i>✶</i> Fix <i>✶</i> Show it off <i>✶</i></span><span>Build <i>✶</i> Wire <i>✶</i> Code <i>✶</i> Print <i>✶</i> Fly <i>✶</i> Mix <i>✶</i> Test <i>✶</i> Fix <i>✶</i> Show it off <i>✶</i></span><span>Build <i>✶</i> Wire <i>✶</i> Code <i>✶</i> Print <i>✶</i> Fly <i>✶</i> Mix <i>✶</i> Test <i>✶</i> Fix <i>✶</i> Show it off <i>✶</i></span><span>Build <i>✶</i> Wire <i>✶</i> Code <i>✶</i> Print <i>✶</i> Fly <i>✶</i> Mix <i>✶</i> Test <i>✶</i> Fix <i>✶</i> Show it off <i>✶</i></span></div></div>
+  <div class="band b"><div class="track"><span>Made in Minneapolis <i>●</i> Made by kids <i>●</i> Made this week <i>●</i></span><span>Made in Minneapolis <i>●</i> Made by kids <i>●</i> Made this week <i>●</i></span><span>Made in Minneapolis <i>●</i> Made by kids <i>●</i> Made this week <i>●</i></span><span>Made in Minneapolis <i>●</i> Made by kids <i>●</i> Made this week <i>●</i></span></div></div>
+</div>
+
+<!-- ======================= MISSION ======================= -->
+<section class="mission" id="about" aria-labelledby="mission-h">
+  <div class="mission-grid">
+    <div>
+      <span class="section-label"><b>01</b> Editor's note</span>
+      <h2 id="mission-h" class="reg">We bring the <span class="hl">workbench.<svg class="scrawl draw" viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true"><path d="M6 104 C 90 92, 210 118, 394 96"/></svg></span><br>Kids make<br>the rest.</h2>
+      <p class="intro">We show up at your school or community site with instructors, tools and a plan. In-school courses during the day. STEM Learning Labs after school and in summer. Every session runs the same honest loop: <b>make it, test it, change one thing, show it off.</b></p>
+    </div>
+    <div style="position:relative">
+      <figure class="bigprint taped" data-depth="-0.06">
+        <span class="tape"></span>
+        <img src="img/ph-fll-table.jpg" alt="A FIRST LEGO League practice: three boys at a field mat while two adult coaches lean in to adjust a LEGO robot." width="1300" height="867" loading="lazy">
+        <figcaption>FIRST LEGO League practice at our first host site, 2016</figcaption>
+      </figure>
+      <img class="sticker pair slap" data-depth="0.18" src="img/st-ev3-pair.webp" alt="A boy and a girl in school uniforms adjust a LEGO EV3 robot together." width="577" height="735" loading="lazy">
+    </div>
+  </div>
+
+  <div class="cards3">
+    <article class="note slap">
+      <span class="tape"></span><span class="num" aria-hidden="true">1</span>
+      <h3>We come to you</h3>
+      <p>Your classroom, gym, library or rec room becomes the lab. No bus, no field-trip forms. Families told us the best part: it comes to them.</p>
+    </article>
+    <article class="note slap">
+      <span class="tape blue"></span><span class="num" aria-hidden="true">2</span>
+      <h3>Real tools, real builds</h3>
+      <p>Motors, micro:bits, 3D printers, mics and flight simulators. Short demo, long build time, and everybody explains what they made.</p>
+    </article>
+    <article class="note slap">
+      <span class="tape pink"></span><span class="num" aria-hidden="true">3</span>
+      <h3>$0 for families</h3>
+      <p>There is no cost to students or families. Schools and community partners host; donors and volunteers keep the parts bin full.</p>
+    </article>
+  </div>
+</section>
+
+<section class="manifesto" aria-label="What changes in a neighborhood">
+  <p class="split">A classroom turns into a <mark>robot pit.</mark> A cafeteria turns into a <mark>sound studio.</mark> A rec center turns into a <mark>print shop.</mark> And the kids who built it all get to show the <mark>neighborhood</mark> how it works.</p>
+  <span class="sign">— that's the whole idea. ✌</span>
+  <img class="sticker st-house slap" data-depth="0.2" src="img/st-house.webp" alt="" width="397" height="602" loading="lazy">
+</section>
+
+<!-- ======================= MADE HERE ======================= -->
+<svg class="tear" data-fill="#C8A26E" data-up="1" viewBox="0 0 1440 28" preserveAspectRatio="none" aria-hidden="true"></svg>
+<section class="made" id="made" aria-labelledby="made-h">
+  <div class="made-head">
+    <div>
+      <span class="section-label"><b>02</b> On the bench</span>
+      <h2 id="made-h" class="reg"><span class="over" data-text="MADE">MADE</span> <span class="over" data-text="HERE.">HERE.</span></h2>
+    </div>
+    <p>Every createMPLS program ends with something real to show. Here are twelve things a kid could walk out with, from Pre-K to Grade 12.</p>
+  </div>
+  <div class="rail-wrap"><div class="rail" id="rail"></div></div>
+  <div class="measure" aria-hidden="true"><div class="fill"></div><div class="ticks"></div><span class="lbl">12 BUILDS</span></div>
+</section>
+
+<!-- ======================= PROGRAMS / PARTS BIN ======================= -->
+<section class="bin" id="programs" aria-labelledby="bin-h">
+  <span class="section-label"><b>03</b> The parts bin · our programs</span>
+  <h2 id="bin-h" class="reg"><span class="over" data-text="FIND YOUR">FIND YOUR</span><br><span class="over" data-text="BUILD.">BUILD.</span></h2>
+
+  <form class="madlib" onsubmit="return false" aria-describedby="bin-count">
+    We're
+    <label><span class="sr">Who you are</span><select id="who">
+      <option value="students">a school</option>
+      <option value="community">a community site</option>
+      <option value="families">a family</option>
+    </select></label>
+    <span id="gradeClause">with kids in <span class="gradeword" id="gradeWord">grade 4</span></span>
+    who want to make something that
+    <label><span class="sr">What to make</span><select id="what">
+      <option value="all">does anything</option>
+      <option value="robots-machines">moves</option>
+      <option value="code-games">you can play</option>
+      <option value="fabrication-3d">gets 3D printed</option>
+      <option value="circuits-electronics">lights up or buzzes</option>
+      <option value="sound-music">makes noise</option>
+      <option value="flight-drones">flies</option>
+      <option value="media-light">glows on a wall</option>
+      <option value="civic-data">helps the neighborhood</option>
+    </select></label>.
+  </form>
+
+  <div class="ruler-box" id="rulerBox">
+    <div class="ruler">
+      <div class="bars" id="bars" aria-hidden="true"></div>
+      <div class="pencil" id="pencil" aria-hidden="true"><svg viewBox="0 0 30 90"><polygon points="15,88 6,66 24,66" fill="#F3C9A0" stroke="#1A1718" stroke-width="2"/><polygon points="15,88 12,80 18,80" fill="#1A1718"/><rect x="6" y="10" width="18" height="56" fill="#FF48B0" stroke="#1A1718" stroke-width="2"/><rect x="6" y="2" width="18" height="10" fill="#FFE800" stroke="#1A1718" stroke-width="2"/></svg></div>
+      <div class="stick" aria-hidden="true"></div>
+      <input type="range" id="grade" min="-1" max="13" step="1" value="4" aria-label="Grade level, from Pre-K to college" aria-valuetext="Grade 4">
+    </div>
+    <div class="ruler-legend" aria-hidden="true"><span><i></i>Ready to schedule</span><span><i class="p"></i>Piloting now</span><span>Bar height = programs that reach each grade · drag the pencil</span></div>
+  </div>
+
+  <div class="controls" role="group" aria-label="Filter by subject ink">
+    <div id="inks" class="inks"></div>
+    <label class="switch"><input type="checkbox" id="unplugged"> Unplugged version only</label>
+  </div>
+  <p class="count" id="bin-count" aria-live="polite"></p>
+  <div class="cards" id="cards"></div>
+
+  <div class="more">
+    <p>Every program is free to students and families. Pick a few, and we'll plan the rest with you.</p>
+    <a class="btn" href="#partner">Send my list <span class="arr">→</span></a>
+  </div>
+</section>
+
+<!-- ======================= IMPACT (REMOVABLE MODULE) =======================
+     Self-contained: delete this <section> (it carries its own <style> and <script>)
+     to remove the only metric on the site. Nothing else references it. -->
+<section id="impact-since-2019" aria-labelledby="impact-h" style="position:relative">
+<style>
+  #impact-since-2019{background:var(--paper-2);padding:100px var(--gutter);overflow:hidden;min-height:640px;display:grid;place-items:center;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink)}
+  #impact-since-2019 canvas{position:absolute;inset:0;width:100%;height:100%}
+  #impact-since-2019 .card{position:relative;z-index:2;background:var(--paper-2);border:3px solid var(--ink);box-shadow:10px 10px 0 var(--pink);padding:34px 40px 30px;text-align:center;max-width:760px;transform:rotate(-1.5deg)}
+  #impact-since-2019 .num{font-family:var(--display);font-size:clamp(110px,17vw,250px);line-height:1;align-items:flex-start;display:flex;justify-content:center;gap:.02em}
+  #impact-since-2019 .num .d{display:inline-block;overflow:hidden;height:1em;line-height:1}
+  #impact-since-2019 .num .d .col{display:block;transition:none}
+  #impact-since-2019 .num .d i{display:block;font-style:normal;color:var(--blue);height:1em;line-height:1}
+  #impact-since-2019 .num .c{color:var(--pink);line-height:1}
+  #impact-since-2019 .lead{font-family:var(--display);text-transform:uppercase;font-size:clamp(30px,3.6vw,54px);line-height:.95;margin-top:14px}
+  #impact-since-2019 .lead em{font-style:normal;background:var(--yellow);padding:0 .15em}
+  #impact-since-2019 .sub{font-family:var(--hand);font-size:22px;margin-top:16px;color:var(--ink-soft)}
+  #impact-since-2019 .tape{top:-16px;left:50%;margin-left:-60px}
+  @media (max-width:860px){#impact-since-2019 .card{padding:26px 18px}}
+</style>
+  <canvas aria-hidden="true"></canvas>
+  <div class="card">
+    <span class="tape pink"></span>
+    <p class="num" aria-hidden="true"></p>
+    <h2 id="impact-h" class="lead"><span class="sr">5,657 </span><em>students</em> since 2019</h2>
+    <p class="sub">Every tally mark behind this card is one of them. Yes, we drew all 5,657.</p>
+  </div>
+<script>
+(function(){
+  var sec=document.getElementById('impact-since-2019'), TOTAL=5657, digits='5,657';
+  var num=sec.querySelector('.num');
+  digits.split('').forEach(function(ch){
+    if(ch===','){var c=document.createElement('span');c.className='c';c.textContent=',';num.appendChild(c);return;}
+    var d=document.createElement('span');d.className='d';var col=document.createElement('span');col.className='col';
+    for(var i=0;i<=+ch;i++){var it=document.createElement('i');it.textContent=i;col.appendChild(it);} d.appendChild(col);num.appendChild(d);
+  });
+  var cv=sec.querySelector('canvas'),ctx=cv.getContext('2d'),marks=[];
+  function layout(){
+    var r=sec.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+    cv.width=r.width*dpr;cv.height=r.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    marks=[];var gw=34,gh=30,cols=Math.floor((r.width-20)/gw),rows=Math.ceil(TOTAL/5/cols),sy=Math.max(8,(r.height-rows*gh)/2);
+    var n=0,seed=7;function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
+    for(var g=0;n<TOTAL;g++){var cx=12+(g%cols)*gw,cy=sy+Math.floor(g/cols)*gh;
+      for(var k=0;k<5&&n<TOTAL;k++,n++){
+        if(k<4)marks.push([cx+k*5+rnd()*1.5,cy+rnd()*2,cx+k*5+rnd()*2-1,cy+18+rnd()*2]);
+        else marks.push([cx-3,cy+15+rnd()*3,cx+21,cy+3+rnd()*3]);
+      }}
+  }
+  function draw(p){ctx.clearRect(0,0,cv.width,cv.height);ctx.strokeStyle='rgba(26,23,24,.28)';ctx.lineWidth=1.6;ctx.lineCap='round';ctx.beginPath();
+    var upto=Math.floor(marks.length*p);for(var i=0;i<upto;i++){var m=marks[i];ctx.moveTo(m[0],m[1]);ctx.lineTo(m[2],m[3]);}ctx.stroke();}
+  function setDigits(p){sec.querySelectorAll('.d .col').forEach(function(col){var n=col.children.length-1;col.style.transform='translateY(-'+Math.round(n*p)+'em)';});}
+  layout();
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.getAttribute('data-motion')==='reduce';
+  if(reduce||!window.gsap){draw(1);setDigits(1);return;}
+  setDigits(0);draw(0);
+  window.addEventListener('load',function(){
+    var st={p:0};
+    gsap.to(st,{p:1,ease:'power2.out',duration:2.4,onUpdate:function(){draw(st.p);setDigits(st.p);},
+      scrollTrigger:{trigger:sec,start:'top 70%',once:true}});
+  });
+  window.addEventListener('resize',function(){layout();draw(1);});
+})();
+</script>
+</section>
+<!-- ===================== /IMPACT (REMOVABLE MODULE) ===================== -->
+
+<!-- ======================= GET INVOLVED ======================= -->
+<section class="involved" id="involved" aria-labelledby="inv-h">
+  <span class="section-label"><b>04</b> Take one</span>
+  <h2 id="inv-h" class="reg">Pull a tab.<br>Make it happen.</h2>
+  <img class="sticker st-cheer slap" data-depth="0.2" src="img/st-boy-cheer.webp" alt="" width="767" height="790" loading="lazy">
+  <p class="marker-note note2" aria-hidden="true">schools &amp; community sites start here ↓</p>
+  <div class="flyers">
+    <article class="flyer p" id="partner">
+      <span class="pin" aria-hidden="true"></span>
+      <span class="kick">For schools &amp; community sites</span>
+      <h3>Bring a lab<br>to your school</h3>
+      <p>You bring the kids and a room. We bring instructors, tools and a plan built for your space, during the school day or after it. No cost to your students or their families.</p>
+      <div class="ph"><span class="tape" style="top:-12px;left:20px;transform:rotate(-6deg)"></span><img src="img/ph-two-girls.jpg" alt="Two girls build a tall LEGO simple machine together, with trays of parts in front of them." width="1000" height="750" loading="lazy"></div>
+      <ul class="list" id="reqList" aria-live="polite"><li style="list-style:none" class="hint">Add programs from the parts bin and they'll show up here.</li></ul>
+      <a class="btn" id="partnerBtn" href="mailto:info@creatempls.org?subject=Bring%20a%20createMPLS%20lab%20to%20our%20site">Start a partnership <span class="arr">→</span></a>
+      <div class="tabs" aria-hidden="true"><a tabindex="-1" href="mailto:info@creatempls.org">info@creatempls.org</a><a tabindex="-1" href="mailto:info@creatempls.org">info@creatempls.org</a><a tabindex="-1" href="mailto:info@creatempls.org">info@creatempls.org</a><a tabindex="-1" href="mailto:info@creatempls.org">info@creatempls.org</a><a tabindex="-1" href="mailto:info@creatempls.org">info@creatempls.org</a><a tabindex="-1" href="mailto:info@creatempls.org">info@creatempls.org</a></div>
+    </article>
+    <article class="flyer v" id="volunteer">
+      <span class="pin" aria-hidden="true"></span>
+      <span class="kick">For neighbors with skills</span>
+      <h3>Lend your hands</h3>
+      <p>Coach a robotics team, help at a build day, or bring your trade into the room for an afternoon. You don't need to be an engineer. You need to be curious.</p>
+      <div class="ph"><img src="img/ph-mentor-ev3.jpg" alt="A volunteer mentor in a FIRST cap talks through an EV3 robot with a student." width="1000" height="628" loading="lazy"></div>
+      <a class="btn ghost" href="mailto:info@creatempls.org?subject=Volunteering%20with%20createMPLS">Volunteer <span class="arr">→</span></a>
+      <div class="tabs" aria-hidden="true"><a tabindex="-1" href="#">VOLUNTEER</a><a tabindex="-1" href="#">VOLUNTEER</a><a tabindex="-1" href="#">VOLUNTEER</a><a tabindex="-1" href="#">VOLUNTEER</a></div>
+    </article>
+    <article class="flyer d" id="donate">
+      <span class="pin" aria-hidden="true"></span>
+      <span class="kick">For everyone who wants in</span>
+      <h3>Stock the parts bin</h3>
+      <p>Gifts keep every program free for students and families. createMPLS is a 501(c)(3); donations are tax-deductible.</p>
+      <div class="ph"><img src="img/ph-paper-tower.jpg" alt="A mentor measures a tower of rolled paper tubes holding up a heavy book while students watch." width="705" height="698" loading="lazy"></div>
+      <a class="btn" href="https://givebutter.com/" rel="noopener">Donate on Givebutter <span class="arr">→</span></a>
+      <div class="tabs" aria-hidden="true"><a tabindex="-1" href="#">GIVE</a><a tabindex="-1" href="#">GIVE</a><a tabindex="-1" href="#">GIVE</a><a tabindex="-1" href="#">GIVE</a></div>
+    </article>
+  </div>
+</section>
+</main>
+
+<!-- ======================= FOOTER ======================= -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <span class="bigline">what would you create?</span>
+      <p>Hands-on STEM for K–12 students, delivered on site in Minneapolis schools and community sites. No cost to students and families.</p>
+    </div>
+    <div><h4>Get in touch</h4><ul><li><a href="mailto:info@creatempls.org">info@creatempls.org</a></li><li>Minneapolis, MN</li></ul></div>
+    <div><h4>Follow @MPLScreate</h4><ul><li><a href="#">Facebook</a></li><li><a href="#">LinkedIn</a></li></ul></div>
+    <div><h4>The fine print</h4><ul><li>createMPLS is a 501(c)(3) nonprofit</li><li>EIN 47-5122723</li></ul>
+      <button class="motion-toggle" id="motionToggle" type="button">Motion: on</button></div>
+  </div>
+  <div class="wordmark" aria-hidden="true"><span class="h">create</span><span class="o">MPLS</span></div>
+  <div class="colophon"><span>Colophon: set in Anton, Archivo, Permanent Marker &amp; Space Mono. Two inks, pink + blue.</span><span>© 2026 createMPLS</span></div>
+</footer>
+
+<script id="programs-data" type="application/json">[{"id":"build-your-block","t":"Build Your Block","m":"a neighborhood invention that lights up, moves, or responds, shown at a public showcase","s":"Invent something for your neighborhood that lights up, moves, makes sound, or reacts to touch, then show it at a public showcase.","a":"s","b":"Grades 3–7","g0":3,"g1":7,"d":"civic-data","sl":2,"sf":true,"h":"28 sessions × 1.75 hr (7 weeks, 4 a week)","r":1,"f":6,"k":["Cardboard & found materials","LEDs, coin cells & copper tape","Motors & buzzers"]},{"id":"build-together-family","t":"Build Together: Family Invention Lab","m":"one shared family invention, tested by another family and revised","s":"Families team up to invent one shared machine from cardboard and recycled stuff, test it on another family, and make it better.","a":"f","b":"Families","g0":null,"g1":null,"d":"civic-data","sl":1,"sf":true,"h":"One 90–120 min workshop","r":0,"f":null,"k":["Cardboard & found materials","LEGO & building blocks"]},{"id":"build-your-block-advanced-studio","t":"Build Your Block: Advanced Studio","m":"an interactive prototype for a real public space, tested with users","s":"Study a real public system, build an interactive prototype that helps, test it with real users, and explain your tradeoffs.","a":"s","b":"Grades 6–8","g0":6,"g1":8,"d":"civic-data","sl":3,"sf":false,"h":"28 sessions × 105 min","r":0,"f":null,"k":["Cardboard & found materials","Block or text coding (site's choice)","Sensors"]},{"id":"robot-orchestra-family","t":"Robot Orchestra","m":"a sensor-driven robot behavior, performed in a group 'robot orchestra'","s":"Families program a robot to react to what it senses, rehearse a shared score, and perform together as a robot orchestra.","a":"f","b":"Families","g0":null,"g1":null,"d":"robots-machines","sl":2,"sf":false,"h":"One 2-hour workshop","r":0,"f":null,"k":["LEGO SPIKE Prime"]},{"id":"make-it-real-family","t":"Make It Real: Family Digital Fabrication Lab","m":"a measured 3D model of a useful object, ready to print","s":"Families sketch, measure, and model a useful object on screen, then send it to the 3D printer queue to be made.","a":"f","b":"Families","g0":null,"g1":null,"d":"fabrication-3d","sl":2,"sf":false,"h":"One 2-hour design workshop (printing finishes afterward)","r":0,"f":null,"k":["Design software (Tinkercad / OpenSCAD)","3D printers","Calipers & measuring tools"]},{"id":"family-sound-lab","t":"Family Sound Lab","m":"a 30–60 second live sound story built from everyday objects","s":"Families go on a listening hunt, make sound effects from everyday objects, and perform a short sound story together.","a":"f","b":"Families","g0":null,"g1":null,"d":"sound-music","sl":1,"sf":true,"h":"One 90-min workshop","r":0,"f":null,"k":["Everyday sound objects (Foley)"]},{"id":"family-flight-night","t":"Family Flight Night","m":"simulator flight drills and a coaching routine for a flying partner","s":"Pairs of an older kid and an adult learn to fly a racing drone in a simulator: controls, calm recovery, coaching, and how drones work.","a":"f","b":"Families","g0":null,"g1":null,"d":"flight-drones","sl":3,"sf":false,"h":"One 90–120 min workshop","r":0,"f":null,"k":["FPV simulator & radios"]},{"id":"family-debugging-lab","t":"Fix It Together: Family Debugging Lab","m":"two solved 'broken on purpose' puzzles and a family debugging routine","s":"Families investigate a puzzle that's broken on purpose, change one thing at a time, and explain the smallest fix that worked.","a":"f","b":"Families","g0":null,"g1":null,"d":"code-games","sl":2,"sf":true,"h":"One 90-min workshop (or a station rotation)","r":0,"f":null,"k":["Paper, markers & prototypes"]},{"id":"idea-to-3d-print","t":"From Idea to 3D Print","m":"a printed nametag, a wiggly chain critter, and a design made for a real partner","s":"Draw, measure, model, slice, print, and revise a useful object for someone else.","a":"s","b":"Grades 3–5","g0":3,"g1":5,"d":"fabrication-3d","sl":2,"sf":false,"h":"11 weeks × 90 min","r":1,"f":5,"k":["Design software (Tinkercad / OpenSCAD)","3D printers","Calipers & measuring tools"]},{"id":"scratch-stories-games","t":"Scratch Stories and Games","m":"a published two-level Scratch game with cutscenes and a win screen","s":"Create an animated two-level Scratch game with cutscenes, playtesting, and a clear ending.","a":"s","b":"Grades 3–5","g0":3,"g1":5,"d":"code-games","sl":3,"sf":false,"h":"12 weeks × 1 hr","r":1,"f":null,"k":["Scratch"]},{"id":"engineering-challenge-lab","t":"Engineering Challenge Lab","m":"working mechanisms like speed reducers, lifters, claw grippers, and walkers","s":"Design, print, test, and redesign mechanisms that meet measurable performance targets.","a":"s","b":"Grades 6–12","g0":6,"g1":12,"d":"robots-machines","sl":2,"sf":false,"h":"10–12 weeks, two work blocks per session","r":1,"f":7,"k":["Design software (Tinkercad / OpenSCAD)","3D printers"]},{"id":"design-for-printability","t":"Design for Printability","m":"a locking box that passes drop and shake tests","s":"Learn why 3D prints fail and how to design parts that fit, snap together, and survive a drop test, ending with a locking box.","a":"s","b":"Grades 6–8","g0":6,"g1":8,"d":"fabrication-3d","sl":3,"sf":false,"h":"10 weeks, two work blocks per session","r":1,"f":null,"k":["Design software (Tinkercad / OpenSCAD)","3D printers","Calipers & measuring tools"]},{"id":"digital-imaging-lab","t":"Digital Imaging Lab","m":"a pixel self-portrait, a poster campaign, and a small exhibition","s":"Use photography, pixels, layers, collage, glitch, and image ethics to make a small exhibition.","a":"s","b":"Grades 6–9","g0":6,"g1":9,"d":"media-light","sl":3,"sf":false,"h":"12 sessions × 90 min","r":1,"f":12,"k":["Cameras & photo editor"]},{"id":"sound-design-engineering","t":"Sound Design and Engineering","m":"a polished sound mini-project made from recorded sound effects and synth sounds","s":"Record sounds with your phone, build synth sounds from snap-together blocks, mix it all, and publish your own mini-project.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"sound-music","sl":3,"sf":false,"h":"22 sessions × 60 min","r":1,"f":null,"k":["Phones & recorders","Audio editor (BandLab / Audacity)","Snap-together synth blocks"]},{"id":"digital-manufacturing","t":"Digital Manufacturing Studio","m":"a CNC-engraved nameplate, a custom keychain, and an assembly of cut and printed parts","s":"Design a part, turn it into instructions for a CNC router and a 3D printer, and join the pieces into one working assembly.","a":"s","b":"Grades 6–12","g0":6,"g1":12,"d":"fabrication-3d","sl":3,"sf":false,"h":"12 sessions × 2 hr","r":1,"f":null,"k":["Design software (Tinkercad / OpenSCAD)","CNC router","3D printers"]},{"id":"robotics-to-fpv","t":"Robotics to FPV","m":"a tiny FPV drone you built, a pilot logbook, and a team demo","s":"Program a driving robot, then solder, build, and fly your own tiny FPV drone, with simulator training and safety first.","a":"s","b":"Grades 6–12","g0":6,"g1":12,"d":"flight-drones","sl":3,"sf":false,"h":"15 weeks × 90 min","r":1,"f":9,"k":["Arduino","Soldering","FPV simulator & radios"]},{"id":"digital-music-control","t":"Digital Music Control","m":"a hand-built music controller with knobs, buttons, and lights","s":"Wire knobs, buttons, and lights to an Arduino and turn them into your own music controller.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"sound-music","sl":3,"sf":false,"h":"4 weekly 2-hr sessions per level (3 levels)","r":1,"f":null,"k":["Arduino","Breadboards & chips","MIDI"]},{"id":"physical-sound-drawing","t":"Physical Sound Drawing","m":"a 60–120 second sound piece played on one string, with a gesture map","s":"Turn gesture, tension, and a single string into recordings, drawings, and a short performance piece.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"sound-music","sl":3,"sf":false,"h":"8 sessions × 90 min","r":1,"f":11,"k":["String instruments","Phones & recorders"]},{"id":"game-tech-intensive","t":"Game Tech Intensive","m":"a remixed Scratch game or a micro:bit controller in a cardboard shell","s":"Take apart and remix a Scratch game, or make a micro:bit react to buttons, shake, and tilt inside a cardboard controller.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"code-games","sl":3,"sf":false,"h":"6 sessions × 60 min per track","r":1,"f":null,"k":["Scratch","micro:bit","Cardboard & found materials"]},{"id":"tiny-machines","t":"Tiny Machines","m":"a moving cardboard creature with flaps, sliders, wheels, and a crank","s":"Build flappy, sliding, and spinning creatures from cardboard and found stuff, then put on a moving story show.","a":"s","b":"Pre-K–Grade 2","g0":-1,"g1":2,"d":"robots-machines","sl":1,"sf":true,"h":"4 sessions × 60 min","r":0,"f":null,"k":["Cardboard & found materials","LEGO & building blocks"]},{"id":"build-a-neighborhood-k2","t":"Build a Neighborhood","m":"a shared cardboard neighborhood with a visitor tour","s":"Build homes, parks, roads, and shared places, then give a tour explaining who each place helps.","a":"s","b":"Pre-K–Grade 2","g0":-1,"g1":2,"d":"civic-data","sl":1,"sf":true,"h":"4 sessions × 60 min","r":0,"f":null,"k":["Cardboard & found materials","LEGO & building blocks","Paper, markers & prototypes"]},{"id":"sound-hunters-k2","t":"Sound Hunters","m":"a 30–60 second live sound story with a picture cue strip","s":"Go on a sound walk, make sounds with safe everyday objects, and perform a short sound story.","a":"s","b":"Pre-K–Grade 2","g0":-1,"g1":2,"d":"sound-music","sl":1,"sf":true,"h":"4 sessions × 60 min","r":0,"f":null,"k":["Everyday sound objects (Foley)"]},{"id":"code-with-your-body-k2","t":"Code With Your Body","m":"a 3–5 card movement routine another pair can follow","s":"Program a partner with picture-card commands, hunt for the bug, and fix the route, all through movement games.","a":"s","b":"Pre-K–Grade 2","g0":-1,"g1":2,"d":"code-games","sl":0,"sf":true,"h":"4 sessions × 60 min","r":0,"f":null,"k":["Picture-command cards & floor tape"]},{"id":"light-color-shadow-lab-k2","t":"Light, Color and Shadow Lab","m":"a tabletop shadow scene with color windows","s":"Play with flashlights and color film to change shadows, then build a shadow scene and tell its story.","a":"s","b":"Pre-K–Grade 2","g0":-1,"g1":2,"d":"media-light","sl":1,"sf":true,"h":"4 sessions × 60 min","r":0,"f":2,"k":["Flashlights & color film","Paper, markers & prototypes"]},{"id":"chain-reaction-playground-k2","t":"Chain-Reaction Playground","m":"a group chain-reaction machine that visitors can watch run","s":"Connect ramps, balls, blocks, and loose parts so one action causes the next, then test and rebuild the chain.","a":"s","b":"Pre-K–Grade 2","g0":-1,"g1":2,"d":"robots-machines","sl":0,"sf":true,"h":"4 sessions × 60 min","r":0,"f":1,"k":["Ramps, balls & blocks","Cardboard & found materials"]},{"id":"energy-electronics-circuits","t":"Energy, Electronics and Circuits","m":"a light-up paper circuit with a switch, plus a tiny buzzing or spinning invention","s":"Light up a paper sign, add a switch, then build a buzzing, spinning, or glowing invention that reacts to touch.","a":"s","b":"Grades 3–5","g0":3,"g1":5,"d":"circuits-electronics","sl":2,"sf":true,"h":"4 sessions × 75 min","r":0,"f":3,"k":["LEDs, coin cells & copper tape","Motors & buzzers","Cardboard & found materials"]},{"id":"lo-fi-beat-laboratory","t":"Lo-Fi Beat Laboratory","m":"a 30–60 second beat built from found sounds and real rooms","s":"Use found sounds and imperfect rooms as instruments for a short original track.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"sound-music","sl":3,"sf":false,"h":"8 sessions × 90 min","r":1,"f":10,"k":["Audio editor (BandLab / Audacity)","Phones & recorders"]},{"id":"machines-that-move","t":"Machines That Move","m":"a moving toy, sculpture, or story object driven by a mechanism you built","s":"Build and test pivots, sliders, wheels, and cams, then use one mechanism in a moving object with a clear purpose.","a":"s","b":"Grades 3–5","g0":3,"g1":5,"d":"robots-machines","sl":1,"sf":true,"h":"4 sessions × 75 min","r":0,"f":null,"k":["Cardboard & found materials"]},{"id":"friendly-city-lab","t":"Friendly City Lab","m":"a clearer sign, map, or label system, tested on real users","s":"Spot a confusing sign, then design and test a clearer sign, map, or guide for a real place.","a":"s","b":"Grades 3–5","g0":3,"g1":5,"d":"civic-data","sl":1,"sf":true,"h":"4 sessions × 75 min","r":0,"f":null,"k":["Paper, markers & prototypes"]},{"id":"advanced-digital-fabrication-lab","t":"Advanced Digital Fabrication Lab","m":"a multi-material capstone print and the scan and queue logs behind it","s":"Run a small print lab: multi-color prints, 3D scans, calibration, and your own G-code tweaks, ending in a capstone portfolio.","a":"s","b":"Grades 11–12","g0":11,"g1":12,"d":"fabrication-3d","sl":3,"sf":false,"h":"14–16 week semester","r":1,"f":null,"k":["3D printers","3D scanning","Design software (Tinkercad / OpenSCAD)"]},{"id":"parametric-sculpture-3d-print","t":"Parametric Sculpture & 3D Print","m":"a gallery-ready 3D-printed sculpture with an artist statement","s":"Write rules in code that generate patterns, remix 3D scans, and print translucent sculptures for a gallery show.","a":"s","b":"Grades 8–11","g0":8,"g1":11,"d":"fabrication-3d","sl":3,"sf":false,"h":"8 weeks, two work blocks per session","r":1,"f":null,"k":["Design software (Tinkercad / OpenSCAD)","3D printers"]},{"id":"critical-making-civic-media","t":"Critical Making & Civic Media","m":"a small public intervention (poster, zine, sign, or short video) made with a partner","s":"Diagnose a local public problem, test a modest fix with real partners, and document it so someone else can repeat it.","a":"s","b":"College / post-secondary","g0":13,"g1":13,"d":"civic-data","sl":3,"sf":false,"h":"12 weeks, 24 sessions × about 110 min","r":1,"f":null,"k":["Paper, markers & prototypes"]},{"id":"high-school-drone-racing-league","t":"High School Drone Racing League","m":"race-ready pilots: a 4-week bootcamp, time trials, and a mini-meet","s":"Start a school drone-racing team: simulator training first, then gates, pit-crew skills, and race days.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"flight-drones","sl":3,"sf":false,"h":"4-week bootcamp, 12-week season, then summer league","r":1,"f":null,"k":["FPV simulator & radios","Tiny FPV drones"]},{"id":"sound-design-for-theater","t":"Sound Design for Theater","m":"a cue sheet and original sound cues played live at a showcase","s":"Record your own sound effects, build cues, and run the sound for a live show alongside the stage crew.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"sound-music","sl":3,"sf":false,"h":"8 sessions × 90 min","r":1,"f":null,"k":["Phones & recorders","Audio editor (BandLab / Audacity)","Small PA & speakers"]},{"id":"imaging-otherwise","t":"Imaging Otherwise","m":"experimental image studies and a public-facing final project","s":"Question how images get made and who they serve, then build experimental image projects for a public final show.","a":"s","b":"College / post-secondary","g0":13,"g1":13,"d":"media-light","sl":3,"sf":false,"h":"14 weeks, one 3-hr meeting a week","r":1,"f":null,"k":["Cameras & photo editor"]},{"id":"sound-systems-society","t":"Sound / Systems / Society","m":"a tiny sound system with a demo, and a community mix with documentation","s":"Study how sound systems shape communities, design a tiny sound system, and host a community listening session.","a":"s","b":"College / post-secondary","g0":13,"g1":13,"d":"sound-music","sl":2,"sf":false,"h":"14 weeks, one 3-hr meeting a week","r":1,"f":null,"k":["Small PA & speakers"]},{"id":"tiny-whoop-tuning-racing","t":"Tiny Whoop Tuning & Racing","m":"a tuned racing whoop, a tune log, and a class race","s":"Fly a tiny FPV whoop, simulator first, then tune its settings, repair it, and race it in a class meet.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"flight-drones","sl":3,"sf":false,"h":"10 weeks, 20 sessions × 90 min","r":1,"f":null,"k":["FPV simulator & radios","Tiny FPV drones"]},{"id":"robotics-vibe-coding","t":"Robotics & Vibe Coding","m":"a sensing robot that performs with sound and light","s":"Build a robot that senses its surroundings and turns motion and data into sound, light, and a live mini-performance.","a":"s","b":"Grades 9–12 & adults","g0":9,"g1":12,"d":"robots-machines","sl":3,"sf":false,"h":"8 sessions × 2 hr","r":1,"f":null,"k":["LEGO SPIKE Prime","Arduino","Sensors"]},{"id":"diy-instrument-lab","t":"DIY Instrument Lab","m":"a playable instrument or instrument system, performed and documented","s":"Build your own instruments from found objects, contact mics, circuits, and sensors, and question how sound tools are made.","a":"s","b":"College / post-secondary","g0":13,"g1":13,"d":"sound-music","sl":3,"sf":false,"h":"14 weeks, one 2–3 hr meeting a week","r":1,"f":null,"k":["Contact mics & found objects","Breadboards & chips","Sensors"]},{"id":"debugging-studio","t":"Debugging Studio","m":"a debugging portfolio built from tough puzzles","s":"Practice getting unstuck: describe problems clearly, change one thing at a time, support your peers, and document what you learn.","a":"s","b":"Grades 6–12","g0":6,"g1":12,"d":"code-games","sl":3,"sf":true,"h":"8 sessions × 60–90 min","r":1,"f":null,"k":["Paper, markers & prototypes"]},{"id":"spike-prime-robotics","t":"SPIKE Prime Robotics","m":"an autonomous maze-solving robot ready for a tournament","s":"Build a LEGO SPIKE robot, program it to run a maze on its own, then test, refine, and compete in a tournament.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"robots-machines","sl":3,"sf":false,"h":"12 sessions × 1 hr","r":1,"f":8,"k":["LEGO SPIKE Prime"]},{"id":"scratch-arcade-adventure","t":"Scratch Arcade Adventure","m":"a polished arcade game: enemy patterns, a power-up, three stages, a boss, and a win screen","s":"Build an arcade game with enemies, power-ups, a score display, and a boss, then revise it from what players tell you.","a":"s","b":"Grades 3–5","g0":3,"g1":5,"d":"code-games","sl":3,"sf":false,"h":"12 weeks × 1 hr (plus an optional 2-session starter bridge)","r":1,"f":4,"k":["Scratch"]},{"id":"sensing-and-gesture-studio","t":"Sensing & Gesture Studio","m":"a gesture-sensing interactive work","s":"Explore how a gesture becomes a signal, then build an interactive piece that senses movement, with consent and access in mind.","a":"s","b":"College / post-secondary","g0":13,"g1":13,"d":"circuits-electronics","sl":3,"sf":true,"h":"14 weeks, one 2–3 hr meeting a week","r":1,"f":null,"k":["Sensors","Arduino"]},{"id":"fpv-systems-primer","t":"FPV Systems Primer","m":"a saved drone configuration, a bench-proof checklist, a telemetry capture, and a troubleshooting story","s":"Learn FPV as a systems skill: prove it on the bench with props off, keep logs, and decide when to stop.","a":"s","b":"College & adults","g0":13,"g1":13,"d":"flight-drones","sl":3,"sf":false,"h":"5 sessions × 2–3 hr","r":1,"f":null,"k":["Tiny FPV drones"]},{"id":"foundations-signals-systems","t":"Foundations of Signals & Systems","m":"labeled plots, working filters, and a reproducible final project on real audio or sensor data","s":"Learn how sound and sensor data work by listening, plotting, filtering, and explaining signals in Python notebooks.","a":"s","b":"Grades 11–12 & college","g0":11,"g1":13,"d":"sound-music","sl":4,"sf":false,"h":"12 weeks","r":1,"f":null,"k":["Python notebooks"]},{"id":"ethics-accessibility-long-term-thinking","t":"Ethics, Accessibility & Long-Term Thinking","m":"a Responsibility Pack: an audit, a tested accessibility fix, and a repair plan","s":"Audit a real system for consent, accessibility, and repairability, then improve it and share what you learned.","a":"s","b":"Grades 11–12 & college","g0":11,"g1":13,"d":"civic-data","sl":3,"sf":true,"h":"12 weeks","r":1,"f":null,"k":["Paper, markers & prototypes"]},{"id":"digital-tools-platforms","t":"Digital Tools & Platforms","m":"a reliable physical controller with documented wiring and code","s":"Wire and program a microcontroller to read knobs and sensors, then build a reliable physical controller as your final project.","a":"s","b":"Grades 11–12 & college","g0":11,"g1":13,"d":"circuits-electronics","sl":3,"sf":false,"h":"12 weeks","r":1,"f":null,"k":["Arduino","Breadboards & chips","Sensors"]},{"id":"repair-studio","t":"Repair Studio: Devices, Diagnostics & Reuse","m":"a repair dossier with before-and-after evidence, or an honest postmortem","s":"Open up low-voltage gadgets, find out what's wrong, and decide: repair it, reuse it, or safely salvage it.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"circuits-electronics","sl":1,"sf":true,"h":"4 sessions × 90 min","r":0,"f":null,"k":["Multimeters & hand tools"]},{"id":"public-data-sensors-civic-interfaces","t":"Public Data, Sensors & Civic Interfaces","m":"a public-facing sign, map, or dashboard, a user test, and a plain-language privacy memo","s":"Collect one small, permissioned observation and turn it into a clearer sign, map, or dashboard, without treating people as data.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"civic-data","sl":2,"sf":true,"h":"4 sessions × 90 min","r":0,"f":null,"k":["Paper, markers & prototypes","Sensors"]},{"id":"live-media-lab","t":"Live Media Lab: Sound, Projection & Generative Performance","m":"a timed visual-and-sound piece and a run sheet","s":"Build a timed light-and-sound show, test it in a real room, and leave a run sheet so someone else can run it.","a":"s","b":"Grades 9–12","g0":9,"g1":12,"d":"media-light","sl":3,"sf":false,"h":"4 sessions × 90 min","r":0,"f":null,"k":["Projector & screens","Small PA & speakers"]},{"id":"public-screens-realtime-video","t":"Public Screens, Experimental Video & Real-Time Systems","m":"a screen or projection work, a site plan, and an operating guide","s":"Make a screen or projection piece for a real place, test it with an audience, and write the guide to keep it running.","a":"s","b":"College / post-secondary","g0":13,"g1":13,"d":"media-light","sl":3,"sf":false,"h":"4 sessions × 110 min","r":0,"f":null,"k":["Projector & screens","Small PA & speakers"]},{"id":"maintenance-repair-infrastructures","t":"Maintenance, Repair & Infrastructures Studio","m":"a map of hidden upkeep work, a low-risk prototype, and a handoff document","s":"Watch how a place gets kept running, map the hidden work, test one small fix, and hand it off clearly.","a":"s","b":"College / post-secondary","g0":13,"g1":13,"d":"civic-data","sl":2,"sf":true,"h":"4 sessions × 110 min","r":0,"f":null,"k":["Paper, markers & prototypes"]}]</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
+<script>
+(function(){
+var root=document.documentElement;
+var REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches || root.getAttribute('data-motion')==='reduce';
+if(window.gsap){gsap.registerPlugin(ScrollTrigger, Flip);}
+
+/* ---------- mobile menu ---------- */
+var nav=document.querySelector('.nav'),mb=nav.querySelector('.menu');
+mb.addEventListener('click',function(){var o=nav.classList.toggle('open');mb.setAttribute('aria-expanded',o);});
+nav.querySelectorAll('.drawer a').forEach(function(a){a.addEventListener('click',function(){nav.classList.remove('open');mb.setAttribute('aria-expanded','false');});});
+
+/* ---------- torn paper edges ---------- */
+document.querySelectorAll('svg.tear').forEach(function(s,idx){
+  var seed=11+idx*7;function r(){seed=(seed*16807)%2147483647;return seed/2147483647;}
+  var d='M0 28 L0 '+(10+r()*8);for(var x=0;x<=1440;x+=14+r()*22){d+=' L'+x.toFixed(0)+' '+(4+r()*16).toFixed(1);}d+=' L1440 12 L1440 28 Z';
+  s.innerHTML='<path fill="'+s.dataset.fill+'" d="'+d+'"/>';
+  s.style.marginTop='-27px';
+});
+
+/* ---------- DATA ---------- */
+var P=JSON.parse(document.getElementById('programs-data').textContent);
+var DOM={
+ 'robots-machines':{l:'Robots & Machines',c:'var(--orange)',t:'var(--ink)',i:'<circle cx="12" cy="12" r="4.5"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/>'},
+ 'code-games':{l:'Code & Games',c:'var(--green)',t:'var(--ink)',i:'<path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/>'},
+ 'fabrication-3d':{l:'3D Printing & Fab',c:'var(--teal)',t:'#fff',i:'<path d="M12 2l9 5v10l-9 5-9-5V7z M3 7l9 5 9-5 M12 12v10"/>'},
+ 'circuits-electronics':{l:'Circuits',c:'var(--yellow)',t:'var(--ink)',i:'<path d="M13 2L5 14h6l-1 8 8-12h-6z"/>'},
+ 'sound-music':{l:'Sound & Music',c:'var(--pink)',t:'var(--ink)',i:'<path d="M2 12h3l2-6 3 12 3-9 2 5 2-2h5"/>'},
+ 'flight-drones':{l:'Flight & Drones',c:'var(--blue)',t:'#fff',i:'<circle cx="5" cy="5" r="3"/><circle cx="19" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M7 7l10 10M17 7L7 17"/>'},
+ 'media-light':{l:'Media & Light',c:'var(--purple)',t:'#fff',i:'<circle cx="12" cy="12" r="4"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/>'},
+ 'civic-data':{l:'Civic Design',c:'var(--red)',t:'var(--ink)',i:'<path d="M3 11l9-8 9 8v10H3z M9 21v-6h6v6"/>'}
+};
+var SCREEN=['Unplugged','Glimpse','Tool bursts','Mixed studio','Screen studio'];
+function gradeLabel(g){return g===-1?'Pre-K':g===0?'Kindergarten':g===13?'college':'grade '+g;}
+function short(g){return g===-1?'PK':g===0?'K':g===13?'C':String(g);}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+/* ---------- MADE HERE rail (featured makes) ---------- */
+var VIS={
+ 1:{bg:'dots',h:'<svg viewBox="0 0 300 200" width="96%" height="96%"><g fill="none" stroke="#1A1718" stroke-width="4" stroke-linecap="round"><path d="M20 40 L140 90"/><path d="M150 120 L260 150"/></g><circle cx="38" cy="30" r="13" fill="#FF48B0" stroke="#1A1718" stroke-width="3"/><g fill="#FFE800" stroke="#1A1718" stroke-width="3"><rect x="150" y="70" width="18" height="44"/><rect x="172" y="70" width="18" height="44"/><rect x="194" y="70" width="18" height="44"/><rect x="216" y="70" width="18" height="44"/></g><rect x="246" y="118" width="40" height="30" fill="#0078BF" stroke="#1A1718" stroke-width="3"/><text x="18" y="190" font-family="Permanent Marker" font-size="18" fill="#1A1718">ball → ramp → blocks → cup!</text></svg>'},
+ 2:{bg:'inkbg',h:'<svg viewBox="0 0 300 200" width="100%" height="100%"><g style="mix-blend-mode:screen"><circle cx="120" cy="95" r="70" fill="#FF48B0"/><circle cx="185" cy="95" r="70" fill="#0078BF"/><circle cx="152" cy="140" r="60" fill="#FFE800" opacity=".85"/></g><path d="M110 170 l18-40 14 18 10-30 22 52z" fill="#1A1718"/></svg>'},
+ 3:{bg:'yelbg',h:'<svg viewBox="0 0 300 200" width="96%" height="96%"><rect x="30" y="30" width="240" height="140" fill="#FBF8F1" stroke="#1A1718" stroke-width="3"/><path d="M60 60 H200 V140 H60 Z" fill="none" stroke="#C47A2C" stroke-width="9"/><circle cx="200" cy="60" r="16" fill="#FF48B0" stroke="#1A1718" stroke-width="3"/><g stroke="#FF48B0" stroke-width="4" stroke-linecap="round"><path d="M224 40l14-10M228 62h18M222 82l14 10"/></g><rect x="70" y="120" width="34" height="34" rx="17" fill="#ccc" stroke="#1A1718" stroke-width="3"/><path d="M200 140 L250 110" stroke="#1A1718" stroke-width="3"/><text x="214" y="164" font-family="Permanent Marker" font-size="15">flap!</text></svg>'},
+ 4:{bg:'inkbg',h:'<svg viewBox="0 0 160 110" width="96%" height="96%" shape-rendering="crispEdges"><rect width="160" height="110" fill="#1A1718"/><g fill="#00A95C"><rect x="0" y="96" width="160" height="14"/></g><g fill="#FF48B0"><rect x="100" y="30" width="40" height="8"/><rect x="96" y="38" width="48" height="24"/><rect x="104" y="62" width="8" height="10"/><rect x="128" y="62" width="8" height="10"/></g><g fill="#1A1718"><rect x="106" y="44" width="8" height="8"/><rect x="126" y="44" width="8" height="8"/></g><g fill="#FFE800"><rect x="24" y="78" width="12" height="18"/><rect x="20" y="70" width="20" height="10"/></g><rect x="50" y="62" width="30" height="4" fill="#0078BF"/><text x="8" y="16" font-family="Space Mono" font-size="9" fill="#FFE800">SCORE 04200  BOSS!</text></svg>'},
+ 5:{bg:'pinkbg',img:'img/st-3dpen.webp'},
+ 6:{bg:'bluebg',img:'img/st-house.webp'},
+ 7:{bg:'',img:'img/riso-3dprinter.jpg',fill:1},
+ 8:{bg:'yelbg',img:'img/st-ev3.webp'},
+ 9:{bg:'dots',img:'img/st-drone.webp'},
+ 10:{bg:'inkbg',h:'<svg viewBox="0 0 300 200" width="100%" height="100%"><g fill="none" stroke-linecap="round"><path id="w1" d="M0 70 '+(function(){var s='';for(var i=0;i<60;i++){s+='L'+(i*5)+' '+(70+Math.sin(i*1.3)*(8+((i*7)%11)));}return s;})()+'" stroke="#FBF8F1" stroke-width="3"/><path d="M0 140 '+(function(){var s='';for(var i=0;i<60;i++){s+='L'+(i*5)+' '+(140+Math.sin(i*0.7)*(18+((i*13)%23))*Math.exp(-((i%20))/14));}return s;})()+'" stroke="#FF48B0" stroke-width="3"/></g><text x="10" y="30" font-family="Space Mono" font-size="12" fill="#FBF8F1">DRY</text><text x="10" y="190" font-family="Space Mono" font-size="12" fill="#FF48B0">+ STAIRWELL REVERB</text></svg>'},
+ 11:{bg:'',h:'<svg viewBox="0 0 300 200" width="96%" height="96%"><path d="M20 100 H280" stroke="#1A1718" stroke-width="3"/><circle cx="20" cy="100" r="6" fill="#1A1718"/><circle cx="280" cy="100" r="6" fill="#1A1718"/><path d="M40 60 C 70 20, 90 150, 120 90 S 170 30, 190 120 S 240 170, 265 70" fill="none" stroke="#0078BF" stroke-width="5" stroke-linecap="round"/><path d="M50 160 q20 -30 40 0 t40 0 t40 0 t40 0" fill="none" stroke="#FF48B0" stroke-width="5" stroke-linecap="round"/><text x="150" y="30" font-family="Permanent Marker" font-size="16">pluck · bow · scrape</text></svg>'},
+ 12:{bg:'',img:'img/px-portrait.png',pix:1}
+};
+var FEAT={1:'A chain reaction the size of the floor',2:'A shadow theater with color windows',3:'A paper circuit that lights up when you close the flap',4:'An arcade game with a boss level',5:'A 3D-printed critter that actually wiggles',6:'A neighborhood invention, shown off on show night',7:'A claw that has to lift 500 grams',8:'A robot that solves a maze by itself',9:'A tiny FPV drone you built, then flew',10:'A beat made from a stairwell',11:'A drawing you can hear',12:'A pixel self-portrait, hung in a real show'};
+var rail=document.getElementById('rail');
+rail.insertAdjacentHTML('beforeend','<div class="railnote" aria-hidden="true">Start at Pre-K →<small>The bench grows with them</small></div>');
+P.filter(function(p){return p.f;}).sort(function(a,b){return a.f-b.f;}).forEach(function(p){
+  var v=VIS[p.f]||{},d=DOM[p.d];
+  var vis=v.img?'<img src="'+v.img+'" alt="" loading="lazy"'+(v.fill?' class="fill riso"':'')+(v.pix?' style="image-rendering:pixelated;width:224px;height:224px"':'')+'>':(v.h||'');
+  var el=document.createElement('article');el.className='clip';
+  el.innerHTML='<span class="n">'+p.f+'</span>'+(p.f%4===1?'<span class="tape"></span>':'')+'<div class="vis '+(v.bg||'')+'">'+vis+'</div><h3>'+esc(FEAT[p.f])+'</h3><div class="meta"><span class="chip ink">'+esc(p.b.replace('Grades','Gr').replace('Pre-K–Grade 2','Pre-K–2'))+'</span><span class="chip" style="background:'+d.c+';color:'+d.t+'">'+d.l+'</span>'+(p.r?'':'<span class="chip pilot">Piloting</span>')+'</div>';
+  rail.appendChild(el);
+});
+rail.insertAdjacentHTML('beforeend','<div class="railnote end" aria-hidden="true">…all the way to Grade 12.<small><a href="#programs" tabindex="-1">See every program ↓</a></small></div>');
+
+/* ---------- PARTS BIN explorer ---------- */
+var who=document.getElementById('who'),what=document.getElementById('what'),grade=document.getElementById('grade'),unp=document.getElementById('unplugged');
+var cardsEl=document.getElementById('cards'),countEl=document.getElementById('bin-count'),inksEl=document.getElementById('inks');
+var picked=new Set();
+// ink chips (domain legend doubles as filter) with live counts
+Object.keys(DOM).forEach(function(k){
+  var b=document.createElement('button');b.type='button';b.className='ink-chip';b.dataset.d=k;b.setAttribute('aria-pressed','false');
+  b.innerHTML='<span class="sw" style="background:'+DOM[k].c+'"></span>'+DOM[k].l+' <small></small>';
+  b.addEventListener('click',function(){var on=b.getAttribute('aria-pressed')==='true';what.value=on?'all':k;render(true);});
+  inksEl.appendChild(b);
+});
+// ruler ticks + histogram (programs reaching each grade; ready solid, pilot hatched)
+var stick=document.querySelector('.ruler .stick'),bars=document.getElementById('bars');
+var studs=P.filter(function(p){return p.a==='s'&&p.g0!==null;}),maxN=0,hist=[];
+for(var g=-1;g<=13;g++){var r=0,pl=0;studs.forEach(function(p){if(p.g0<=g&&g<=p.g1){p.r?r++:pl++;}});hist.push([r,pl]);maxN=Math.max(maxN,r+pl);
+  var s=document.createElement('span');s.textContent=short(g);stick.appendChild(s);}
+hist.forEach(function(h,i){var b=document.createElement('div');b.className='bar';b.dataset.g=i-1;
+  b.innerHTML='<i style="height:'+(h[0]/maxN*76)+'px"></i><i class="p" style="height:'+(h[1]/maxN*76)+'px"></i>';bars.appendChild(b);});
+
+function matches(p){
+  var w=who.value, aud = w==='families'?'f':'s';
+  if(p.a!==aud) return false;
+  if(aud==='s'){var g=+grade.value;if(!(p.g0<=g&&g<=p.g1))return false;}
+  if(what.value!=='all'&&p.d!==what.value)return false;
+  if(unp.checked&&!p.sf)return false;
+  return true;
+}
+function card(p){
+  var d=DOM[p.d],dial='';for(var i=0;i<5;i++)dial+='<i class="'+(i<=p.sl?'f':'')+'"></i>';
+  return '<article class="pcard" data-id="'+p.id+'"><div class="top" style="background:'+d.c+';color:'+d.t+'"><span>'+d.l+'</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d.i+'</svg></div>'+
+   '<div class="body"><span class="lbl">you\'ll make…</span><h4>'+esc(p.m)+'</h4><p class="title">'+esc(p.t)+'</p>'+
+   '<dl><dt>Who</dt><dd>'+esc(p.b)+'</dd><dt>Time</dt><dd>'+esc(p.h)+'</dd><dt>Screens</dt><dd><span class="dial" title="'+SCREEN[p.sl]+'">Hands '+dial+' Screens</span>'+(p.sf?' · <span style="font-size:12px">unplugged version</span>':'')+'</dd></dl></div>'+
+   '<div class="foot"><span class="stamp'+(p.r?'':' pilot')+'">'+(p.r?'Ready':'Piloting')+'</span><button type="button" class="add" aria-pressed="'+(picked.has(p.id)?'true':'false')+'" data-id="'+p.id+'">'+(picked.has(p.id)?'✓ On my list':'+ Add to list')+'</button></div></article>';
+}
+var firstRender=true;
+function render(animate){
+  var g=+grade.value, fam=who.value==='families';
+  document.getElementById('gradeWord').textContent=gradeLabel(g);
+  document.getElementById('gradeClause').style.display=fam?'none':'';
+  document.getElementById('rulerBox').style.opacity=fam?'.35':'1';
+  grade.setAttribute('aria-valuetext',gradeLabel(g));
+  document.getElementById('pencil').style.left='calc('+(g+1)+' * 100% / 15)';
+  bars.querySelectorAll('.bar').forEach(function(b){b.classList.toggle('on',+b.dataset.g===g);});
+  inksEl.querySelectorAll('.ink-chip').forEach(function(b){
+    var k=b.dataset.d;b.setAttribute('aria-pressed',what.value===k?'true':'false');
+    var n=P.filter(function(p){var save=what.value;return (p.d===k)&&(function(){var ok=true;var aud=fam?'f':'s';if(p.a!==aud)ok=false;if(ok&&!fam&&!(p.g0<=g&&g<=p.g1))ok=false;if(ok&&unp.checked&&!p.sf)ok=false;return ok;})();}).length;
+    b.querySelector('small').textContent=n;
+  });
+  var list=P.filter(matches).sort(function(a,b){return b.r-a.r||(a.g0||0)-(b.g0||0);});
+  var state=(!REDUCE&&animate&&window.Flip)?Flip.getState(cardsEl.querySelectorAll('.pcard')):null;
+  cardsEl.innerHTML=list.length?list.map(card).join(''):'<p class="empty">Nothing on the shelf for that combo yet. Try another ink, or <a href="#partner" style="color:var(--yellow)">ask us</a>: we build new programs with partners.</p>';
+  var ready=list.filter(function(p){return p.r;}).length;
+  countEl.innerHTML='Showing <b>'+list.length+'</b> '+(list.length===1?'program':'programs')+(list.length?' · '+ready+' ready to schedule, '+(list.length-ready)+' piloting':'')+' · all free to students &amp; families';
+  if(state){Flip.from(state,{targets:cardsEl.querySelectorAll('.pcard'),duration:.55,ease:'back.out(1.4)',stagger:.025,absolute:false,
+      onEnter:function(els){return gsap.fromTo(els,{opacity:0,y:40,rotation:function(){return gsap.utils.random(-8,8);}},{opacity:1,y:0,rotation:0,duration:.5,stagger:.03,ease:'back.out(1.6)'});},
+      onLeave:function(els){return gsap.to(els,{opacity:0,scale:.8,duration:.2});}});}
+}
+[who,what,unp].forEach(function(el){el.addEventListener('change',function(){render(true);});});
+grade.addEventListener('input',function(){render(true);});
+cardsEl.addEventListener('click',function(e){var b=e.target.closest('.add');if(!b)return;var id=b.dataset.id;
+  picked.has(id)?picked.delete(id):picked.add(id);
+  b.setAttribute('aria-pressed',picked.has(id));b.textContent=picked.has(id)?'✓ On my list':'+ Add to list';updateReq();});
+function updateReq(){
+  var ul=document.getElementById('reqList'),names=P.filter(function(p){return picked.has(p.id);}).map(function(p){return p.t;});
+  ul.innerHTML=names.length?names.map(function(n){return '<li>'+esc(n)+'</li>';}).join(''):'<li style="list-style:none" class="hint">Add programs from the parts bin and they\'ll show up here.</li>';
+  var body='Hi createMPLS! We are interested in bringing a lab to our site.'+(names.length?'\n\nPrograms on our list:\n- '+names.join('\n- '):'');
+  document.getElementById('partnerBtn').href='mailto:info@creatempls.org?subject='+encodeURIComponent('Bring a createMPLS lab to our site')+'&body='+encodeURIComponent(body);
+}
+// preselect two programs so the request flyer shows the hand-written list
+['scratch-arcade-adventure','from-idea-to-3d-print'].forEach(function(id){if(P.some(function(p){return p.id===id;}))picked.add(id);});
+render(false);updateReq();
+
+/* ---------- manifesto word split ---------- */
+var man=document.querySelector('.manifesto .split');
+(function split(node){Array.prototype.slice.call(node.childNodes).forEach(function(n){
+  if(n.nodeType===3){var frag=document.createDocumentFragment();n.textContent.split(/(\s+)/).forEach(function(t){if(!t)return;if(/^\s+$/.test(t)){frag.appendChild(document.createTextNode(t));}else{var s=document.createElement('span');s.className='w';s.textContent=t;frag.appendChild(s);}});n.replaceWith(frag);}
+  else if(n.nodeType===1&&n.tagName==='MARK'){n.classList.add('w');n.style.setProperty('--hx',REDUCE?1:0);}
+});})(man);
+
+/* ---------- verb swap words ---------- */
+var VERBS=['build','wire','code','print','fly','mix','fix'];
+
+/* ---------- motion toggle ---------- */
+var mt=document.getElementById('motionToggle');mt.textContent='Motion: '+(REDUCE?'off':'on');
+mt.addEventListener('click',function(){try{localStorage.setItem('cm-motion',REDUCE?'on':'off');}catch(e){}location.reload();});
+
+if(REDUCE||!window.gsap){ // static, complete page
+  document.querySelectorAll('.manifesto .w').forEach(function(w){w.style.opacity=1;});
+  document.querySelectorAll('svg.strike path').forEach(function(p){p.style.strokeDasharray='none';});
+  var m=document.querySelector('.measure');if(m)m.style.display='none';
+  return;
+}
+
+/* ================= MOTION (all inside matchMedia) ================= */
+var mm=gsap.matchMedia();
+mm.add({desk:'(min-width: 861px)',mob:'(max-width: 860px)'},function(ctx){
+  var desk=ctx.conditions.desk;
+
+  // 1. Registration intro: the two ink plates slide into (near) register
+  var intro=gsap.timeline({defaults:{ease:'expo.out'}});
+  intro.from('.cover .l',{yPercent:40,opacity:0,duration:.8,stagger:.08})
+       .fromTo('.cover .over',{'--mx':'-46px','--my':'22px'},{'--mx':'4px','--my':'3px',duration:1.1,stagger:.06},0.05)
+       .from('.cover .print',{y:-60,rotation:-6,opacity:0,duration:.9},0.15)
+       .from('.cover .print .tape',{scaleX:0,duration:.35,stagger:.1},0.6)
+       .from('.cover .slap',{scale:1.35,rotation:function(i){return [18,-20,10,-14][i%4];},opacity:0,duration:.7,ease:'back.out(2.2)',stagger:.09},0.35)
+       .from('.cover .burst',{scale:0,rotation:-120,duration:.8,ease:'back.out(2)'},0.7)
+       .from('.cover .lede',{y:40,opacity:0,duration:.7},0.5)
+       .from('.cover .note1',{opacity:0,x:-10,duration:.5},1.0);
+  gsap.to('.cover .burst svg',{rotation:360,duration:40,repeat:-1,ease:'none'});
+
+  // 2. Verb swap: Sharpie strike, then a new hand-written verb above
+  var strike=document.querySelector('svg.strike path'),L=strike.getTotalLength();
+  gsap.set(strike,{strokeDasharray:L,strokeDashoffset:L});
+  var altw=document.querySelector('.altw'),alt=document.querySelector('.verb .alt');gsap.set(alt,{opacity:0});
+  var vt=gsap.timeline({delay:1.3});
+  vt.to(strike,{strokeDashoffset:0,duration:.45,ease:'power2.in'}).fromTo(alt,{opacity:0,y:10,scale:.8},{opacity:1,y:0,scale:1,duration:.35,ease:'back.out(3)'});
+  var vi=0;
+  gsap.timeline({delay:3.4,repeat:-1,repeatDelay:1.6}).to(alt,{opacity:0,y:-8,duration:.2,onComplete:function(){vi=(vi+1)%VERBS.length;altw.textContent=VERBS[vi];}})
+    .fromTo(alt,{opacity:0,y:10,rotation:-12},{opacity:1,y:0,rotation:-7,duration:.35,ease:'back.out(3)'});
+
+  // 3. Hover misregistration on headlines
+  document.querySelectorAll('.over').forEach(function(o){
+    o.addEventListener('mouseenter',function(){gsap.to(o,{'--mx':'12px','--my':'-6px',duration:.3,ease:'power2.out'});});
+    o.addEventListener('mouseleave',function(){gsap.to(o,{'--mx':'4px','--my':'3px',duration:.6,ease:'elastic.out(1,.4)'});});
+  });
+
+  // 4. Depth parallax by layer (data-depth = speed relative to page)
+  gsap.utils.toArray('[data-depth]').forEach(function(el){
+    var dpt=parseFloat(el.dataset.depth);
+    gsap.to(el,{yPercent:-dpt*100,ease:'none',scrollTrigger:{trigger:el.closest('section')||el,start:'top bottom',end:'bottom top',scrub:true}});
+  });
+
+  // 5. Marquee bands, velocity-reactive
+  var tracks=gsap.utils.toArray('.band .track').map(function(t,i){
+    return i?gsap.fromTo(t,{xPercent:-50},{xPercent:0,duration:30,ease:'none',repeat:-1}):gsap.to(t,{xPercent:-50,duration:34,ease:'none',repeat:-1});
+  });
+  ScrollTrigger.create({onUpdate:function(self){var v=Math.min(4,1+Math.abs(self.getVelocity())/600);tracks.forEach(function(t){gsap.to(t,{timeScale:v,duration:.2,overwrite:true});gsap.to(t,{timeScale:1,duration:1.2,delay:.2});});}});
+  document.querySelectorAll('.band').forEach(function(b,i){b.addEventListener('mouseenter',function(){tracks[i].pause();});b.addEventListener('mouseleave',function(){tracks[i].play();});});
+
+  // 6. Paste-up reveals: slap stickers, rip tape, draw Sharpie
+  gsap.utils.toArray('section:not(.cover) .slap').forEach(function(el){
+    gsap.from(el,{scale:1.25,rotation:gsap.utils.random(-16,16),opacity:0,duration:.7,ease:'back.out(2)',scrollTrigger:{trigger:el,start:'top 88%'}});
+  });
+  gsap.utils.toArray('section:not(.cover) .taped').forEach(function(el){
+    gsap.from(el,{y:60,opacity:0,rotation:-6,duration:.9,ease:'expo.out',scrollTrigger:{trigger:el,start:'top 85%'}});
+  });
+  gsap.utils.toArray('svg.draw path').forEach(function(p){
+    var l=p.getTotalLength();gsap.set(p,{strokeDasharray:l,strokeDashoffset:l});
+    gsap.to(p,{strokeDashoffset:0,duration:.9,ease:'power2.inOut',delay:p.closest('.cover')?1.1:0,scrollTrigger:p.closest('.cover')?null:{trigger:p.closest('section'),start:'top 70%'}});
+  });
+  gsap.utils.toArray('section:not(.cover) .reg .over, section:not(.cover) h2.reg').forEach(function(h){
+    gsap.from(h,{yPercent:30,opacity:0,duration:.8,ease:'expo.out',scrollTrigger:{trigger:h,start:'top 85%'}});
+  });
+  gsap.utils.toArray('section:not(.cover) .over').forEach(function(o){
+    gsap.fromTo(o,{'--mx':'-30px','--my':'14px'},{'--mx':'4px','--my':'3px',duration:1.1,ease:'expo.out',scrollTrigger:{trigger:o,start:'top 85%'}});
+  });
+
+  // 7. Manifesto: words ink in, highlighter swipes
+  var words=gsap.utils.toArray('.manifesto .w');
+  gsap.to(words,{opacity:1,stagger:.1,ease:'none',scrollTrigger:{trigger:'.manifesto',start:'top 75%',end:'bottom 60%',scrub:.6}});
+  gsap.utils.toArray('.manifesto mark').forEach(function(m){gsap.to(m,{'--hx':1,duration:.5,ease:'power2.out',scrollTrigger:{trigger:m,start:'top 62%'}});});
+
+  // 8. MADE HERE: pinned horizontal rail with a tape-measure progress bar (desktop)
+  if(desk){
+    var railEl=document.getElementById('rail');
+    var dist=function(){return railEl.scrollWidth-window.innerWidth;};
+    gsap.to(railEl,{x:function(){return -dist();},ease:'none',scrollTrigger:{trigger:'#made',start:'top top',end:function(){return '+='+dist();},pin:true,scrub:.6,invalidateOnRefresh:true,
+      onUpdate:function(s){document.querySelector('.measure').style.setProperty('--p',s.progress);}}});
+    gsap.utils.toArray('.clip').forEach(function(c,i){gsap.from(c,{y:i%2?-40:40,ease:'none',scrollTrigger:{trigger:'#made',start:'top top',end:'+=1200',scrub:true}});});
+  } else {
+    gsap.from('.clip',{y:40,opacity:0,stagger:.08,duration:.6,ease:'back.out(1.6)',scrollTrigger:{trigger:'#made .rail-wrap',start:'top 85%'}});
+  }
+
+  // 9. Parts bin cards deal in like a hand of cards
+  gsap.from('#cards .pcard',{y:70,opacity:0,rotation:function(){return gsap.utils.random(-7,7);},stagger:.06,duration:.7,ease:'back.out(1.5)',scrollTrigger:{trigger:'#cards',start:'top 85%'}});
+  gsap.from('.ruler .bar',{scaleY:0,transformOrigin:'bottom',stagger:.03,duration:.5,ease:'back.out(2)',scrollTrigger:{trigger:'.ruler',start:'top 85%'}});
+
+  // 10. Flyers get pinned up
+  gsap.from('.flyer',{y:-80,rotation:function(i){return [-8,9,-6][i];},opacity:0,stagger:.12,duration:.9,ease:'back.out(1.5)',scrollTrigger:{trigger:'.flyers',start:'top 85%'}});
+  gsap.from('.wordmark',{yPercent:60,duration:1.1,ease:'expo.out',scrollTrigger:{trigger:'footer',start:'top 80%'}});
+});
+document.fonts&&document.fonts.ready.then(function(){ScrollTrigger.refresh();});
+})();
+</script>
+</body>
+</html>
