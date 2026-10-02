@@ -1,0 +1,1529 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>createMPLS — Headliners</title>
+<meta name="description" content="createMPLS brings hands-on robotics, coding, 3D printing, circuits, sound tech and drones into Minneapolis schools and community sites. Students and families pay nothing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Three text families (Bricolage, Anton, Permanent Marker). Bungee is for sign objects only, always uppercase,
+     and loads as a true glyph subset: only the characters the sign objects use (generated, see concept.md §4). -->
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Permanent+Marker&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap&text=%20%24%2B0123456789ABCDEFGHIKLMNOPRSTUVWY%C2%B7%E2%80%93%E2%86%92%E2%9C%93" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1' y='3' width='30' height='22' rx='5' fill='%23C8321F'/%3E%3Cpath d='M12 24l4 6 4-6z' fill='%23C8321F'/%3E%3Cpath d='M21 10C18 6 9 7 9 15C9 22 17 23 21 19' fill='none' stroke='%2315112B' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='M21 10C18 6 9 7 9 15C9 22 17 23 21 19' fill='none' stroke='%23FF48B0' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+/* =========================================================
+   HEADLINERS — createMPLS "Marquee + Zine"  (round 3)
+   Night = the marquee (lit signs, the season map, tickets)
+   Day   = the poster wall (paper, tape, stickers, Sharpie)
+   House rule for every section headline (Anton): night = ONE word lit gold; day = ONE phrase with the red Sharpie underline.
+   Gold appears only where something is lit: the primary button, the lit word, bulbs.
+   ========================================================= */
+:root{
+  --night:#15112B; --night-2:#201941; --line:#3B3170;
+  --gold:#FFC83D; --gold-hot:#FFE9A8; --gold-dim:#5C4A1F;
+  --red:#E5412D; --red-deep:#C8321F; --velvet:#8E1B2C;
+  --cream:#FFF3DC; --paper:#F4EEE1; --paper-2:#FFFBF2; --wall:#E6DCC9; --tpaper:#FBF1DC;
+  --ink:#15112B; --ink-soft:#4A4166; --mute-n:#C9C0E6; --eye-n:#FFB3D9;
+  --pink:#FF48B0; --pink-paper:#FFB3D9; --blue:#0B5CB8; --orange-paper:#FF9152; --lilac-paper:#E4DAFF;
+  --tape:rgba(240,230,196,.92);
+  --s-robots:#FF8A3D; --s-code:#7CE0C3; --s-fab:#B9A6FF; --s-circ:#C6F05A;
+  --s-sound:#FF7EB6; --s-flight:#6FC3FF; --s-media:#3CC8C0; --s-civic:#FF9F8A;
+  --f-sign:'Bungee', system-ui, sans-serif;
+  --f-poster:'Anton', 'Impact', sans-serif;
+  --f-hand:'Permanent Marker', cursive;
+  --f-text:'Bricolage Grotesque', system-ui, sans-serif;
+  --gut:clamp(18px, 4vw, 40px);
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .30 0 0 0 0 .22 0 0 0 0 .10 1.7 0 0 0 -.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+html[data-motion="reduce"]{scroll-behavior:auto}
+body{margin:0; background:var(--night); color:var(--cream); font-family:var(--f-text); font-size:17px; line-height:1.55}
+img{max-width:100%; height:auto; display:block}
+html,body{overflow-x:clip}
+main>section,footer{overflow-x:clip}
+a{color:inherit}
+button,input,select,textarea{font:inherit; color:inherit}
+.wrap{max-width:1240px; margin:0 auto; padding:0 var(--gut)}
+[hidden]{display:none!important}
+.sr{position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.skip:focus{position:fixed; left:12px; top:12px; width:auto; height:auto; clip:auto; z-index:999; background:var(--gold); color:var(--ink); padding:10px 14px; font-weight:800}
+:focus-visible{outline:3px solid var(--gold); outline-offset:3px; border-radius:4px}
+.day :focus-visible{outline-color:var(--blue)}
+.eyebrow{font-size:14px; font-weight:750; letter-spacing:.16em; text-transform:uppercase; margin:0}
+.fine{font-size:14px; line-height:1.45}
+.h-poster{font-family:var(--f-poster); font-weight:400; text-transform:uppercase; font-size:clamp(50px,6.4vw,100px); line-height:.94; letter-spacing:.005em; margin:12px 0 0; text-wrap:balance}
+.lit{color:var(--gold); text-shadow:0 0 22px rgba(255,200,61,.45), 0 0 2px var(--gold-hot)}
+/* review mode (?review): draft details the owner must confirm get a dotted underline; hidden on the public page */
+html.review [data-confirm]{text-decoration:underline dotted 2px; text-underline-offset:4px; background:rgba(255,72,176,.14)}
+.review-key{display:none}
+html.review .review-key{display:block; position:fixed; left:10px; bottom:12px; z-index:70; background:var(--pink); color:var(--ink); font-size:14px; font-weight:800; padding:6px 12px; border-radius:99px}
+
+/* ---------- textures: grain on grounds + objects, never on faces ---------- */
+.grain{position:relative; isolation:isolate}
+.grain::before{content:""; position:absolute; inset:0; z-index:-1; background:var(--noise); mix-blend-mode:multiply; opacity:.3; pointer-events:none}
+.grain-n{position:absolute; inset:0; pointer-events:none; background:var(--noise); mix-blend-mode:screen; opacity:.08}
+
+/* ---------- bulbs: static and lit (SVG frames sized by JS so bulbs stay round); the footer sign chases on hover only ---------- */
+[data-bulbs]{position:relative}
+svg.bulbs{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index:3}
+svg.bulbs .dim{fill:none; stroke:#F7D58A; stroke-linecap:round; opacity:.55}
+svg.bulbs .lit{fill:none; stroke:var(--gold-hot); stroke-linecap:round; filter:drop-shadow(0 0 3px var(--gold)) drop-shadow(0 0 9px rgba(255,200,61,.6))}
+html[data-motion="full"]:not(.paused) [data-chase] svg.bulbs .lit{animation:chase var(--speed,1s) steps(3) infinite}
+@keyframes chase{to{stroke-dashoffset:calc(var(--g) * -3)}}
+html[data-motion="reduce"] svg.bulbs .lit, html.paused svg.bulbs .lit, [data-bulbs]:not([data-chase]) svg.bulbs .lit{stroke-dasharray:0 var(--g)!important}
+
+/* ---------- buttons: punched ticket (a sign object, so Bungee, uppercase) ---------- */
+.btn{--bg:var(--gold); --fg:var(--ink); position:relative; display:inline-flex; align-items:center; justify-content:center; gap:.6em; min-height:54px; padding:14px 30px; background:var(--bg); color:var(--fg); font-family:var(--f-sign); font-weight:400; font-size:15px; letter-spacing:.02em; line-height:1.15; text-transform:uppercase; text-decoration:none; border:0; cursor:pointer; text-align:center;
+  -webkit-mask:radial-gradient(circle 9px at 0 50%, #0000 97%, #000) left/51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, #0000 97%, #000) right/51% 100% no-repeat;
+          mask:radial-gradient(circle 9px at 0 50%, #0000 97%, #000) left/51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, #0000 97%, #000) right/51% 100% no-repeat;
+  transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.btn:hover{transform:rotate(-1.5deg) translateY(-2px)}
+.btn .arr{transition:transform .25s}
+.btn:hover .arr{transform:translateX(4px)}
+.btn.ghost{background:transparent; color:var(--cream); -webkit-mask:none; mask:none; border:2px solid var(--cream); border-radius:999px; padding:12px 26px}
+.btn.ink{--bg:var(--ink); --fg:var(--cream)}
+.btn.paper{--bg:var(--cream); --fg:var(--ink)}
+.btn .n{display:inline-grid; place-items:center; min-width:24px; height:24px; padding:0 6px; border-radius:99px; background:var(--ink); color:var(--cream); font-size:12px}
+.btn .n:empty{display:none}
+
+/* ============ NAV ============ */
+.nav{position:fixed; inset:0 0 auto; z-index:50; transition:background .3s, box-shadow .3s}
+.nav.solid{background:rgba(21,17,43,.94); box-shadow:0 1px 0 var(--line); backdrop-filter:blur(8px)}
+.nav .wrap{display:flex; align-items:center; gap:28px; height:78px}
+.logo{display:block; flex:none}
+.logo svg{display:block; height:54px; width:auto; overflow:visible}
+.nav ul{display:flex; gap:26px; list-style:none; margin:0 0 0 auto; padding:0}
+.nav ul a{text-decoration:none; font-weight:650; font-size:16px; padding:6px 0; background:linear-gradient(var(--cream),var(--cream)) 0 100%/0 3px no-repeat; transition:background-size .25s}
+.nav ul a:hover{background-size:100% 3px}
+.nav .btn{min-height:46px; padding:10px 22px; font-size:13px}
+.menu-btn{display:none; background:none; border:2px solid var(--cream); border-radius:999px; width:46px; height:46px; cursor:pointer; padding:0}
+.menu-btn span{display:block; width:18px; height:2px; background:currentColor; margin:4px auto}
+.drawer{position:fixed; inset:0; z-index:60; background:var(--night); padding:90px 24px 24px; display:none; flex-direction:column; gap:6px}
+.drawer.open{display:flex}
+.drawer a{font-family:var(--f-poster); text-transform:uppercase; font-size:34px; line-height:1.1; text-decoration:none; padding:10px 0; border-bottom:1px solid var(--line)}
+.drawer .btn{font-family:var(--f-sign); font-size:15px; margin-top:18px; border:0; line-height:1.15}
+.drawer .close{position:absolute; top:12px; right:18px; background:none; border:2px solid var(--cream); border-radius:999px; width:46px; height:46px; font-size:22px; cursor:pointer}
+
+/* ============ HERO (night): the venue, its sign, and the poster wall beside it ============ */
+.hero{position:relative; padding:104px 0 92px; overflow:hidden; background:
+  radial-gradient(1100px 600px at 78% 35%, rgba(229,65,45,.20), transparent 60%),
+  radial-gradient(900px 500px at 10% 100%, rgba(108,79,214,.22), transparent 60%), var(--night)}
+.skyline{position:absolute; left:0; right:0; bottom:0; width:100%; height:150px; color:#3F3579; pointer-events:none}
+/* the wheat-pasted wall: dim posters behind the sign, lit only by its glow */
+.pwall{position:absolute; top:0; bottom:0; right:0; width:60%; z-index:0; display:grid; grid-template-columns:repeat(5,1fr); grid-auto-rows:210px; gap:4px 0; padding:56px 0 0; pointer-events:none;
+  -webkit-mask:linear-gradient(90deg,#0000,#000 22%); mask:linear-gradient(90deg,#0000,#000 22%)}
+.pwall::after{content:""; position:absolute; inset:0; background:radial-gradient(60% 55% at 52% 46%, rgba(21,17,43,.18), rgba(21,17,43,.8) 80%)}
+.wp{--c:var(--s-sound); position:relative; margin:0 -10px; background:var(--c); color:var(--ink); padding:12px 12px; transform:rotate(var(--r,0deg)) translateY(var(--y,0)); isolation:isolate; clip-path:polygon(0 2%,8% 0,30% 2%,52% 0,78% 2%,100% 0,99% 40%,100% 72%,98% 100%,70% 98%,40% 100%,12% 98%,0 100%,1% 60%)}
+.wp::before{content:""; position:absolute; inset:0; z-index:-1; background:var(--noise); mix-blend-mode:multiply; opacity:.7}
+.wp small{display:inline-block; font-family:var(--f-sign); text-transform:uppercase; font-size:11px; background:var(--ink); color:var(--c); padding:1px 6px}
+.wp b{display:block; font-family:var(--f-poster); font-weight:400; font-size:44px; line-height:.9; text-transform:uppercase; margin-top:6px; word-break:break-word}
+.wp i{display:block; margin-top:8px; height:46px; border-top:3px solid var(--ink); background:radial-gradient(circle, var(--ink) 1.4px, transparent 1.7px) 0 6px/8px 8px}
+.hero-grid{position:relative; z-index:2; display:grid; grid-template-columns:1fr 1fr; grid-template-areas:"top stage" "bot stage"; column-gap:56px; align-items:center}
+.hc-top{grid-area:top; align-self:end}
+.hc-bot{grid-area:bot; align-self:start}
+.stage{grid-area:stage}
+.kicker{font-size:14px; font-weight:750; letter-spacing:.14em; text-transform:uppercase; color:var(--eye-n); margin:0}
+.hero h1{font-family:var(--f-poster); font-weight:400; text-transform:uppercase; font-size:clamp(60px,7.2vw,104px); line-height:.92; letter-spacing:.005em; margin:16px 0 20px}
+.hero .lede{font-size:clamp(17px,1.45vw,20px); max-width:560px; color:#EDE5FF; margin:0 0 26px}
+.hero .lede strong{color:var(--cream)}
+.cta-row{display:flex; flex-wrap:wrap; gap:14px; align-items:center}
+/* the one $0 ticket in the hero, plus the line principals ask about */
+.cost{display:grid; grid-template-columns:auto 1fr; margin-top:24px; max-width:590px; background:var(--cream); color:var(--ink);
+  -webkit-mask:radial-gradient(circle 8px at 0 50%, #0000 97%, #000) left/51% 100% no-repeat, radial-gradient(circle 8px at 100% 50%, #0000 97%, #000) right/51% 100% no-repeat;
+          mask:radial-gradient(circle 8px at 0 50%, #0000 97%, #000) left/51% 100% no-repeat, radial-gradient(circle 8px at 100% 50%, #0000 97%, #000) right/51% 100% no-repeat}
+.cost .z{display:flex; align-items:center; gap:10px; padding:12px 16px 12px 24px; border-right:2px dashed #CFC4AE}
+.cost .z b{font-family:var(--f-sign); font-weight:400; color:var(--red-deep); font-size:30px; line-height:1}
+.cost .z span{font-size:14px; font-weight:750; line-height:1.2; max-width:96px}
+.cost p{margin:0; padding:11px 24px 11px 16px; font-size:15px; line-height:1.4; align-self:center}
+.cost p b{font-weight:800}
+.cost a{font-weight:800; color:var(--red-deep); white-space:nowrap}
+
+.stage{position:relative; padding-top:84px}
+.board{position:relative; z-index:2; background:linear-gradient(180deg,#D8402A,#B32D1B); border-radius:24px; padding:30px 30px 74px; box-shadow:0 0 0 2px #7A1D12 inset, 0 30px 80px -10px rgba(229,65,45,.45), 0 10px 0 #6E1A10}
+.panel{position:relative; background:linear-gradient(#FFF8E6,#FCEBC6); border-radius:10px; padding:16px 16px 18px; text-align:center; box-shadow:inset 0 0 0 3px #2A1B14, inset 0 10px 30px rgba(255,255,255,.7), 0 0 40px rgba(255,233,168,.55)}
+.panel .rail{height:3px; background:#D9C59B; margin:10px 0; border-radius:2px}
+.panel .ln{font-family:var(--f-sign); text-transform:uppercase; color:var(--red-deep); font-size:clamp(17px,1.9vw,26px); letter-spacing:.12em; line-height:1}
+.word{display:flex; justify-content:center; gap:5px; min-height:1.18em; font-size:clamp(30px,4.3vw,62px)}
+.tile{display:inline-grid; place-items:center; width:.84em; height:1.12em; background:#FFFDF6; color:var(--ink); font-family:var(--f-sign); line-height:1; border-radius:3px; box-shadow:0 2px 0 #C9B88F, 0 0 0 1px #E8DAB6}
+/* one whole gig poster, pasted over the sign's top-right corner */
+.feat{position:absolute; z-index:5; top:0; right:-46px; width:150px; padding:12px 12px 10px; background:var(--s-sound); color:var(--ink); transform:rotate(6deg); box-shadow:0 14px 24px rgba(0,0,0,.5); isolation:isolate}
+.feat::before{content:""; position:absolute; inset:0; z-index:-1; background:var(--noise); mix-blend-mode:multiply; opacity:.6}
+.feat .tape{top:-12px; left:28px; width:84px; transform:rotate(-5deg)}
+.feat small{display:inline-block; font-family:var(--f-sign); text-transform:uppercase; font-size:12px; background:var(--ink); color:var(--s-sound); padding:2px 7px}
+.feat svg{display:block; width:100%; height:auto; margin:8px 0 4px}
+.feat b{display:block; font-family:var(--f-poster); font-weight:400; font-size:48px; line-height:.9; text-transform:uppercase}
+.feat span{display:block; font-size:13px; font-weight:750; line-height:1.2; border-top:2.5px solid var(--ink); margin-top:6px; padding-top:4px}
+.kids{position:relative; z-index:4; width:90%; margin:-66px 0 0 auto; filter:drop-shadow(0 22px 22px rgba(0,0,0,.45))}
+.kids img{width:100%}
+.older{position:absolute; z-index:5; left:-4px; bottom:6px; width:23%; transform:rotate(-7deg); filter:drop-shadow(0 14px 14px rgba(0,0,0,.45))}
+.kids-tag{position:absolute; z-index:6; right:6%; bottom:-14px; transform:rotate(-3deg); background:var(--tape); color:var(--ink); font-family:var(--f-hand); font-size:15px; padding:6px 14px; box-shadow:0 4px 10px rgba(0,0,0,.25); white-space:nowrap; margin:0}
+.floor{position:absolute; left:6%; right:6%; bottom:-10px; height:60px; background:radial-gradient(closest-side, rgba(255,200,61,.28), transparent); z-index:3; filter:blur(6px)}
+
+/* ---------- tape band (night -> day seam): the live verb loop; the pause control sits on the tape ---------- */
+.band-clip{position:relative; z-index:8; height:0; overflow:visible}
+.band-wrap{position:absolute; left:-2vw; right:-2vw; top:-34px; transform:rotate(-1.6deg)}
+.band{position:relative; background:var(--tape); color:var(--ink); padding:14px 0 12px; box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.band::before,.band::after{content:""; position:absolute; left:0; right:0; height:6px; background:repeating-linear-gradient(90deg, transparent 0 7px, rgba(120,100,60,.18) 7px 9px)}
+.band::before{top:0} .band::after{bottom:0}
+.band-view{overflow:hidden; -webkit-mask:linear-gradient(90deg,#0000,#000 2%,#000 calc(100% - 170px),#0000 calc(100% - 110px)); mask:linear-gradient(90deg,#0000,#000 2%,#000 calc(100% - 170px),#0000 calc(100% - 110px))}
+.band-track{display:flex; width:max-content; font-family:var(--f-hand); font-size:clamp(24px,2.6vw,34px); white-space:nowrap; line-height:1.1}
+.band-track span{padding:0 18px}
+.band-track i{font-style:normal; color:var(--red-deep)}
+html[data-motion="full"]:not(.paused) .band-track{animation:crawl 38s linear infinite}
+@keyframes crawl{to{transform:translateX(-50%)}}
+.pause{position:absolute; z-index:2; right:calc(2vw + var(--gut)); top:50%; transform:translateY(-50%); display:inline-flex; gap:7px; align-items:center; background:var(--ink); border:0; color:var(--cream); border-radius:999px; padding:8px 14px; font-size:14px; font-weight:750; cursor:pointer; min-height:40px}
+html[data-motion="reduce"] .pause{display:none}
+
+/* ============ DAY: HOW IT WORKS ============ */
+.day{color:var(--ink); background:var(--paper)}
+.how{padding:96px 0 76px}
+.how-head{display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:start}
+.day .eyebrow{color:var(--red-deep)}
+.uline{position:relative; white-space:nowrap; display:inline-block}
+.uline svg{position:absolute; left:-2%; bottom:-.14em; width:104%; height:.3em; overflow:visible}
+.uline path{fill:none; stroke:var(--red); stroke-width:7; stroke-linecap:round}
+.how-head .copy{padding-top:34px}
+.how-head p{font-size:19px; margin:0 0 14px; color:var(--ink-soft)}
+.how-head p strong{color:var(--ink)}
+.quote{position:relative; display:inline-block; margin:30px 0 0 6px; background:var(--paper-2); padding:16px 20px 13px; transform:rotate(-2deg); box-shadow:0 10px 20px -8px rgba(60,40,10,.35)}
+.quote blockquote{margin:0}
+.quote blockquote p{font-family:var(--f-hand); font-size:28px; line-height:1.1; margin:0; color:var(--ink)}
+.quote figcaption{font-size:14px; font-weight:650; color:var(--ink-soft); margin-top:6px; max-width:300px; line-height:1.35}
+.tape{position:absolute; width:96px; height:26px; background:var(--tape); box-shadow:0 1px 3px rgba(0,0,0,.12); z-index:4;
+  clip-path:polygon(2% 10%,6% 0,12% 8%,18% 0,24% 6%,100% 0,98% 30%,100% 55%,97% 100%,88% 92%,80% 100%,0 100%,3% 60%)}
+.quote .tape{top:-12px; left:30%; transform:rotate(4deg)}
+
+.acts{display:grid; grid-template-columns:repeat(3,1fr); gap:34px; margin-top:56px}
+.act{--stock:var(--orange-paper); --fg:var(--ink); position:relative; background:var(--stock); color:var(--fg); padding:20px 20px 18px; transform:rotate(var(--r,0deg)); box-shadow:0 2px 0 rgba(0,0,0,.06), 0 22px 34px -16px rgba(50,30,10,.45)}
+.act::after{content:""; position:absolute; inset:0 0 auto auto; width:46%; height:110px; pointer-events:none; opacity:.22; background:radial-gradient(circle, var(--fg) 1.3px, transparent 1.6px) 0 0/7px 7px; -webkit-mask:linear-gradient(225deg,#000,transparent 70%); mask:linear-gradient(225deg,#000,transparent 70%)}
+.act:nth-child(1){--r:-1.4deg} .act:nth-child(2){--stock:var(--pink-paper); --r:1deg; margin-top:26px} .act:nth-child(3){--stock:var(--blue); --fg:#fff; --r:-.6deg}
+.act .no{font-size:14px; font-weight:800; letter-spacing:.14em; text-transform:uppercase}
+.act h3{font-family:var(--f-poster); font-weight:400; font-size:clamp(56px,5.4vw,84px); line-height:.9; margin:2px 0 14px; text-transform:uppercase}
+.act figure{position:relative; margin:0 0 14px; background:#fff; padding:7px; box-shadow:0 6px 12px rgba(0,0,0,.18); transform:rotate(calc(var(--r) * -1.6))}
+.act figure img{width:100%; aspect-ratio:4/3; object-fit:cover}
+.act figure .tape{top:-12px; left:calc(50% - 48px); transform:rotate(-3deg)}
+.act figcaption{position:absolute; right:-6px; bottom:16px; background:var(--ink); color:var(--cream); font-size:14px; font-weight:700; padding:3px 9px}
+.act p{margin:0 0 14px; font-size:16.5px; line-height:1.5}
+.act .afoot{border-top:3px solid currentColor; padding-top:8px; font-size:14px; font-weight:750; letter-spacing:.06em; text-transform:uppercase; display:flex; justify-content:space-between; gap:10px}
+.facts{list-style:none; display:flex; flex-wrap:wrap; justify-content:center; margin:52px 0 0; padding:14px 0; border-top:3px solid var(--ink); border-bottom:3px solid var(--ink)}
+.facts li{display:flex; align-items:center; gap:10px; font-weight:750; font-size:17px; padding:4px 26px; line-height:1.3}
+.facts li + li{border-left:2px dashed rgba(21,17,43,.35)}
+.facts svg{width:22px; height:22px; flex:none; color:var(--red-deep)}
+
+/* ============ NIGHT: PROOF (a cream gig-poster lineup + three taped flyers) ============ */
+.proof{position:relative; padding:104px 0 40px; background:radial-gradient(900px 500px at 15% 10%, rgba(229,65,45,.14), transparent 60%), var(--night)}
+.proof .eyebrow,.lineup .eyebrow{color:var(--eye-n)}
+.proof-grid{margin-top:44px}
+.tour{position:relative; background:var(--cream); color:var(--ink); padding:30px 34px 22px; transform:rotate(-.4deg); box-shadow:0 26px 40px -16px rgba(0,0,0,.7); isolation:isolate}
+.tour::before{content:""; position:absolute; inset:0; z-index:-1; background:var(--noise); mix-blend-mode:multiply; opacity:.5}
+.tour .tape{top:-12px; left:calc(50% - 48px); transform:rotate(-2deg)}
+.tour .pre{font-size:14px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin:0; color:var(--red-deep)}
+.tour-top{display:grid; grid-template-columns:1fr auto; gap:12px 40px; align-items:end; border-bottom:4px solid var(--ink); padding-bottom:16px; margin-bottom:18px}
+.tour h3{font-family:var(--f-poster); font-weight:400; text-transform:uppercase; font-size:clamp(44px,4.6vw,70px); line-height:1; margin:8px 0 0; color:var(--ink); text-wrap:balance}
+.tour h3 em{font-style:normal; color:var(--red-deep)}
+.headliner{text-align:right; padding-bottom:4px; margin:0}
+.headliner span{display:block; font-size:14px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--red-deep)}
+.headliner b{display:block; font-size:clamp(30px,3.2vw,46px); font-weight:800; letter-spacing:-.025em; line-height:1}
+.lineup-grid{display:grid; grid-template-columns:repeat(4,1fr); column-gap:30px; align-items:start}
+.lineup-grid .tier-h.s{grid-column:1/4; grid-row:1} .lineup-grid .tier-h.c{grid-column:4; grid-row:1}
+.tier-h{font-size:14px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin:0 0 10px; color:var(--red-deep); display:flex; align-items:center; gap:10px}
+.tier-h::after{content:""; flex:1; height:2px; background:var(--red-deep); opacity:.5}
+.grp h4{font-size:14px; font-weight:800; margin:0 0 4px; color:var(--ink-soft); line-height:1.3}
+.grp ul{list-style:none; margin:0 0 14px; padding:0}
+.grp li{font-size:17px; font-weight:650; line-height:1.3; padding:4px 0; border-bottom:1px dashed rgba(21,17,43,.22)}
+.tour .fine{margin:4px 0 0; color:var(--ink-soft); font-weight:600}
+.says{display:grid; grid-template-columns:repeat(3,1fr); gap:30px; margin-top:44px; align-items:start}
+.say{--stock:var(--paper-2); --fg:var(--ink); --sub:var(--ink-soft); position:relative; margin:0; background:var(--stock); color:var(--fg); padding:22px 22px 18px; transform:rotate(var(--r,0deg)); box-shadow:0 20px 30px -14px rgba(0,0,0,.7); isolation:isolate}
+.say::before{content:""; position:absolute; inset:0; z-index:-1; background:var(--noise); mix-blend-mode:multiply; opacity:.45}
+.say:nth-child(1){--r:1deg} .say:nth-child(2){--r:-1.2deg; --stock:var(--pink-paper); margin-top:28px} .say:nth-child(3){--r:.6deg; --stock:var(--blue); --fg:#fff; --sub:#DCE8FF}
+.say .tape{top:-12px; left:24px; transform:rotate(-5deg)}
+.say .ph{float:right; width:44%; margin:-8px -6px 8px 12px; background:#fff; padding:5px 5px 4px; transform:rotate(3deg); box-shadow:0 6px 12px rgba(0,0,0,.25)}
+.say .ph img{aspect-ratio:4/3; object-fit:cover; width:100%}
+.say .ph span{display:block; font-size:12.5px; font-weight:700; color:var(--ink); line-height:1.2; padding-top:3px}
+.say blockquote{margin:0; font-size:20px; line-height:1.3; font-weight:750; letter-spacing:-.01em}
+.say figcaption{margin-top:12px; font-size:14px; color:var(--sub); font-weight:600; line-height:1.35; clear:both}
+.say figcaption b{display:block; font-size:16px; color:var(--fg); font-weight:800}
+.site-tag{display:inline-block; margin-top:8px; font-family:var(--f-sign); text-transform:uppercase; font-size:12px; letter-spacing:.03em; background:var(--fg); color:var(--stock); padding:3px 9px}
+.proof .src{color:var(--mute-n); margin:24px 0 0}
+
+/* ============ DAY: POSTER WALL (what kids make) ============ */
+.wall{background:var(--wall); color:var(--ink); padding:104px 0 64px; overflow:hidden}
+.wall-head{display:grid; grid-template-columns:1.25fr .75fr; gap:48px; align-items:end}
+.wall-head .h-poster{font-size:clamp(50px,6.2vw,96px)}
+.wall-head p{font-size:19px; color:var(--ink-soft); margin:0 0 10px}
+.wall-head .fine{font-size:14px; margin:0}
+.gigs{display:grid; grid-template-columns:repeat(3,1fr); gap:56px 36px; margin-top:56px; align-items:start}
+.gig{--stock:var(--paper-2); position:relative; background:var(--stock); color:var(--ink); padding:16px 18px 14px; transform:rotate(var(--r,0deg)); box-shadow:0 2px 0 rgba(0,0,0,.05), 0 24px 36px -18px rgba(50,30,10,.5); display:flex; flex-direction:column; isolation:isolate}
+.gig::before{content:""; position:absolute; inset:0; z-index:-1; background:var(--noise); mix-blend-mode:multiply; opacity:.45}
+.gig:nth-child(3n+2){margin-top:46px} .gig:nth-child(3n){margin-top:12px}
+.gig .tape{top:-13px; left:calc(50% - 48px); transform:rotate(var(--tr,-2deg))}
+.gig .gtop{display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:14px; font-weight:800; letter-spacing:.06em; text-transform:uppercase}
+.gig .gr{font-family:var(--f-sign); text-transform:uppercase; font-weight:400; letter-spacing:.02em; font-size:13px; background:var(--ink); color:var(--stock); padding:3px 9px; white-space:nowrap}
+.gig .art{position:relative; height:220px; margin:12px 0 14px}
+.gig .art img{position:absolute; left:var(--x,50%); top:50%; width:var(--w,84%); transform:translate(-50%,-50%) rotate(var(--sr,-4deg)); filter:drop-shadow(0 12px 14px rgba(40,25,0,.32)); max-width:none}
+.gig .art svg{width:100%; height:100%}
+.gig .art .realtag{position:absolute; right:4px; bottom:-4px; transform:rotate(-3deg); background:var(--tape); font-family:var(--f-hand); font-size:15px; padding:2px 10px; white-space:nowrap; box-shadow:0 2px 5px rgba(0,0,0,.15)}
+.gig h3{font-family:var(--f-poster); font-weight:400; text-transform:uppercase; font-size:clamp(30px,2.6vw,38px); line-height:1.04; margin:6px 0 10px; text-wrap:balance}
+.gig .sharpie{font-family:var(--f-hand); font-size:18px; line-height:1.2; color:var(--ink); margin:0 0 14px; transform:rotate(-1.5deg); transform-origin:0 50%; white-space:nowrap}
+.gig .sharpie::before{content:"↳ "}
+.gig .gfoot{margin-top:auto; border-top:3px solid var(--ink); padding-top:8px; font-size:14px; font-weight:650}
+.swipe{display:none}
+.wall-cta{margin-top:48px; display:flex; flex-wrap:wrap; gap:14px 20px; align-items:center}
+.wall-cta .hand{font-family:var(--f-hand); font-size:22px; white-space:nowrap}
+
+/* ============ NIGHT: PROGRAMS = the season map; tickets open as its detail drawer ============ */
+.lineup{position:relative; padding:100px 0 90px; background:radial-gradient(900px 500px at 85% 0, rgba(229,65,45,.16), transparent 60%), var(--night)}
+.valance{position:absolute; left:0; right:0; top:0; height:30px; background:radial-gradient(circle at 50% 0, var(--velvet) 18px, transparent 19px) 0 0/40px 30px repeat-x, linear-gradient(var(--velvet),var(--velvet)) 0 0/100% 10px no-repeat}
+.lineup-head .h-poster{font-size:clamp(48px,5.6vw,88px); max-width:1000px}
+.lineup-head p{color:#E7DFFA; font-size:18px; margin:18px 0 0; max-width:680px}
+.who{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:30px}
+.who .lab{font-family:var(--f-hand); font-size:24px; margin-right:6px; white-space:nowrap}
+.who button[data-who]{min-height:48px; padding:8px 18px; border-radius:999px; background:transparent; border:2px solid #5D5394; font-weight:750; font-size:16px; cursor:pointer; transition:all .2s}
+.who button[data-who]:hover{border-color:var(--cream)}
+.who button[aria-pressed="true"]{background:var(--cream); color:var(--ink); border-color:var(--cream)}
+.switch{display:inline-flex; align-items:center; gap:10px; cursor:pointer; font-weight:650; font-size:15px; background:none; border:0; padding:4px 0; margin-left:10px}
+.switch .track{width:46px; height:26px; border-radius:99px; background:#3B3170; position:relative; transition:background .2s; flex:none}
+.switch .track::after{content:""; position:absolute; left:3px; top:3px; width:20px; height:20px; border-radius:50%; background:var(--cream); transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.switch[aria-checked="true"] .track{background:var(--s-circ)}
+.switch[aria-checked="true"] .track::after{transform:translateX(20px); background:var(--ink)}
+.count{margin:22px 0 0; font-size:14px; font-weight:750; letter-spacing:.1em; text-transform:uppercase; color:var(--cream)}
+
+.smap{position:relative; margin-top:40px; background:var(--cream); color:var(--ink); padding:28px 28px 20px; box-shadow:0 34px 60px -24px rgba(0,0,0,.8); isolation:isolate}
+.smap::before{content:""; position:absolute; inset:0; z-index:-1; background:var(--noise); mix-blend-mode:multiply; opacity:.5}
+.smap .tape.tl{top:-12px; left:46px; transform:rotate(-4deg)} .smap .tape.tr{top:-12px; right:46px; transform:rotate(3deg)}
+.start{position:absolute; right:22%; top:-46px; font-family:var(--f-hand); font-size:22px; color:var(--cream); transform:rotate(-3deg); display:flex; align-items:flex-start; gap:4px; white-space:nowrap}
+.start svg{width:40px; height:40px; overflow:visible} .start path{fill:none; stroke:var(--cream); stroke-width:3; stroke-linecap:round}
+.smap-top{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:12px 24px; border-bottom:4px solid var(--ink); padding-bottom:12px; margin-bottom:8px}
+.smap-top .pre{font-size:14px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin:0}
+.smap-top h3{font-family:var(--f-poster); font-weight:400; text-transform:uppercase; font-size:clamp(48px,5.4vw,78px); line-height:.9; margin:4px 0 0}
+.legend{display:flex; flex-wrap:wrap; gap:6px 20px; font-size:14px; font-weight:700; margin:0; padding:0; list-style:none}
+.legend li{display:inline-flex; align-items:center; gap:8px}
+.legend .bk{width:30px; height:12px; border-radius:2px; background:repeating-linear-gradient(135deg, rgba(21,17,43,.35) 0 2px, transparent 2px 6px); box-shadow:inset 0 0 0 1px rgba(21,17,43,.3)}
+.legend .bulb{width:14px; height:14px}
+.srow{display:grid; grid-template-columns:var(--cols); gap:8px; align-items:stretch; padding:7px; background:var(--c); margin-top:6px}
+.srow.head{background:transparent; padding:2px 7px 0; margin:0}
+.srow.head .ch{font-family:var(--f-poster); font-weight:400; font-size:clamp(22px,2.1vw,28px); text-transform:uppercase; line-height:1; padding:4px 4px}
+.srow.head .ch.subj{font-family:var(--f-text); font-size:14px; font-weight:800; letter-spacing:.12em; align-self:end; padding-bottom:6px}
+.rl{display:flex; align-items:center; gap:10px; font-family:var(--f-poster); font-size:clamp(21px,1.9vw,27px); text-transform:uppercase; line-height:.95; padding:4px 6px; background:none; border:0; color:var(--ink); text-align:left; cursor:pointer; border-radius:4px}
+.rl:hover .rn{text-decoration:underline; text-decoration-thickness:3px; text-underline-offset:4px}
+.rl svg{width:24px; height:24px; flex:none}
+.rl .rc{display:block; font-family:var(--f-text); font-size:13px; font-weight:800; text-transform:none; letter-spacing:0; margin-top:4px}
+.slot{display:flex; flex-direction:column; align-items:flex-start; gap:7px; min-height:84px; padding:10px 12px; text-align:left; background-color:#17132A; background-image:repeating-linear-gradient(180deg, rgba(255,255,255,.05) 0 2px, transparent 2px 7px); color:var(--cream); border:0; border-radius:4px; cursor:pointer; box-shadow:inset 0 0 0 2px rgba(0,0,0,.25); transition:transform .2s, box-shadow .2s}
+button.slot:hover{transform:translateY(-2px); box-shadow:inset 0 0 0 2px var(--cream)}
+.slot[aria-expanded="true"], .rl[aria-expanded="true"]{box-shadow:inset 0 0 0 3px var(--ink), 0 0 0 3px var(--cream)}
+.slot .bulbs-row{display:flex; gap:6px; flex-wrap:wrap}
+.slot .names{display:flex; flex-direction:column; gap:2px; font-size:14px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; line-height:1.2}
+.slot .names em{font-style:normal; color:var(--mute-n); text-transform:none; letter-spacing:0}
+.slot .cnt{display:none}
+.slot.blank{align-self:center; min-height:0; height:22px; padding:0; cursor:default; background:repeating-linear-gradient(135deg, rgba(21,17,43,.28) 0 2px, transparent 2px 7px); box-shadow:inset 0 0 0 1.5px rgba(21,17,43,.28)}
+.slot.note{background:var(--paper-2); color:var(--ink); background-image:none; cursor:default; justify-content:center; font-weight:700; font-size:15px; text-transform:none; letter-spacing:0}
+.bulb{display:inline-block; width:16px; height:16px; border-radius:50%; background:var(--gold-dim); flex:none}
+.bulb.on{background:radial-gradient(circle at 40% 35%, #FFFBEA, var(--gold-hot) 45%, var(--gold)); box-shadow:0 0 9px rgba(255,200,61,.85)}
+/* detail drawer: the tickets for one slot (or one subject), right under its row */
+.sdrawer{margin:6px 0 4px; background:var(--night-2); color:var(--cream); padding:16px 16px 20px; border-radius:6px; box-shadow:inset 0 0 0 3px var(--c)}
+.sd-head{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 16px; margin-bottom:14px}
+.sd-head h4{margin:0; font-size:16px; font-weight:800; letter-spacing:.02em}
+.sd-head h4 span{color:var(--mute-n); font-weight:650}
+.sd-close{background:none; border:2px solid #5D5394; color:var(--cream); border-radius:999px; padding:6px 14px; font-weight:750; font-size:14px; cursor:pointer; min-height:40px}
+.sd-close:hover{border-color:var(--cream)}
+.smap-foot{display:flex; flex-wrap:wrap; gap:10px 26px; justify-content:space-between; align-items:center; margin-top:16px; padding-top:12px; border-top:3px solid var(--ink); font-size:15.5px; font-weight:550}
+.smap-foot .hand{font-family:var(--f-hand); font-size:19px}
+.linkbtn{background:none; border:0; padding:6px 0; cursor:pointer; color:inherit; font-weight:800; text-decoration:underline; text-underline-offset:4px; font-size:15.5px; text-align:left}
+.morep{margin-top:14px}
+.morep p{margin:0 0 12px; font-size:15px; color:var(--ink-soft); font-weight:600}
+.bside{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:8px 16px; list-style:none; margin:0; padding:0}
+.bside li{border-left:6px solid var(--c); padding:4px 0 6px 12px; line-height:1.3; border-bottom:1px dashed rgba(21,17,43,.25)}
+.bside .w{display:block; font-size:13px; font-weight:800; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em}
+.bside b{display:block; font-size:15.5px; line-height:1.3; margin:2px 0}
+.bside span.t{display:block; font-size:14px; color:var(--ink-soft)}
+
+/* tickets: cream ticket stock, stage-color header band, die-cut notches, vertical stub */
+.tix-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:22px 20px}
+.tix{position:relative; filter:drop-shadow(0 7px 0 rgba(0,0,0,.38))}
+.tix:nth-child(odd){transform:rotate(-.4deg)} .tix:nth-child(even){transform:rotate(.4deg)}
+.tstock{--stubw:92px; position:relative; display:grid; grid-template-columns:1fr var(--stubw); height:100%; background:var(--tpaper); color:var(--ink); border-radius:4px; isolation:isolate;
+  -webkit-mask:radial-gradient(circle 15px at calc(100% - var(--stubw)) 0, #0000 97%, #000) top/100% 51% no-repeat, radial-gradient(circle 15px at calc(100% - var(--stubw)) 100%, #0000 97%, #000) bottom/100% 51% no-repeat;
+          mask:radial-gradient(circle 15px at calc(100% - var(--stubw)) 0, #0000 97%, #000) top/100% 51% no-repeat, radial-gradient(circle 15px at calc(100% - var(--stubw)) 100%, #0000 97%, #000) bottom/100% 51% no-repeat}
+.tstock::before{content:""; position:absolute; inset:0; z-index:-1; background:var(--noise); mix-blend-mode:multiply; opacity:.5}
+.tmain{display:flex; flex-direction:column; gap:8px; padding:0 18px 16px; border-right:2.5px dashed rgba(21,17,43,.4); min-width:0}
+.tband{margin:0 -18px 6px; padding:9px 18px 8px; background:var(--c); display:flex; align-items:center; gap:8px; font-size:14px; font-weight:800; letter-spacing:.05em; text-transform:uppercase}
+.tband svg{width:17px; height:17px; flex:none}
+.tix h5{font-size:20px; line-height:1.2; font-weight:800; margin:2px 0 0; letter-spacing:-.01em}
+.tix .prog{font-size:14px; color:var(--ink-soft); margin:0; font-weight:600}
+.tix .meta{font-size:14.5px; font-weight:750; margin:0}
+.tdet summary{display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:800; cursor:pointer; list-style:none; padding:4px 0; text-decoration:underline; text-underline-offset:3px}
+.tdet summary::-webkit-details-marker{display:none}
+.tdet summary::after{content:"+"; font-size:16px; text-decoration:none}
+.tdet[open] summary::after{content:"–"}
+.tdet dl{display:grid; grid-template-columns:auto 1fr; gap:5px 12px; margin:6px 0 0; font-size:14.5px; line-height:1.4}
+.tdet dt{font-size:14px; font-weight:800; color:var(--ink-soft)}
+.tdet dd{margin:0; font-weight:600}
+.meter{display:inline-flex; gap:3px; vertical-align:-1px; margin-right:6px}
+.meter i{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--ink)}
+.meter i.f{background:var(--ink)}
+.stub{display:flex; flex-direction:column; align-items:center; justify-content:space-between; gap:12px; padding:20px 8px 16px; background:color-mix(in srgb, var(--c) 34%, transparent)}
+.stub .sg{writing-mode:vertical-rl; transform:rotate(180deg); font-family:var(--f-sign); text-transform:uppercase; font-size:20px; letter-spacing:.04em; line-height:1; white-space:nowrap}
+.add{border:2px solid var(--ink); background:var(--tpaper); color:var(--ink); border-radius:999px; padding:7px 11px; font-weight:800; font-size:14px; cursor:pointer; white-space:nowrap; min-height:40px}
+.add[aria-pressed="true"]{background:var(--ink); color:var(--cream)}
+
+.tray{position:sticky; bottom:14px; z-index:30; margin:30px auto 0; max-width:1000px; display:none; align-items:center; gap:14px; background:var(--cream); color:var(--ink); border-radius:14px; padding:12px 12px 12px 18px; box-shadow:0 18px 40px rgba(0,0,0,.55), 0 0 0 3px var(--ink)}
+.tray.show{display:flex}
+.tray .tl{font-weight:800; font-size:15px; white-space:nowrap}
+.tray .items{flex:1; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; font-size:14px}
+.tray .items span{background:#fff; border:1.5px solid var(--ink); border-radius:999px; padding:3px 10px; white-space:nowrap; font-weight:650}
+.tray .btn{min-height:46px; padding:8px 22px; font-size:13px}
+
+/* ============ DAY: GET INVOLVED (flyers on the wall) ============ */
+.join{position:relative; padding:100px 0 96px; background:var(--wall); color:var(--ink)}
+.join-head{max-width:860px}
+.join-head p{color:var(--ink-soft); font-size:18.5px; margin:16px 0 0; max-width:620px}
+.host-grid > .form-card{grid-column:2; grid-row:1 / span 1}
+.host-grid > .pitch{grid-row:1 / span 2}
+.host-stick{grid-column:2; position:relative; width:min(330px,80%); margin:6px 8% 0 auto; transform:rotate(4deg); z-index:6; filter:drop-shadow(0 14px 14px rgba(0,0,0,.35))}
+.host-stick .tg{position:absolute; left:50%; bottom:-8px; transform:translateX(-50%) rotate(-3deg); background:var(--tape); color:var(--ink); font-family:var(--f-hand); font-size:15px; padding:3px 10px; white-space:nowrap}
+.flyer{--stock:var(--cream); --fg:var(--ink); --rule:rgba(21,17,43,.28); position:relative; background:var(--stock); color:var(--fg); padding:28px 28px 24px; transform:rotate(var(--r,0)); box-shadow:0 2px 0 rgba(0,0,0,.05), 0 26px 40px -18px rgba(50,30,10,.55); isolation:isolate}
+.flyer::before{content:""; position:absolute; inset:0; z-index:-1; background:var(--noise); mix-blend-mode:multiply; opacity:.45; pointer-events:none}
+.flyer.host{--stock:var(--red-deep); --fg:var(--cream); --rule:rgba(255,243,220,.38); --r:-.3deg; margin-top:34px; scroll-margin-top:96px}
+.flyer.crew{--stock:var(--pink-paper); --r:.8deg; scroll-margin-top:96px}
+.flyer.give{--stock:var(--blue); --fg:#fff; --rule:rgba(255,255,255,.4); --r:-.7deg; scroll-margin-top:96px; padding-bottom:0}
+.flyer.fam{--stock:var(--lilac-paper); --r:.6deg; scroll-margin-top:96px}
+.flyer .tape{top:-12px; left:calc(50% - 48px); transform:rotate(3deg)}
+.flyer .kick{font-size:14px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin:0}
+.flyer h3{font-family:var(--f-poster); font-weight:400; text-transform:uppercase; font-size:clamp(42px,4vw,60px); line-height:.95; margin:8px 0 12px; text-wrap:balance}
+.flyer p{margin:0 0 14px; font-size:16.5px}
+.flyer .hook{font-weight:800; font-size:18px}
+.flyer .stick{position:absolute; z-index:5; filter:drop-shadow(0 12px 14px rgba(0,0,0,.35)); pointer-events:none; margin:0}
+.flyer .stick .tg{position:absolute; left:50%; bottom:-6px; transform:translateX(-50%) rotate(-3deg); background:var(--tape); color:var(--ink); font-family:var(--f-hand); font-size:15px; line-height:1.2; padding:3px 10px; white-space:nowrap}
+.flyer.crew .stick{width:150px; right:16px; top:-62px; transform:rotate(-5deg)}
+.host-grid{display:grid; grid-template-columns:1fr 1.05fr; gap:38px; align-items:start}
+.terms{display:grid; gap:0; margin:18px 0 0}
+.terms div{display:grid; grid-template-columns:150px 1fr; gap:14px; border-top:2px solid var(--rule); padding:10px 0}
+.terms dt{font-size:14px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding-top:2px}
+.terms dd{margin:0; font-size:16px; font-weight:600; line-height:1.4}
+.terms dd a{font-weight:800; white-space:nowrap}
+.terms .zero dd{font-family:var(--f-sign); font-size:30px; line-height:1}
+.fund{position:relative; margin:22px 0 0; background:var(--paper-2); color:var(--ink); padding:20px 20px 16px; transform:rotate(-.8deg); box-shadow:0 14px 24px -10px rgba(0,0,0,.45); scroll-margin-top:100px}
+.fund .tape{left:24px; transform:rotate(-4deg)}
+.fund h4{font-family:var(--f-poster); font-weight:400; text-transform:uppercase; font-size:30px; line-height:1; margin:0 0 10px}
+.fund ol{margin:0; padding:0; list-style:none; counter-reset:f; display:grid; gap:9px}
+.fund li{counter-increment:f; display:grid; grid-template-columns:30px 1fr; gap:10px; font-size:15.5px; line-height:1.4}
+.fund li::before{content:counter(f); display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--red-deep); color:var(--cream); font-weight:800; font-size:15px}
+.fund li b{font-weight:800}
+.form-card{position:relative; background:var(--paper-2); color:var(--ink); padding:24px 24px 22px; box-shadow:0 14px 24px -10px rgba(0,0,0,.45); transform:rotate(.5deg)}
+.form-card .tape{top:-12px; left:auto; right:34px; transform:rotate(-3deg)}
+.form-card h4{font-family:var(--f-poster); font-weight:400; text-transform:uppercase; font-size:32px; line-height:1; margin:0 0 14px}
+.fgrid{display:grid; grid-template-columns:1fr 1fr; gap:12px 14px}
+.field{display:flex; flex-direction:column; gap:5px; min-width:0}
+.field.full{grid-column:1/-1}
+.field label,.field legend,.field .lbl{font-size:14px; font-weight:800; padding:0}
+.field input,.field select,.field textarea{font-size:16px; padding:10px 12px; border:2px solid var(--ink); border-radius:6px; background:#fff; color:var(--ink); min-height:46px; width:100%}
+.field textarea{min-height:76px; resize:vertical}
+fieldset.field{border:0; margin:0; padding:0}
+.checks{display:flex; flex-wrap:wrap; gap:8px; margin-top:2px}
+.checks label{display:inline-flex; align-items:center; gap:7px; border:2px solid var(--ink); border-radius:999px; padding:6px 13px; font-weight:750; font-size:15px; cursor:pointer; background:#fff}
+.field .checks input{accent-color:var(--ink); width:18px; height:18px; min-height:0; margin:0; padding:0; border:0; flex:none}
+.picks{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.picks span{background:var(--pink-paper); border:1.5px solid var(--ink); border-radius:999px; padding:3px 10px; font-size:14px; font-weight:700}
+.picks .none{background:none; border:0; padding:0; font-weight:600; color:var(--ink-soft)}
+.picks a{font-size:14px; font-weight:800}
+.form-card .btn{width:100%; margin-top:16px}
+.form-card .fine{margin:10px 0 0; color:var(--ink-soft)}
+.sent{display:none; text-align:left}
+.form-card.done form{display:none} .form-card.done .sent{display:block}
+.sent h4{margin-bottom:8px}
+.sent p{margin:0 0 10px; font-size:16.5px}
+.flyers2{display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:80px; align-items:start}
+.col2{display:grid; gap:44px}
+.roles,.gifts{list-style:none; padding:0; margin:0 0 14px; display:grid}
+.roles li{display:grid; grid-template-columns:1fr; gap:1px; border-top:2px solid rgba(21,17,43,.28); padding:9px 0}
+.roles b{font-size:17px; font-weight:800}
+.roles span{font-size:15.5px}
+.need{font-size:15.5px!important}
+.mini-form{display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; background:var(--paper-2); color:var(--ink); padding:16px; margin:4px 0 14px; box-shadow:0 10px 18px -10px rgba(60,40,10,.4)}
+.mini-form .btn{grid-column:1/-1; width:100%; min-height:50px}
+.mini-form .done-msg{grid-column:1/-1; margin:0; font-weight:700; font-size:15.5px}
+.ask{font-size:15.5px!important; margin:0!important}
+.ask a{font-weight:800}
+.gifts li{display:grid; grid-template-columns:86px 1fr; gap:12px; align-items:baseline; border-top:2px solid rgba(255,255,255,.4); padding:8px 0}
+.gifts b{font-family:var(--f-poster); font-weight:400; font-size:34px; line-height:1}
+.gifts span{font-size:16px; font-weight:600}
+.give-btns{display:flex; flex-wrap:wrap; gap:10px; margin:6px 0 20px}
+.flyer.give .btn{--bg:#fff; --fg:var(--ink)}
+.flyer.give .btn.ghost{color:#fff; border-color:#fff; background:transparent}
+/* the one set of tear-offs on the page: horizontal, labeled, on the Give flyer */
+.tabs{display:grid; grid-template-columns:repeat(4,1fr); margin:0 -28px; border-top:2px dashed currentColor}
+.tabs a{display:flex; align-items:center; justify-content:center; min-height:58px; padding:8px 4px; font-size:15px; font-weight:800; text-decoration:none; border-left:2px dashed currentColor; transition:background .2s}
+.tabs a:first-child{border-left:0}
+.tabs a:hover,.tabs a:focus-visible{background:rgba(255,255,255,.14)}
+.tabs a:nth-child(odd){transform:rotate(-1deg)} .tabs a:nth-child(even){transform:rotate(1deg)}
+.fam ol{margin:0 0 16px; padding-left:22px; font-size:16px}
+.fam ol li{margin:0 0 6px}
+.fam-btns{display:flex; flex-wrap:wrap; gap:10px}
+.fam-btns .btn{font-size:13px; padding:12px 20px}
+.fam .btn.ghost{color:var(--ink); border-color:var(--ink)}
+
+/* ============ FOOTER ============ */
+.foot{position:relative; padding:90px 0 40px; background:#120E25; overflow:hidden}
+.bigsign{position:relative; display:flex; flex-direction:column; align-items:center; margin:0 auto 60px; width:min(760px,100%)}
+.bigsign .box{position:relative; width:100%; background:linear-gradient(#D8402A,#B32D1B); border-radius:26px; padding:62px 30px 40px; text-align:center; box-shadow:0 0 0 2px #7A1D12 inset, 0 30px 90px -20px rgba(229,65,45,.55)}
+.bigsign .mpls{font-family:var(--f-sign); font-size:clamp(64px,13vw,150px); line-height:.9; color:var(--cream)}
+.bigsign .create{position:absolute; left:2%; top:-22%; width:38%; transform:rotate(-8deg); z-index:4; overflow:visible}
+.bigsign .point{width:0; height:0; border-left:30px solid transparent; border-right:30px solid transparent; border-top:34px solid #B32D1B; margin-top:-1px}
+.bigsign .here{font-family:var(--f-poster); text-transform:uppercase; color:var(--cream); font-size:clamp(26px,3vw,38px); margin-top:16px; text-align:center}
+.fcols{display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:34px; border-top:1px solid var(--line); padding-top:40px}
+.fcols h4{font-size:14px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--eye-n); margin:0 0 14px}
+.fcols ul{list-style:none; margin:0; padding:0; display:grid; gap:9px}
+.fcols a{text-decoration:none; color:#E9E0F5} .fcols a:hover{color:var(--cream); text-decoration:underline}
+.fcols p{margin:0 0 10px; color:#DCD3F5; font-size:15.5px}
+.legal{margin-top:46px; display:flex; flex-wrap:wrap; gap:14px 28px; justify-content:space-between; align-items:center; font-size:14px; color:#C3B9E2}
+.toggles button{background:none; border:1.5px solid #5D5394; color:var(--cream); border-radius:999px; padding:7px 14px; font-size:14px; font-weight:650; cursor:pointer}
+.toggles button:hover{border-color:var(--cream)}
+
+/* ---------- paste-up: the one scroll effect (CSS + IntersectionObserver) ---------- */
+html[data-motion="full"] .paste:not(.in){translate:0 44px; opacity:0}
+html[data-motion="full"] .paste{transition:translate .6s cubic-bezier(.3,1.5,.5,1), opacity .35s ease-out}
+
+/* ---------- mobile action bar: one line, 56px; hidden over the hero, the form, and the Crew / Give / Families flyers ---------- */
+.mbar{position:fixed; left:8px; right:8px; bottom:8px; z-index:40; display:none; gap:6px; padding:5px; background:rgba(21,17,43,.96); border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.5), 0 0 0 1.5px var(--line); transform:translateY(150%); transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+.mbar.on{transform:none}
+.mbar .btn{min-height:46px; padding:6px 14px; font-size:13px; flex:1; line-height:1; white-space:nowrap}
+.mbar .btn.give{flex:0 0 auto; background:transparent; color:var(--cream); -webkit-mask:none; mask:none; border:2px solid var(--cream); border-radius:12px; padding:6px 14px}
+html[data-motion="reduce"] .mbar{transition:none}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1100px){
+  .nav ul{display:none} .menu-btn{display:block} .nav .btn{margin-left:auto}
+  .hero-grid{grid-template-columns:1fr; grid-template-areas:"stage" "top" "bot"; row-gap:0}
+  .stage{max-width:640px; margin:0 auto 24px; width:100%}
+  .pwall{width:100%; bottom:auto; height:640px; grid-template-columns:repeat(4,1fr); -webkit-mask:linear-gradient(#000 60%,#0000); mask:linear-gradient(#000 60%,#0000)}
+  .how-head{grid-template-columns:1fr; gap:14px}
+  .how-head .copy{padding-top:0}
+  .acts{grid-template-columns:1fr 1fr} .act:nth-child(3){grid-column:1/-1; max-width:520px; justify-self:center}
+  .proof-grid{grid-template-columns:1fr}
+  .says{grid-template-columns:1fr 1fr} .say:nth-child(3){grid-column:1/-1; max-width:520px} .lineup-grid{grid-template-columns:1fr 1fr} .lineup-grid .tier-h.s,.lineup-grid .tier-h.c{grid-column:1/-1; grid-row:auto}
+  .wall-head{grid-template-columns:1fr; gap:18px}
+  .gigs{grid-template-columns:1fr 1fr} .gig:nth-child(n){margin-top:0} .gig:nth-child(2n){margin-top:40px}
+  .host-grid{grid-template-columns:1fr} .host-grid > .form-card,.host-grid > .host-stick{grid-column:1} .host-grid > .pitch{grid-row:auto} .host-grid > .form-card{grid-row:auto}
+  .flyers2{grid-template-columns:1fr; gap:60px}
+  .fcols{grid-template-columns:1fr 1fr}
+}
+@media (max-width:720px){
+  body{font-size:16px}
+  .nav .wrap{height:64px; gap:12px}
+  .logo svg{height:42px}
+  .nav .btn{display:none}
+  .menu-btn{width:44px; height:44px; margin-left:auto}
+  .hero{padding:66px 0 70px}
+  .hide-s{display:none}
+  .pwall{height:420px; padding-top:40px; grid-template-columns:repeat(3,1fr); grid-auto-rows:150px}
+  .wp{padding:8px 9px} .wp b{font-size:30px} .wp small{font-size:10px} .wp i{height:26px}
+  .stage{padding-top:50px; margin-bottom:14px}
+  .feat{width:90px; right:-12px; top:0; padding:8px 8px 7px; transform:rotate(7deg)}
+  .feat .tape{width:56px; height:18px; top:-9px; left:20px}
+  .feat small{font-size:10px; padding:1px 5px}
+  .feat svg{margin:5px 0 3px}
+  .feat b{font-size:31px}
+  .feat span{font-size:10.5px; border-top-width:2px; white-space:nowrap; letter-spacing:-.01em}
+  .board{padding:14px 14px 36px; border-radius:16px}
+  .panel{padding:9px 8px 10px}
+  .panel .ln{font-size:16px}
+  .panel .rail{margin:6px 0}
+  .word{gap:3px; font-size:30px}
+  .kids{width:84%; margin-top:-34px}
+  .older{width:25%; left:-2px; bottom:-2px}
+  .kids-tag{font-size:14px; padding:3px 10px; right:2%; bottom:-14px}
+  .kicker{font-size:13px; letter-spacing:.1em; margin-top:16px}
+  .hero h1{font-size:clamp(44px,13.4vw,60px); margin:8px 0 10px}
+  .hero .lede{font-size:16.5px; margin-bottom:16px; line-height:1.5}
+  .cta-row{gap:10px}
+  .cta-row .btn{flex:1 1 100%; padding:12px 14px; font-size:13px; letter-spacing:0}
+  .cta-row .btn.ghost{flex:0 1 auto}
+  .cost{grid-template-columns:1fr; -webkit-mask:none; mask:none; border-radius:4px; margin-top:18px}
+  .cost .z{border-right:0; border-bottom:2px dashed #CFC4AE; padding:10px 16px}
+  .cost .z span{max-width:none}
+  .cost p{padding:10px 16px 12px}
+  .band-view{-webkit-mask:linear-gradient(90deg,#0000,#000 3%,#000 calc(100% - 120px),#0000 calc(100% - 76px)); mask:linear-gradient(90deg,#0000,#000 3%,#000 calc(100% - 120px),#0000 calc(100% - 76px))}
+  .pause .pl{display:none}
+  .pause{padding:8px 12px; min-width:44px; min-height:44px; justify-content:center}
+
+  .how{padding:92px 0 60px}
+  .h-poster{font-size:clamp(46px,13.6vw,62px)}
+  .how-head p{font-size:17px}
+  .quote{margin-top:16px}
+  .quote blockquote p{font-size:26px}
+  .acts{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:20px; margin:16px calc(var(--gut) * -1) 0; padding:24px var(--gut) 22px; scrollbar-width:none; align-items:flex-start}
+  .act:nth-child(n){flex:0 0 84%; scroll-snap-align:center; margin-top:0; max-width:none}
+  .act h3{font-size:58px}
+  .facts{flex-direction:column; align-items:stretch; margin-top:22px; padding:6px 0}
+  .facts li{padding:10px 4px}
+  .facts li + li{border-left:0; border-top:2px dashed rgba(21,17,43,.3)}
+
+  .proof{padding:80px 0 24px}
+  .proof-grid{margin-top:26px}
+  .tour{padding:24px 18px 16px; transform:none}
+  .tour-top{grid-template-columns:1fr}
+  .headliner{text-align:left}
+  .lineup-grid{grid-template-columns:1fr 1fr; column-gap:16px}
+  .lineup-grid .tier-h.s,.lineup-grid .tier-h.c{grid-column:1/-1; grid-row:auto}
+  .lineup-grid .grp:nth-of-type(3),.lineup-grid .grp:nth-of-type(4){grid-column:1/-1}
+  .lineup-grid .grp:nth-of-type(3) ul,.lineup-grid .grp:nth-of-type(4) ul{columns:2; column-gap:16px}
+  .grp li{font-size:15px; line-height:1.25; padding:3px 0; break-inside:avoid}
+  .says{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:18px; margin:0 calc(var(--gut) * -1); padding:26px var(--gut) 18px; scrollbar-width:none; align-items:flex-start}
+  .says::-webkit-scrollbar,.acts::-webkit-scrollbar{display:none}
+  .say{flex:0 0 84%; scroll-snap-align:center; margin-top:0!important}
+  .says{margin-top:0}
+  .say blockquote{font-size:18px}
+  .swipe{display:flex; align-items:center; gap:8px; justify-content:flex-end; font-family:var(--f-hand); font-size:17px; margin:0}
+  .proof .src{margin-top:10px}
+
+  .wall{padding:80px 0 50px}
+  .wall-head p{font-size:17px}
+  .gigs{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:22px; margin:18px calc(var(--gut) * -1) 0; padding:24px var(--gut) 26px; scrollbar-width:none}
+  .gigs::-webkit-scrollbar{display:none}
+  .gig{flex:0 0 82%; scroll-snap-align:center; margin-top:0!important}
+  .gig .art{height:180px}
+  .gig .sharpie{font-size:17px}
+  .wall-cta{margin-top:18px}
+  .wall-cta .btn{width:100%}
+
+  .lineup{padding:80px 0 50px}
+  .lineup-head p{font-size:16.5px; margin-top:14px}
+  .who{gap:8px; margin-top:22px}
+  .who .lab{width:100%}
+  .who button[data-who]{min-height:44px; padding:6px 14px; font-size:15px}
+  .switch{margin:6px 0 0}
+  .count{margin-top:16px}
+  .smap{padding:18px 10px 12px; margin-top:22px}
+  .smap .tape.tl{left:20px} .smap .tape.tr{right:20px}
+  .start{display:none}
+  .smap-top{padding-bottom:10px}
+  .smap-top h3{font-size:46px}
+  .legend{font-size:13px; gap:4px 14px}
+  .srow{gap:5px; padding:5px; margin-top:5px}
+  .srow.head{padding:0 5px}
+  .srow.head .ch{font-size:19px; text-align:center; padding:2px 0}
+  .srow.head .ch .gw{display:none}
+  .srow.head .ch.subj{text-align:left; font-size:12px}
+  .rl{font-size:19px; padding:2px 4px; gap:7px}
+  .rl svg{width:19px; height:19px}
+  .rl .rc{font-size:12px; margin-top:2px}
+  .slot{min-height:46px; padding:4px; align-items:center; justify-content:center; gap:3px}
+  .slot .bulbs-row,.slot .names{display:none}
+  .slot .cnt{display:flex; align-items:center; gap:5px; font-family:var(--f-poster); font-size:22px; line-height:1}
+  .slot .cnt .bulb{width:11px; height:11px}
+  .slot.blank{height:16px}
+  .sdrawer{padding:12px 10px 14px}
+  .sd-head h4{font-size:15px}
+  .smap-foot{font-size:15px}
+  .tix-grid{grid-template-columns:1fr; gap:14px}
+  .tstock{--stubw:80px}
+  .tmain{padding:0 14px 12px; gap:6px}
+  .tband{margin:0 -14px 4px; padding:7px 14px 6px}
+  .tix h5{font-size:17px}
+  .stub{padding:14px 6px 12px}
+  .stub .sg{font-size:16px}
+  .tray{display:none!important}
+
+  .join{padding:84px 0 90px}
+  .host-stick{width:230px; margin:22px 4px 6px auto}
+  .flyer{padding:24px 18px 20px}
+  .flyer.host{margin-top:20px}
+  .flyer h3{font-size:clamp(40px,12vw,52px)}
+  .terms div{grid-template-columns:1fr; gap:2px}
+  .fund{padding:18px 14px 14px; margin:18px -4px 0}
+  .form-card{padding:20px 16px 18px; transform:none; margin:0 -4px}
+  .mini-form{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr 1fr; gap:12px 10px} .fgrid > .field:nth-child(-n+4){grid-column:1/-1}
+  .tabs{margin:0 -18px}
+  .tabs a{font-size:14px; min-height:54px}
+  .flyers2{margin-top:120px; gap:56px}
+  .flyer.crew .stick{width:118px; right:-6px; top:-112px}
+  .give-btns .btn{flex:1 1 100%}
+  .fam-btns .btn{flex:1 1 100%}
+  .fcols{grid-template-columns:1fr 1fr; gap:26px 18px} .fcols > div:first-child{grid-column:1/-1}
+  .bigsign .box{padding:44px 16px 26px; border-radius:18px}
+  .bigsign{margin-bottom:36px} .foot{padding-top:64px}
+  .bigsign .create{top:-30%}
+  .foot{padding-bottom:96px}
+  .mbar{display:flex}
+}
+</style>
+</head>
+<body>
+<a class="sr skip" href="#main">Skip to content</a>
+<p class="review-key" aria-hidden="true">Review mode: highlighted = draft detail to confirm</p>
+
+<!-- The custom "create" lettering: drawn Sharpie strokes (not a font), used in the lockup, footer sign, and favicon.
+     Rendered twice: a night outline, then the pink line. Outlined/expanded for production. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="cw" viewBox="0 0 120 50"><g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 25 C15 19 5 19 4 30 C3 40 12 43 19 37"/><path d="M24 21 L23 41 M23.5 31 C25 23 30 20 35 22"/><path d="M39 31 L54 29 C55 21 43 18 40 28 C38 38 46 43 55 37"/><path d="M72 25 C68 19 59 21 59 31 C59 40 68 41 72 33 M73.5 22 L73 38 C73 41 75 42 78 39"/><path d="M86 9 L84 39 C84 43 89 43 92 39 M78 21 L94 19.5"/><path d="M97 31 L112 29 C113 21 101 18 98 28 C96 38 104 43 113 37"/>
+  </g></symbol>
+</defs></svg>
+
+<!-- Logo: the kid's hand ("create", drawn Sharpie lettering) tags the city's sign (MPLS, marquee). The pointer = right here, on site. -->
+<template id="logo-tpl">
+  <svg viewBox="0 0 250 74" role="img" aria-label="createMPLS">
+    <rect x="120" y="8" width="126" height="48" rx="9" fill="#C8321F"/>
+    <rect x="120" y="8" width="126" height="48" rx="9" fill="none" stroke="#FFE9A8" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="0 9.55" style="filter:drop-shadow(0 0 2.5px #FFC83D)"/>
+    <path d="M174 55 L183 67 L192 55 Z" fill="#C8321F"/>
+    <text x="185" y="43" text-anchor="middle" font-family="Bungee" font-size="27" fill="#FFF3DC" letter-spacing="1">MPLS</text>
+    <g transform="translate(2 12) rotate(-6 0 40)"><use href="#cw" width="122" height="51" stroke="#15112B" stroke-width="13"/><use href="#cw" width="122" height="51" stroke="#FF48B0" stroke-width="6.5"/></g>
+  </svg>
+</template>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="createMPLS home" data-logo></a>
+    <ul>
+      <li><a href="#lineup">Programs</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#families">Families</a></li>
+      <li><a href="#crew">Volunteer</a></li>
+      <li><a href="#give">Donate</a></li>
+    </ul>
+    <a class="btn" href="#book" data-book>Bring a program to your school <span class="arr" aria-hidden="true">&rarr;</span></a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<nav class="drawer" id="drawer" aria-label="Menu">
+  <button class="close" id="menuClose" aria-label="Close menu">&times;</button>
+  <a href="#lineup">Programs</a><a href="#how">How it works</a><a href="#families">Families</a><a href="#crew">Volunteer</a><a href="#give">Donate</a>
+  <a class="btn" href="#book" data-book>Bring a program to your school <span class="arr" aria-hidden="true">&rarr;</span></a>
+</nav>
+
+<main id="main">
+
+<!-- ======================= HERO (night): the venue, the sign, and the poster wall ======================= -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="pwall" aria-hidden="true">
+    <div class="wp" style="--c:var(--s-flight); --r:-4deg"><small>Gr 6–12</small><b>Drones</b><i></i></div>
+    <div class="wp" style="--c:var(--s-code); --r:3deg; --y:18px"><small>Gr 3–5</small><b>Games</b><i></i></div>
+    <div class="wp" style="--c:var(--s-robots); --r:-2deg; --y:-6px"><small>Gr 6–12</small><b>Robots</b><i></i></div>
+    <div class="wp" style="--c:var(--s-fab); --r:4deg; --y:12px"><small>Gr 3–5</small><b>Prints</b><i></i></div>
+    <div class="wp" style="--c:var(--s-civic); --r:-3deg"><small>Gr 3–7</small><b>Block</b><i></i></div>
+    <div class="wp" style="--c:var(--s-media); --r:2deg; --y:-10px"><small>Gr 6–9</small><b>Pixels</b><i></i></div>
+    <div class="wp" style="--c:var(--s-sound); --r:-5deg; --y:8px"><small>Gr 9–12</small><b>Synths</b><i></i></div>
+    <div class="wp" style="--c:var(--s-circ); --r:3deg"><small>Gr 11–12</small><b>Wires</b><i></i></div>
+    <div class="wp" style="--c:var(--s-flight); --r:-2deg; --y:14px"><small>Gr 9–12</small><b>Race</b><i></i></div>
+    <div class="wp" style="--c:var(--s-code); --r:4deg; --y:-4px"><small>Gr 6–12</small><b>Debug</b><i></i></div>
+    <div class="wp" style="--c:var(--s-robots); --r:-3deg"><small>Gr 9–12</small><b>Mazes</b><i></i></div>
+    <div class="wp" style="--c:var(--s-fab); --r:2deg; --y:10px"><small>Gr 6–8</small><b>Boxes</b><i></i></div>
+    <div class="wp" style="--c:var(--s-sound); --r:-4deg"><small>Gr 9–12</small><b>Cues</b><i></i></div>
+    <div class="wp" style="--c:var(--s-civic); --r:3deg; --y:-8px"><small>Gr 9–12</small><b>Fixes</b><i></i></div>
+    <div class="wp" style="--c:var(--s-media); --r:-2deg"><small>Gr 6–9</small><b>Posters</b><i></i></div>
+  </div>
+  <div class="grain-n" aria-hidden="true"></div>
+  <svg class="skyline" viewBox="0 0 1440 180" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M0 180V156H36V142H64V156H96V130H132V148H160V160H196V110H228V160H246L252 38L262 14L272 38L278 160H316V100H352V160H380V56H414V160H446V80H470V20H520V160H540V-10L547 -16V-24L554 -30H612L619 -24V-16L626 -10V160H648V24L656 16V4L668 -8L680 4V16L688 24V160H720V70H760V160H780V92H808V130H836V160H860"/><circle cx="397" cy="38" r="16"/></g></svg>
+
+  <div class="wrap hero-grid">
+    <div class="hc-top">
+      <p class="kicker">Minneapolis nonprofit<span class="hide-s"> &middot; hands-on STEM</span> &middot; since 2015</p>
+      <h1 id="hero-title">Every kid gets <span class="lit">top billing.</span></h1>
+    </div>
+    <div class="hc-bot">
+      <p class="lede">We bring hands-on robotics, coding, 3D printing, sound tech, and drones <strong>right into Minneapolis schools and community sites.</strong><span class="hide-s"> Kids build it, test it, and show it off.</span></p>
+      <div class="cta-row" id="heroCta">
+        <a class="btn" href="#book" data-book>Bring a program to your school <span class="arr" aria-hidden="true">&rarr;</span></a>
+        <a class="btn ghost" href="#lineup">See the programs</a>
+      </div>
+      <div class="cost">
+        <div class="z"><b>$0</b><span>for students &amp; families</span></div>
+        <p><b>Your school or site:</b> <span data-confirm>many partner sites pay nothing, because grants and sponsors cover the program.</span> <a href="#funding">How funding works&nbsp;&darr;</a></p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <!-- one whole gig poster, wheat-pasted over the sign's corner -->
+      <div class="feat" data-sticker aria-hidden="true"><span class="tape"></span><small>Gr 9–12</small>
+        <svg viewBox="0 0 120 34"><path d="M2 17 H14 L18 5 L22 29 L26 9 L30 25 L34 17 H44 L48 2 L52 32 L56 8 L60 26 L64 17 H76 L80 7 L84 27 L88 12 L92 22 L96 17 H118" fill="none" stroke="#15112B" stroke-width="3" stroke-linejoin="round"/></svg>
+        <b>Beats</b><span>Lo-Fi Beat Lab</span></div>
+      <div class="board" data-bulbs data-gap="25" data-inset="12" data-r="16">
+        <div class="panel">
+          <div class="ln">Now making</div>
+          <div class="rail" aria-hidden="true"></div>
+          <div class="word" id="word" aria-hidden="true"></div>
+          <p class="sr">Now making robots, beats, drones, games, and 3D prints, at your school, free.</p>
+          <div class="rail" aria-hidden="true"></div>
+          <div class="ln">At your school &middot; free</div>
+        </div>
+      </div>
+      <figure class="kids" style="margin-bottom:0">
+        <img id="heroKids" src="img/kids-four.webp" width="1249" height="643" alt="Four young createMPLS students laughing together on the floor with their LEGO builds.">
+      </figure>
+      <img class="older" data-sticker src="img/kid-girl-red.webp" width="347" height="422" alt="An older createMPLS student in a red school fleece, smiling at her build table.">
+      <p class="kids-tag">real createMPLS <span class="hide-s">students </span>&middot; 2019 &amp; 2023</p>
+      <div class="floor" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<div class="band-clip"><div class="band-wrap">
+  <div class="band" aria-hidden="true"><div class="band-view"><div class="band-track" id="bandTrack"></div></div></div>
+  <button class="pause" id="pauseBtn" aria-pressed="false" aria-label="Pause moving text"><span aria-hidden="true">❚❚</span> <span class="pl">Pause</span></button>
+</div></div>
+
+<!-- ======================= HOW IT WORKS (day) ======================= -->
+<section class="day how grain" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <div class="how-head">
+      <div>
+        <p class="eyebrow">How it works</p>
+        <h2 class="h-poster" id="how-title">The show comes <span class="uline">to you.<svg viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M4 20 C 70 8, 150 6, 296 14"/></svg></span></h2>
+        <figure class="quote"><span class="tape" aria-hidden="true"></span>
+          <blockquote><p>&ldquo;It comes to us!&rdquo;</p></blockquote>
+          <figcaption>Raechelle, a createMPLS parent, on programs held at her children's school</figcaption>
+        </figure>
+      </div>
+      <div class="copy">
+        <p><strong>We bring the instructors, the kits, and the plan</strong> into your school or community site, during the school day, after school, or in summer. Students make something real, test it, change one thing, and show it to the people they care about.</p>
+        <p><strong>Students and families pay nothing.</strong> No bus, no tuition, no gear to buy.</p>
+        <p>Parent or caregiver? <a href="#families"><strong>Here's how to bring it to your kid's school.</strong></a></p>
+      </div>
+    </div>
+
+    <div class="acts">
+      <article class="act paste">
+        <div class="no">Act I</div>
+        <h3>Make</h3>
+        <figure><span class="tape" aria-hidden="true"></span><picture><source srcset="img/org-lego-machine.avif" type="image/avif"><img src="img/org-lego-machine-760.jpg" width="760" height="570" loading="lazy" alt="Two girls build a LEGO simple machine together from a bin of parts."></picture><figcaption>Real createMPLS, 2025</figcaption></figure>
+        <p>A short demo, then a long build sprint with real tools. Hands on parts in the first ten minutes.</p>
+        <div class="afoot"><span>Build sprint</span><span>Real tools</span></div>
+      </article>
+      <article class="act paste">
+        <div class="no">Act II</div>
+        <h3>Test</h3>
+        <figure><span class="tape" aria-hidden="true"></span><picture><source srcset="img/org-two-girls-robot.avif" type="image/avif"><img src="img/org-two-girls-robot-760.jpg" width="760" height="427" loading="lazy" alt="Two students adjust a LEGO robot on a classroom table."></picture><figcaption>Real createMPLS, 2019</figcaption></figure>
+        <p>Run it. Watch it fail. Change one thing. Run it again. That loop is the lesson.</p>
+        <div class="afoot"><span>Try &middot; fix &middot; retry</span><span>One change</span></div>
+      </article>
+      <article class="act paste">
+        <div class="no">Act III</div>
+        <h3>Show</h3>
+        <figure><span class="tape" aria-hidden="true"></span><picture><source srcset="img/org-paper-tower.avif" type="image/avif"><img src="img/org-paper-tower-760.jpg" width="705" height="698" loading="lazy" alt="A mentor measures a student-built paper tower while classmates watch."></picture><figcaption>Real createMPLS, 2018</figcaption></figure>
+        <p>Every program ends with a share: a showcase, a demo, a race, a listening party. Kids explain how it works.</p>
+        <div class="afoot"><span>The share</span><span>Kids explain it</span></div>
+      </article>
+    </div>
+    <p class="swipe" aria-hidden="true">swipe: make, test, show <svg width="40" height="18" viewBox="0 0 40 18"><path d="M2 9 H36 M28 2 L37 9 L28 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></p>
+
+    <ul class="facts">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>On site, in your space</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>School day, after school &amp; summer</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M6 20V9l6-5 6 5v11M10 20v-5h4v5"/></svg>Grades 3–12 now, K–2 in development</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= PROOF (night): where programs have run + what partners say ======================= -->
+<section class="proof" id="proof" aria-labelledby="proof-title">
+  <div class="grain-n" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="eyebrow">Where programs have run</p>
+    <h2 class="h-poster" id="proof-title">Already on stage at schools <span class="lit">like yours.</span></h2>
+    <div class="proof-grid">
+      <div class="tour paste">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="tour-top">
+          <div><p class="pre">createMPLS &middot; on tour since 2015</p><h3>Programs have <em>run at</em></h3></div>
+          <p class="headliner"><span>First host site, 2015</span><b>Hope Academy</b></p>
+        </div>
+        <div class="lineup-grid">
+          <p class="tier-h s">Schools</p>
+          <div class="grp"><h4>Minneapolis public</h4><ul><li>Green Central Elementary</li><li>Webster Elementary</li><li>Windom Community School</li></ul></div>
+          <div class="grp"><h4>Independent &amp; faith-based</h4><ul><li>Ascension Catholic School</li><li>St. Peter Claver</li><li>Journey School</li></ul></div>
+          <div class="grp"><h4>Suburban districts</h4><ul><li>Brooklyn Center Secondary</li><li>Hopkins West Junior High</li><li>Oak Grove Middle School</li><li>Valley View Elementary</li><li>Zanewood Community School</li></ul></div>
+          <p class="tier-h c">Community sites</p>
+          <div class="grp"><h4>Youth &amp; community programs</h4><ul><li>Urban Ventures</li><li>Banyan Community</li><li>Boys &amp; Girls Clubs</li><li>Best Buy Teen Tech Center at The Capri</li><li>PCYC</li><li>Girl Scouts River Valleys</li></ul></div>
+        </div>
+        <p class="fine">From the host-site lists published on creatempls.org, 2023–25. <span data-confirm>Groupings to confirm.</span></p>
+      </div>
+      <div class="says">
+        <figure class="say paste"><span class="tape" aria-hidden="true"></span>
+          <div class="ph"><picture><source srcset="img/org-fll-table-520.avif" type="image/avif"><img src="img/org-fll-table-520.jpg" width="520" height="346" loading="lazy" alt="Students and coaches at a robotics practice table at Hope Academy."></picture><span>Hope Academy, 2016</span></div>
+          <blockquote>&ldquo;I am extremely grateful for the opportunities in technology that our students have because of createMPLS.&rdquo;</blockquote>
+          <figcaption><b>Nathan Ziegler</b>Upper School Principal</figcaption>
+          <span class="site-tag">Hope Academy</span>
+        </figure>
+        <figure class="say paste"><span class="tape" aria-hidden="true"></span>
+          <blockquote>&ldquo;&hellip;what createMPLS provides is a great fit and has helped the students feel successful.&rdquo;</blockquote>
+          <figcaption><b>Nichole</b>Community site partner</figcaption>
+          <span class="site-tag">Urban Ventures</span>
+        </figure>
+        <figure class="say paste"><span class="tape" aria-hidden="true"></span>
+          <blockquote>&ldquo;I didn't know what to expect with a robotics program for such little kids, but it was amazing.&rdquo;</blockquote>
+          <figcaption><b>Sandy Hayden</b>Elementary teacher</figcaption>
+          <span class="site-tag">Elementary classroom</span>
+        </figure>
+      </div>
+    </div>
+    <p class="swipe" aria-hidden="true">swipe for more <svg width="40" height="18" viewBox="0 0 40 18"><path d="M2 9 H36 M28 2 L37 9 L28 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></p>
+    <p class="fine src">Quotes as published on creatempls.org, 2019–25.</p>
+  </div>
+</section>
+
+<!-- ===================== IMPACT MODULE: students served =====================
+     Self-contained and removable: delete from here to END IMPACT MODULE.
+     Nothing else on the page references it. The only metric allowed on the site. -->
+<section id="impact-since-2019" aria-labelledby="hc-title">
+<style>
+#impact-since-2019{position:relative; background:#15112B; color:#FFF3DC; padding:40px 0 110px; overflow:hidden; isolation:isolate}
+#impact-since-2019 .hc-wrap{max-width:980px; margin:0 auto; padding:0 clamp(18px,4vw,40px)}
+#impact-since-2019 .hc-poster{position:relative; background:#FFFBF2; color:#15112B; padding:34px clamp(18px,4vw,48px) 38px; transform:rotate(-1deg); box-shadow:0 30px 50px -22px rgba(0,0,0,.8); text-align:center}
+#impact-since-2019 .hc-tape{position:absolute; width:110px; height:28px; background:rgba(240,230,196,.92); top:-13px}
+#impact-since-2019 .hc-tape.l{left:8%; transform:rotate(-5deg)} #impact-since-2019 .hc-tape.r{right:8%; transform:rotate(4deg)}
+#impact-since-2019 .hc-eye{font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:800; font-size:14px; letter-spacing:.16em; text-transform:uppercase; color:#C8321F; margin:0}
+#impact-since-2019 .hc-sign{position:relative; display:inline-block; margin:20px auto 18px; background:linear-gradient(#D8402A,#B32D1B); border-radius:18px; padding:30px 34px; box-shadow:0 0 0 2px #7A1D12 inset, 0 18px 40px -14px rgba(200,50,31,.7)}
+#impact-since-2019 .hc-num{display:flex; gap:clamp(4px,1vw,10px); align-items:flex-end; font-size:clamp(56px,11vw,124px); line-height:1; perspective:600px}
+#impact-since-2019 .hc-t{display:inline-grid; place-items:center; width:.82em; height:1.1em; background:#FFFDF6; border-radius:5px; font-family:'Bungee',sans-serif; color:#15112B; box-shadow:0 3px 0 #C9B88F; transform-origin:50% 0}
+#impact-since-2019 .hc-t.c{width:.28em; height:auto; background:transparent; box-shadow:none; color:#FFE9A8; font-family:'Anton',Impact,sans-serif; font-size:.62em; align-self:flex-end; margin-bottom:-.08em; text-shadow:0 0 10px rgba(255,200,61,.8)}
+#impact-since-2019 .hc-bulbs{position:absolute; inset:6px; border-radius:14px; pointer-events:none; border:7px dotted #FFE9A8; filter:drop-shadow(0 0 3px #FFC83D)}
+#impact-since-2019 h2{font-family:'Anton',Impact,sans-serif; font-weight:400; text-transform:uppercase; font-size:clamp(36px,5.4vw,66px); line-height:.98; margin:6px 0 0}
+#impact-since-2019 .hc-note{position:absolute; right:clamp(6px,4%,40px); bottom:-24px; transform:rotate(-4deg); font-family:'Permanent Marker',cursive; font-size:clamp(17px,2vw,22px); background:#FFB3D9; color:#15112B; padding:6px 14px; box-shadow:0 6px 12px rgba(0,0,0,.25); white-space:nowrap}
+#impact-since-2019 .hc-small{font-family:'Bricolage Grotesque',system-ui,sans-serif; font-size:14px; font-weight:600; color:#4A4166; margin:14px 0 0}
+@media (max-width:720px){ #impact-since-2019{padding:34px 0 70px} #impact-since-2019 .hc-sign{padding:22px 20px} #impact-since-2019 .hc-bulbs{border-width:5px} #impact-since-2019 .hc-note{position:relative; display:inline-block; right:auto; bottom:auto; margin-top:18px} }
+</style>
+  <div class="hc-wrap">
+    <div class="hc-poster">
+      <span class="hc-tape l" aria-hidden="true"></span><span class="hc-tape r" aria-hidden="true"></span>
+      <p class="hc-eye">Students served</p>
+      <div class="hc-sign" aria-hidden="true">
+        <span class="hc-bulbs"></span>
+        <div class="hc-num"><span class="hc-t">5</span><span class="hc-t c">,</span><span class="hc-t">6</span><span class="hc-t">5</span><span class="hc-t">7</span></div>
+      </div>
+      <h2 id="hc-title"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">5,657 </span>students served since 2019</h2>
+      <p class="hc-small">createMPLS programs, all ages, 2019 to today</p>
+      <span class="hc-note" aria-hidden="true">that's a lot of show-and-tell</span>
+    </div>
+  </div>
+<script>
+(function(){
+  var s=document.getElementById('impact-since-2019'); if(!s) return;
+  var reduce=document.documentElement.dataset.motion==='reduce' || matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce || !('IntersectionObserver' in window)) return;
+  var tiles=[].slice.call(s.querySelectorAll('.hc-t:not(.c)'));
+  tiles.forEach(function(t){ t.dataset.v=t.textContent; t.style.transform='rotateX(90deg)'; });
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting) return; io.disconnect();
+    tiles.forEach(function(t,i){ var n=0, v=t.dataset.v; var spin=setInterval(function(){ t.textContent=(n++)%10; if(n>8+i*3){ clearInterval(spin); t.textContent=v; } },45);
+      t.animate([{transform:'rotateX(90deg)'},{transform:'rotateX(-14deg)'},{transform:'rotateX(0)'}],{duration:700,delay:i*120,easing:'cubic-bezier(.3,1.4,.5,1)',fill:'forwards'}); });
+  }); },{threshold:.4});
+  io.observe(s);
+})();
+</script>
+</section>
+<!-- ===================== END IMPACT MODULE ===================== -->
+
+<!-- ======================= WHAT KIDS MAKE (day, poster wall) =======================
+     One real-kids poster up front; the other five are drawn (one consistent screen-print plate style)
+     until the half-day build shoot replaces them with real builds. No stock photos. -->
+<section class="wall grain" id="makes" aria-labelledby="makes-title">
+  <div class="wrap">
+    <div class="wall-head">
+      <div>
+        <p class="eyebrow">What kids make</p>
+        <h2 class="h-poster" id="makes-title">What kids walk out having <span class="uline">made.<svg viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M4 18 C 80 8, 170 8, 296 16"/></svg></span></h2>
+      </div>
+      <div>
+        <p>Every program ends with something you can hold, play, fly, or hear, and a kid who can tell you exactly how it works.</p>
+        <p class="fine">Posters drawn from each program's real final build. Photos marked "real createMPLS" are from our programs.</p>
+      </div>
+    </div>
+
+    <div class="gigs" id="gigs">
+      <article class="gig paste" style="--stock:var(--s-robots); --r:-1.2deg">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="gtop"><span>Robots &amp; Machines</span><span class="gr">Gr 6–12</span></div>
+        <div class="art" data-sticker><img src="img/kids-ev3-pair.webp" style="--w:52%; --x:50%; --sr:-3deg" width="577" height="735" loading="lazy" alt="Two createMPLS students lean in together to adjust the LEGO robot they built."><span class="realtag">real createMPLS, 2019</span></div>
+        <h3>Lifters, claw grippers, and walkers that work</h3>
+        <p class="sharpie">tested until it lifts</p>
+        <p class="gfoot">Program: Engineering Challenge Lab</p>
+      </article>
+      <article class="gig paste" style="--stock:var(--s-flight); --r:1.2deg; --tr:3deg">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="gtop"><span>Flight &amp; Drones</span><span class="gr">Gr 6–12</span></div>
+        <div class="art">
+          <svg viewBox="0 0 300 210" role="img" aria-label="Drawing of a tiny four-rotor FPV drone over a dotted practice flight path.">
+            <rect x="34" y="14" width="232" height="168" rx="16" fill="#15112B"/>
+            <path d="M58 160 C 92 130, 62 86, 112 70 S 214 92, 244 44" fill="none" stroke="#6FC3FF" stroke-width="2.6" stroke-dasharray="1 8" stroke-linecap="round"/>
+            <path d="M118 72 L182 136 M182 72 L118 136" stroke="#FFF3DC" stroke-width="8" stroke-linecap="round"/>
+            <g fill="rgba(255,126,182,.18)" stroke="#FF7EB6" stroke-width="3"><circle cx="118" cy="72" r="20"/><circle cx="182" cy="72" r="20"/><circle cx="118" cy="136" r="20"/><circle cx="182" cy="136" r="20"/></g>
+            <g fill="#FFF3DC"><circle cx="118" cy="72" r="4"/><circle cx="182" cy="72" r="4"/><circle cx="118" cy="136" r="4"/><circle cx="182" cy="136" r="4"/></g>
+            <rect x="136" y="89" width="28" height="30" rx="6" fill="#FFF3DC"/><circle cx="150" cy="98" r="5.5" fill="#15112B"/><circle cx="150" cy="98" r="2.2" fill="#6FC3FF"/>
+            <g font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="11" fill="#FFF3DC"><text x="50" y="36">SIM ✓</text><text x="190" y="36">LAP 1 · 0:42</text></g>
+          </svg>
+        </div>
+        <h3>A tiny FPV drone you built, then flew</h3>
+        <p class="sharpie">flown in a simulator first</p>
+        <p class="gfoot">Program: Robotics to FPV</p>
+      </article>
+      <article class="gig paste" style="--stock:var(--s-code); --r:-.6deg">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="gtop"><span>Code &amp; Games</span><span class="gr">Gr 3–5</span></div>
+        <div class="art">
+          <svg viewBox="0 0 300 210" role="img" aria-label="Drawing of a kid-made arcade game: a boss level with a power-up.">
+            <rect x="34" y="14" width="232" height="168" rx="16" fill="#15112B"/>
+            <rect x="48" y="28" width="204" height="124" rx="6" fill="#221A45"/>
+            <g fill="#FF7EB6"><rect x="128" y="44" width="44" height="8"/><rect x="120" y="52" width="60" height="8"/><rect x="112" y="60" width="76" height="16"/><rect x="112" y="76" width="16" height="8"/><rect x="172" y="76" width="16" height="8"/></g>
+            <g fill="#15112B"><rect x="132" y="62" width="8" height="8"/><rect x="160" y="62" width="8" height="8"/></g>
+            <g fill="#FFF3DC"><rect x="140" y="128" width="20" height="8"/><rect x="146" y="120" width="8" height="8"/><rect x="148" y="98" width="4" height="12"/><rect x="148" y="86" width="4" height="6"/></g>
+            <g fill="#7CE0C3"><rect x="70" y="104" width="10" height="10"/><rect x="66" y="108" width="18" height="2"/></g>
+            <text x="58" y="44" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="11" fill="#FFF3DC">LVL 3 · BOSS</text>
+            <text x="200" y="44" font-family="Bricolage Grotesque, sans-serif" font-size="11" fill="#FF7EB6">♥♥♥</text>
+            <circle cx="96" cy="166" r="7" fill="#E5412D"/><circle cx="116" cy="166" r="7" fill="#7CE0C3"/><rect x="176" y="161" width="36" height="10" rx="5" fill="#3B3170"/>
+          </svg>
+        </div>
+        <h3>A boss-level arcade game</h3>
+        <p class="sharpie">three stages and a boss</p>
+        <p class="gfoot">Program: Scratch Arcade Adventure</p>
+      </article>
+      <article class="gig paste" style="--stock:var(--s-sound); --r:1deg; --tr:-4deg">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="gtop"><span>Sound &amp; Music</span><span class="gr">Gr 9–12</span></div>
+        <div class="art">
+          <svg viewBox="0 0 300 210" role="img" aria-label="Drawing of a beat as a waveform: stairwell reverb, a clap, a door slam.">
+            <rect x="34" y="14" width="232" height="168" rx="16" fill="#15112B"/>
+            <path d="M48 95 L58 95 L63 60 L68 130 L73 74 L78 112 L83 88 L92 95 L102 95 L107 48 L112 142 L117 66 L122 120 L127 86 L136 95 L146 95 L151 70 L156 118 L161 82 L168 95 L180 95 L185 40 L190 150 L195 58 L200 128 L205 78 L212 95 L224 95 L229 72 L234 116 L239 86 L246 95 L252 95" fill="none" stroke="#FF7EB6" stroke-width="3" stroke-linejoin="round"/>
+            <g font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="11" fill="#FFF3DC"><text x="50" y="38">STAIRWELL</text><text x="138" y="38">CLAP</text><text x="200" y="38">DOOR</text></g>
+            <g fill="#FFF3DC"><rect x="48" y="160" width="28" height="6"/><rect x="102" y="160" width="28" height="6"/><rect x="180" y="160" width="28" height="6"/></g>
+          </svg>
+        </div>
+        <h3>A beat built from found sounds</h3>
+        <p class="sharpie">recorded in real rooms</p>
+        <p class="gfoot">Program: Lo-Fi Beat Laboratory</p>
+      </article>
+      <article class="gig paste" style="--stock:var(--s-civic); --r:-1.1deg">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="gtop"><span>Civic Design</span><span class="gr">Gr 3–7</span></div>
+        <div class="art">
+          <svg viewBox="0 0 300 210" role="img" aria-label="Drawing of a cardboard model block with three buildings whose windows light up.">
+            <rect x="34" y="14" width="232" height="168" rx="16" fill="#15112B"/>
+            <text x="50" y="38" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="11" fill="#FFF3DC">MY BLOCK · LIGHTS ON</text>
+            <path d="M48 162 H252" stroke="#FFF3DC" stroke-width="3" stroke-linecap="round"/>
+            <path d="M60 162 V104 L88 80 L116 104 V162 Z" fill="#D9B48A" stroke="#15112B" stroke-width="2"/>
+            <rect x="126" y="70" width="58" height="92" fill="#E6C79E" stroke="#15112B" stroke-width="2"/>
+            <rect x="194" y="110" width="48" height="52" fill="#C99C6C" stroke="#15112B" stroke-width="2"/>
+            <g fill="#FFF3DC"><rect x="70" y="114" width="14" height="14"/><rect x="92" y="136" width="14" height="14"/><rect x="136" y="82" width="14" height="14"/><rect x="160" y="106" width="14" height="14"/><rect x="136" y="130" width="14" height="14"/><rect x="204" y="122" width="12" height="12"/></g>
+            <g fill="#3B3170"><rect x="92" y="114" width="14" height="14"/><rect x="70" y="136" width="14" height="14"/><rect x="160" y="82" width="14" height="14"/><rect x="136" y="106" width="14" height="14"/><rect x="160" y="130" width="14" height="14"/><rect x="222" y="122" width="12" height="12"/></g>
+            <rect x="211" y="142" width="14" height="20" fill="#3B3170"/>
+            <path d="M242 140 C 256 140, 258 120, 248 112" fill="none" stroke="#FF9F8A" stroke-width="2.5"/><rect x="242" y="100" width="12" height="14" rx="2" fill="#FF9F8A"/>
+          </svg>
+        </div>
+        <h3>A neighborhood invention that lights up</h3>
+        <p class="sharpie">shown at a public showcase</p>
+        <p class="gfoot">Program: Build Your Block</p>
+      </article>
+      <article class="gig paste" style="--stock:var(--s-fab); --r:.8deg; --tr:2deg">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="gtop"><span>3D Printing</span><span class="gr">Gr 3–5</span></div>
+        <div class="art">
+          <svg viewBox="0 0 300 210" role="img" aria-label="Drawing of a 3D-printed chain critter that wiggles, next to a printed nametag.">
+            <rect x="34" y="14" width="232" height="168" rx="16" fill="#15112B"/>
+            <g stroke="#FFF3DC" stroke-width="2.5" stroke-linecap="round" fill="none"><path d="M96 70 q6 -8 12 0"/><path d="M150 62 q6 -8 12 0"/><path d="M204 70 q6 -8 12 0"/></g>
+            <g fill="#B9A6FF" stroke="#15112B" stroke-width="2.5"><rect x="62" y="104" width="34" height="28" rx="10"/><rect x="92" y="92" width="34" height="28" rx="10"/><rect x="122" y="104" width="34" height="28" rx="10"/><rect x="152" y="92" width="34" height="28" rx="10"/><rect x="182" y="104" width="34" height="28" rx="10"/><circle cx="232" cy="104" r="22"/></g>
+            <g fill="#15112B"><circle cx="226" cy="100" r="3.5"/><circle cx="240" cy="100" r="3.5"/></g>
+            <path d="M226 84 L220 70 M238 84 L244 70" stroke="#B9A6FF" stroke-width="3" stroke-linecap="round"/>
+            <g transform="rotate(-8 92 160)"><rect x="56" y="146" width="74" height="26" rx="5" fill="#FFF3DC"/><circle cx="66" cy="159" r="4" fill="#15112B"/><text x="76" y="164" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="13" fill="#15112B">HI, I'M ★</text></g>
+          </svg>
+        </div>
+        <h3>A 3D-printed critter that wiggles</h3>
+        <p class="sharpie">plus a printed nametag</p>
+        <p class="gfoot">Program: From Idea to 3D Print</p>
+      </article>
+    </div>
+    <p class="swipe" aria-hidden="true">swipe for more <svg width="40" height="18" viewBox="0 0 40 18"><path d="M2 9 H36 M28 2 L37 9 L28 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></p>
+
+    <div class="wall-cta">
+      <a class="btn ink" href="#lineup">See the season map <span class="arr" aria-hidden="true">&rarr;</span></a>
+      <span class="hand">grades 3–12, free for families</span>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PROGRAMS (night): the season map; tickets are its detail drawer ======================= -->
+<section class="lineup" id="lineup" aria-labelledby="lineup-title">
+  <div class="valance" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="lineup-head">
+      <p class="eyebrow">Programs</p>
+      <h2 class="h-poster" id="lineup-title">Pick a grade. Pick a subject. We bring <span class="lit">the rest.</span></h2>
+      <p>Every program runs on site, at your school or community space. Choose who you work with, open a slot to see its programs, add the ones you like, and send us the list.</p>
+    </div>
+
+    <div class="who" role="group" aria-label="I work with" id="who">
+      <span class="lab" aria-hidden="true">I work with:</span>
+    </div>
+    <button class="switch" id="sfSwitch" role="switch" aria-checked="false"><span class="track" aria-hidden="true"></span>Only programs that can run screen-free</button>
+    <p class="count" id="count" aria-live="polite"></p>
+
+    <div class="smap" id="smap">
+      <span class="tape tl" aria-hidden="true"></span><span class="tape tr" aria-hidden="true"></span>
+      <span class="start" aria-hidden="true">open a lit slot<svg viewBox="0 0 40 40"><path d="M6 4 C 26 8, 32 18, 26 34 M18 28 L26 35 L33 26"/></svg></span>
+      <div class="smap-top">
+        <div>
+          <p class="pre">createMPLS &middot; at your school or site</p>
+          <h3>Season map</h3>
+        </div>
+        <ul class="legend">
+          <li><span class="bulb on" aria-hidden="true"></span>one program</li>
+          <li><span class="bk" aria-hidden="true"></span>not offered yet</li>
+          <li>Tap a slot or a subject to see its programs</li>
+        </ul>
+      </div>
+      <div id="gridMap" role="group" aria-label="Season map: programs by subject and grade band"></div>
+      <div class="smap-foot">
+        <span id="k2line"><span class="hand">Grades K–2?</span> New programs for younger grades are in development. Ask us.</span>
+        <button class="linkbtn" id="openAlso" aria-expanded="false" aria-controls="morep">College &amp; adult programs <span aria-hidden="true">&darr;</span></button>
+      </div>
+      <div class="morep" id="morep" hidden>
+        <p>For college students and for adults (workplace lunch labs and workshops). Our main focus is K–12; these are here for partners who ask.</p>
+        <ul class="bside" id="bside"></ul>
+      </div>
+    </div>
+
+    <div class="tray" id="tray" aria-live="polite">
+      <span class="tl">Your list</span>
+      <div class="items" id="trayItems"></div>
+      <a class="btn" href="#book" data-book>Bring a program to your school <span class="arr" aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= GET INVOLVED (day: flyers on the wall) ======================= -->
+<section class="join grain" id="join" aria-labelledby="join-title">
+  <div class="wrap">
+    <div class="join-head">
+      <div>
+        <p class="eyebrow">Get involved</p>
+        <h2 class="h-poster" id="join-title">Next show: <span class="uline">yours.<svg viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M4 18 C 80 8, 170 8, 296 16"/></svg></span></h2>
+        <p>Bring a program to your students, ask for one at your kid's school, lend a hand, or help keep the kits stocked.</p>
+      </div>
+    </div>
+
+    <!-- PRIMARY: every "Bring a program to your school" button lands here -->
+    <article class="flyer host paste" id="book" aria-labelledby="book-title">
+      <span class="tape" aria-hidden="true"></span>
+      <div class="host-grid">
+        <div class="pitch">
+          <p class="kick">Schools &amp; community sites</p>
+          <h3 id="book-title">Host a program at your school or site</h3>
+          <p>Tell us your grades, your space, and your timing. We match a program and bring it to you.</p>
+          <dl class="terms">
+            <div class="zero"><dt>Students &amp; families pay</dt><dd>$0</dd></div>
+            <div><dt>Your school or site</dt><dd><span data-confirm>Many partner sites pay nothing: grants and sponsors cover the program. Where there is a cost, schools often use Title I, 21st CCLC, or PTO funds.</span> <a href="#funding">How funding works&nbsp;&darr;</a></dd></div>
+            <div><dt>We bring</dt><dd>Instructors, kits, and the lesson plan</dd></div>
+            <div><dt>You provide</dt><dd>A room with tables and outlets, <span data-confirm>a staff member in the room</span>, and your students</dd></div>
+            <div><dt>Lead time</dt><dd><span data-confirm>About one season ahead</span>; tell us your dates</dd></div>
+          </dl>
+          <div class="fund" id="funding">
+            <span class="tape" aria-hidden="true"></span>
+            <h4>How funding works</h4>
+            <ol>
+              <li><span><b>First call:</b> you tell us your grades, dates, and space. We tell you what it costs your site, <span data-confirm>and for many sites that's $0</span>.</span></li>
+              <li><span><b>We look for coverage first:</b> <span data-confirm>createMPLS grants and local sponsors</span>.</span></li>
+              <li><span><b>If there's a gap:</b> the usual sources are Title I, 21st CCLC (after school), or PTO and site budgets. <span data-confirm>We'll write the program description for your request.</span></span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="form-card" id="bookCard">
+          <span class="tape" aria-hidden="true"></span>
+          <form id="bookForm" novalidate>
+            <h4>Tell us about your site</h4>
+            <div class="fgrid">
+              <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required></div>
+              <div class="field"><label for="f-role">Your role</label>
+                <select id="f-role" name="role"><option value="">Choose one</option><option>Principal or administrator</option><option>Teacher</option><option>After-school or site director</option><option value="parent">Parent or caregiver</option><option>Other</option></select></div>
+              <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+              <div class="field"><label for="f-site">School or site</label><input id="f-site" name="site" autocomplete="organization" required></div>
+              <div class="field"><label for="f-type">Type of site</label>
+                <select id="f-type" name="type"><option value="">Choose one</option><option>Public school</option><option>Charter or independent school</option><option>After-school or youth program</option><option>Community center</option><option>Other</option></select></div>
+              <div class="field"><label for="f-when">When</label>
+                <select id="f-when" name="when"><option value="">Choose one</option><option value="school">During the school day</option><option value="after">After school</option><option value="summer">Summer</option><option value="unsure">Not sure yet</option></select></div>
+              <fieldset class="field full"><legend>Grades</legend>
+                <div class="checks" id="f-grades">
+                  <label><input type="checkbox" name="grades" value="K–2">K–2</label>
+                  <label><input type="checkbox" name="grades" value="3–5">3–5</label>
+                  <label><input type="checkbox" name="grades" value="6–8">6–8</label>
+                  <label><input type="checkbox" name="grades" value="9–12">9–12</label>
+                </div>
+              </fieldset>
+              <div class="field full"><span class="lbl">Programs you're interested in</span>
+                <div class="picks" id="bookPicks"></div></div>
+              <div class="field full"><label for="f-msg">Anything else?</label><textarea id="f-msg" name="message" placeholder="Dates, room, number of students…"></textarea></div>
+            </div>
+            <button class="btn" type="submit">Start a partnership <span class="arr" aria-hidden="true">&rarr;</span></button>
+            <p class="fine">We reply by email from info@creatempls.org.</p>
+          </form>
+          <div class="sent" id="bookSent" tabindex="-1">
+            <h4>Thanks, you're on our list.</h4>
+            <p id="bookSentMsg"></p>
+            <p class="fine">Design mockup: nothing was sent.</p>
+          </div>
+        </div>
+        <figure class="host-stick" data-sticker><img src="img/kids-2025.webp" width="756" height="545" loading="lazy" alt="Two createMPLS students build a LEGO simple machine together."><figcaption class="tg">real createMPLS, 2025</figcaption></figure>
+      </div>
+    </article>
+
+    <div class="flyers2">
+      <article class="flyer crew paste" id="crew" aria-labelledby="crew-title">
+        <span class="tape" aria-hidden="true"></span>
+        <figure class="stick" data-sticker aria-hidden="true"><img src="img/kids-build-pair.webp" width="676" height="625" alt="" loading="lazy"><span class="tg">real createMPLS, 2019</span></figure>
+        <p class="kick">Volunteers</p>
+        <h3 id="crew-title">Join the crew</h3>
+        <p class="hook">No teaching experience needed: engineers, makers, and coders welcome.</p>
+        <p>Bring patience; we bring the parts.</p>
+        <ul class="roles">
+          <li><b>Build-day helper</b><span data-confirm>One session, about 2 hours</span></li>
+          <li><b>Program mentor</b><span><span data-confirm>Weekly, for one program</span> (most run 8–15 weeks)</span></li>
+          <li><b>Skills volunteer</b><span>Grants, marketing, IT, or curriculum, on your schedule</span></li>
+        </ul>
+        <p class="need"><b>Before you work with students:</b> <span data-confirm>a background check and a short onboarding</span>.</p>
+        <form class="mini-form" id="crewForm" novalidate>
+          <div class="field"><label for="c-name">Name</label><input id="c-name" autocomplete="name" required></div>
+          <div class="field"><label for="c-email">Email</label><input id="c-email" type="email" autocomplete="email" required></div>
+          <div class="field" style="grid-column:1/-1"><label for="c-role">I'd like to be a</label>
+            <select id="c-role"><option value="build">Build-day helper</option><option value="mentor">Program mentor</option><option value="skills">Skills volunteer</option></select></div>
+          <button class="btn ink" type="submit">Sign up to volunteer <span class="arr" aria-hidden="true">&rarr;</span></button>
+          <p class="done-msg" hidden>Thanks! We'll email you about next steps. (Design mockup: nothing was sent.)</p>
+        </form>
+        <p class="ask">Questions first? <a href="mailto:info@creatempls.org?subject=Volunteering">info@creatempls.org</a></p>
+      </article>
+      <div class="col2">
+        <article class="flyer give paste" id="give" aria-labelledby="give-title">
+          <span class="tape" aria-hidden="true"></span>
+          <p class="kick">Donors</p>
+          <h3 id="give-title">Keep the lights on</h3>
+          <p>Gifts buy the kits, parts, and gear we carry into schools.</p>
+          <ul class="gifts">
+            <li><b data-confirm>$25</b><span>a day of programs for one student</span></li>
+            <li><b data-confirm>$100</b><span>a junior robotics kit</span></li>
+            <li><b data-confirm>$250</b><span>an iPad for coding and robotics</span></li>
+            <li><b data-confirm>$500</b><span>an intermediate robotics kit</span></li>
+          </ul>
+          <div class="give-btns">
+            <a class="btn" href="https://givebutter.com/creatempls">Give on Givebutter <span class="arr" aria-hidden="true">&rarr;</span></a>
+            <a class="btn ghost" href="https://givebutter.com/creatempls" data-confirm>Give monthly</a>
+          </div>
+          <nav class="tabs" aria-label="Tear off a gift amount">
+            <a href="https://givebutter.com/creatempls">Give $25</a><a href="https://givebutter.com/creatempls">Give $100</a><a href="https://givebutter.com/creatempls">Give $250</a><a href="https://givebutter.com/creatempls">Monthly</a>
+          </nav>
+        </article>
+        <article class="flyer fam paste" id="families" aria-labelledby="fam-title">
+          <span class="tape" aria-hidden="true"></span>
+          <p class="kick">Parents &amp; caregivers</p>
+          <h3 id="fam-title">Want this at your kid's school?</h3>
+          <p>We run where schools and rec centers invite us. A note from a parent is a great way to start.</p>
+          <ol>
+            <li>Send this page to your principal or rec-center director.</li>
+            <li>Or tell us where your kid goes, and we'll reach out.</li>
+          </ol>
+          <div class="fam-btns">
+            <a class="btn ink" id="mailPrincipal" href="mailto:?subject=A%20free%20STEM%20program%20for%20our%20school">Send this to your principal <span class="arr" aria-hidden="true">&rarr;</span></a>
+            <a class="btn ghost" href="mailto:info@creatempls.org?subject=A%20parent%20asking%20about%20createMPLS">Ask us</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot" aria-label="Footer">
+  <div class="wrap">
+    <div class="bigsign">
+      <div class="box" data-bulbs data-gap="30" data-inset="13" data-r="18" id="bigBox">
+        <svg class="create" viewBox="0 0 120 50" aria-hidden="true"><use href="#cw" stroke="#15112B" stroke-width="13"/><use href="#cw" stroke="#FF48B0" stroke-width="6.5"/></svg>
+        <div class="mpls" aria-hidden="true">MPLS</div>
+        <span class="sr">createMPLS</span>
+      </div>
+      <div class="point" aria-hidden="true"></div>
+      <p class="here">Right here in Minneapolis.</p>
+    </div>
+    <div class="fcols">
+      <div>
+        <h4>createMPLS</h4>
+        <p>Hands-on STEM for K–12 students, delivered on site through school and community partnerships. Always free for students and families.</p>
+      </div>
+      <div><h4>Explore</h4><ul><li><a href="#lineup">Programs</a></li><li><a href="#how">How it works</a></li><li><a href="#makes">What kids make</a></li><li><a href="#funding">How funding works</a></li></ul></div>
+      <div><h4>Get involved</h4><ul><li><a href="#book" data-book>Bring a program to your school</a></li><li><a href="#families">For parents &amp; caregivers</a></li><li><a href="#crew">Volunteer</a></li><li><a href="#give">Donate</a></li></ul></div>
+      <div><h4>Say hello</h4><ul><li><a href="mailto:info@creatempls.org">info@creatempls.org</a></li><li><a href="https://www.facebook.com/MPLScreate">@MPLScreate</a></li></ul></div>
+    </div>
+    <div class="legal">
+      <span>createMPLS is a 501(c)(3) nonprofit &middot; EIN 47-5122723 &middot; Photos marked "real createMPLS" are from createMPLS programs; posters without a photo are drawings.</span>
+      <div class="toggles"><button id="motionBtn" aria-pressed="false">Reduce motion</button></div>
+    </div>
+  </div>
+</footer>
+
+<div class="mbar" id="mbar" aria-label="Quick actions" role="region">
+  <a class="btn" href="#book" data-book>Bring a program <span class="n" id="mbarN"></span></a>
+  <a class="btn give" href="#give">Donate</a>
+</div>
+
+<!-- No animation library: CSS + IntersectionObserver only. -->
+<script>
+const PROGRAMS = [{"id": "idea-to-3d-print", "title": "From Idea to 3D Print", "domain": "fabrication-3d", "grade_min": 3, "grade_max": 5, "screen_level": 2, "screen_load": "Short screen bursts", "can_run_screen_free": false, "sessions_hint": "11 weeks × 90 min", "what_kids_make": "a printed nametag, a wiggly chain critter, and a design made for a real partner", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A printed nametag and a wiggly chain critter", "short": "3D-print critter", "show": "A design for a real partner"}, {"id": "scratch-arcade-adventure", "title": "Scratch Arcade Adventure", "domain": "code-games", "grade_min": 3, "grade_max": 5, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "12 weeks × 1 hr (plus an optional 2-session starter bridge)", "what_kids_make": "a polished arcade game: enemy patterns, a power-up, three stages, a boss, and a win screen", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "A boss-level arcade game", "short": "Arcade game", "show": null}, {"id": "scratch-stories-games", "title": "Scratch Stories and Games", "domain": "code-games", "grade_min": 3, "grade_max": 5, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "12 weeks × 1 hr", "what_kids_make": "a published two-level Scratch game with cutscenes and a win screen", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "A two-level Scratch game with cutscenes", "short": "Story game", "show": null}, {"id": "build-your-block", "title": "Build Your Block", "domain": "civic-data", "grade_min": 3, "grade_max": 7, "screen_level": 2, "screen_load": "Short screen bursts", "can_run_screen_free": true, "sessions_hint": "28 sessions × 1.75 hr (7 weeks, 4 a week)", "what_kids_make": "a neighborhood invention that lights up, moves, or responds, shown at a public showcase", "audience": "students", "formats": ["Course"], "setup_level": 0, "setup_label": "Room, tables, and a tote of basic materials", "bill": "A neighborhood invention that lights up, moves, or responds", "short": "Block invention", "show": "A public showcase"}, {"id": "design-for-printability", "title": "Design for Printability", "domain": "fabrication-3d", "grade_min": 6, "grade_max": 8, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "10 weeks, two work blocks per session", "what_kids_make": "a locking box that passes drop and shake tests", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A locking box that survives the drop test", "short": "Locking box", "show": null}, {"id": "digital-imaging-lab", "title": "Digital Imaging Lab", "domain": "media-light", "grade_min": 6, "grade_max": 9, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "12 sessions × 90 min", "what_kids_make": "a pixel self-portrait, a poster campaign, and a small exhibition", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "A pixel self-portrait and a poster campaign", "short": "Pixel portrait", "show": "A small exhibition"}, {"id": "debugging-studio", "title": "Debugging Studio", "domain": "code-games", "grade_min": 6, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": true, "sessions_hint": "8 sessions × 60–90 min", "what_kids_make": "a debugging portfolio built from tough puzzles", "audience": "students", "formats": ["Course"], "setup_level": 0, "setup_label": "Room, tables, and a tote of basic materials", "bill": "A portfolio of tough bugs, fixed", "short": "Bug portfolio", "show": null}, {"id": "digital-manufacturing", "title": "Digital Manufacturing Studio", "domain": "fabrication-3d", "grade_min": 6, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "12 sessions × 2 hr", "what_kids_make": "a CNC-engraved nameplate, a custom keychain, and an assembly of cut and printed parts", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A CNC-engraved nameplate and a custom keychain", "short": "CNC nameplate", "show": null}, {"id": "engineering-challenge-lab", "title": "Engineering Challenge Lab", "domain": "robots-machines", "grade_min": 6, "grade_max": 12, "screen_level": 2, "screen_load": "Short screen bursts", "can_run_screen_free": false, "sessions_hint": "10–12 weeks, two work blocks per session", "what_kids_make": "working mechanisms like speed reducers, lifters, claw grippers, and walkers", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "Lifters, claw grippers, and walkers that work", "short": "Lifters & walkers", "show": null}, {"id": "robotics-to-fpv", "title": "Robotics to FPV", "domain": "flight-drones", "grade_min": 6, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "15 weeks × 90 min", "what_kids_make": "a tiny FPV drone you built, a pilot logbook, and a team demo", "audience": "students", "formats": ["Course"], "setup_level": 4, "setup_label": "Dedicated space or equipment (flight zone, machine shop, private network)", "bill": "A tiny FPV drone you built, then flew", "short": "Tiny FPV drone", "show": "A team demo"}, {"id": "parametric-sculpture-3d-print", "title": "Parametric Sculpture & 3D Print", "domain": "fabrication-3d", "grade_min": 8, "grade_max": 11, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "8 weeks, two work blocks per session", "what_kids_make": "a gallery-ready 3D-printed sculpture with an artist statement", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A gallery-ready 3D-printed sculpture", "short": "3D sculpture", "show": "An artist statement"}, {"id": "ai-in-your-feed", "title": "AI in Your Feed: Create, Explore, Protect", "domain": "civic-data", "grade_min": 9, "grade_max": 12, "screen_level": 4, "screen_load": "Screen studio", "can_run_screen_free": false, "sessions_hint": "4 weekly sessions × 90 min", "what_kids_make": "a small creative project made with AI tools, plus a student guide to using AI with care", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "A creative project made with AI tools, used with care", "short": "AI, with care", "show": null}, {"id": "digital-music-control", "title": "Digital Music Control", "domain": "sound-music", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "4 weekly 2-hr sessions per level (3 levels)", "what_kids_make": "a hand-built music controller with knobs, buttons, and lights", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A hand-built music controller with knobs and lights", "short": "Music controller", "show": null}, {"id": "game-tech-intensive", "title": "Game Tech Intensive", "domain": "code-games", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "6 sessions × 60 min per track", "what_kids_make": "a remixed Scratch game or a micro:bit controller in a cardboard shell", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "A remixed game or a micro:bit controller", "short": "Remixed game", "show": null}, {"id": "high-school-drone-racing-league", "title": "High School Drone Racing League", "domain": "flight-drones", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "4-week bootcamp, 12-week season, then summer league", "what_kids_make": "race-ready pilots: a 4-week bootcamp, time trials, and a mini-meet", "audience": "students", "formats": ["League", "Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "Race-ready pilots, from bootcamp to mini-meet", "short": "Drone racing", "show": "Time trials and a mini-meet"}, {"id": "lo-fi-beat-laboratory", "title": "Lo-Fi Beat Laboratory", "domain": "sound-music", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "8 sessions × 90 min", "what_kids_make": "a 30–60 second beat built from found sounds and real rooms", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "A beat built from found sounds and real rooms", "short": "Lo-fi beat", "show": null}, {"id": "physical-sound-drawing", "title": "Physical Sound Drawing", "domain": "sound-music", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "8 sessions × 90 min", "what_kids_make": "a 60–120 second sound piece played on one string, with a gesture map", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "A sound piece played on one string", "short": "One-string piece", "show": "A live performance"}, {"id": "robotics-vibe-coding", "title": "Robotics & Vibe Coding", "domain": "robots-machines", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "8 sessions × 2 hr", "what_kids_make": "a sensing robot that performs with sound and light", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A sensing robot that performs with sound and light", "short": "Performing robot", "show": "A robot performance"}, {"id": "spike-prime-robotics", "title": "SPIKE Prime Robotics", "domain": "robots-machines", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "12 sessions × 1 hr", "what_kids_make": "an autonomous maze-solving robot ready for a tournament", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A maze-solving robot, tournament-ready", "short": "Maze robot", "show": "A tournament-style run"}, {"id": "sound-design-engineering", "title": "Sound Design and Engineering", "domain": "sound-music", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "22 sessions × 60 min", "what_kids_make": "a polished sound mini-project made from recorded sound effects and synth sounds", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "A sound mini-project from effects you recorded", "short": "Sound mini-project", "show": null}, {"id": "sound-design-for-theater", "title": "Sound Design for Theater", "domain": "sound-music", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "8 sessions × 90 min", "what_kids_make": "a cue sheet and original sound cues played live at a showcase", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "Original sound cues, played live", "short": "Theater sound", "show": "Live cues at a showcase"}, {"id": "tiny-whoop-tuning-racing", "title": "Tiny Whoop Tuning & Racing", "domain": "flight-drones", "grade_min": 9, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "10 weeks, 20 sessions × 90 min", "what_kids_make": "a tuned racing whoop, a tune log, and a class race", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A tuned racing drone and a tune log", "short": "Tuned whoop", "show": "A class race"}, {"id": "advanced-digital-fabrication-lab", "title": "Advanced Digital Fabrication Lab", "domain": "fabrication-3d", "grade_min": 11, "grade_max": 12, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "14–16 week semester", "what_kids_make": "a multi-material capstone print and the scan and queue logs behind it", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A multi-material capstone print", "short": "Capstone print", "show": null}, {"id": "digital-tools-platforms", "title": "Digital Tools & Platforms", "domain": "circuits-electronics", "grade_min": 11, "grade_max": 13, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "12 weeks", "what_kids_make": "a reliable physical controller with documented wiring and code", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "bill": "A physical controller, wired and coded", "short": "Controller build", "show": null}, {"id": "ethics-accessibility-long-term-thinking", "title": "Ethics, Accessibility & Long-Term Thinking", "domain": "civic-data", "grade_min": 11, "grade_max": 13, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": true, "sessions_hint": "12 weeks", "what_kids_make": "a Responsibility Pack: an audit, a tested accessibility fix, and a repair plan", "audience": "students", "formats": ["Course"], "setup_level": 0, "setup_label": "Room, tables, and a tote of basic materials", "bill": "A tested accessibility fix and a repair plan", "short": "Accessibility fix", "show": null}, {"id": "foundations-signals-systems", "title": "Foundations of Signals & Systems", "domain": "sound-music", "grade_min": 11, "grade_max": 13, "screen_level": 4, "screen_load": "Screen studio", "can_run_screen_free": false, "sessions_hint": "12 weeks", "what_kids_make": "labeled plots, working filters, and a reproducible final project on real audio or sensor data", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "bill": "Working audio filters and real-data plots", "short": "Signals & filters", "show": null}];
+const MORE = [{"id": "critical-making-civic-media", "title": "Critical Making & Civic Media", "domain": "civic-data", "grade_min": 13, "grade_max": 13, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "12 weeks, 24 sessions × about 110 min", "what_kids_make": "a small public intervention (poster, zine, sign, or short video) made with a partner", "audience": "students", "formats": ["Course"], "setup_level": 0, "setup_label": "Room, tables, and a tote of basic materials", "who": "College"}, {"id": "diy-instrument-lab", "title": "DIY Instrument Lab", "domain": "sound-music", "grade_min": 13, "grade_max": 13, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "14 weeks, one 2–3 hr meeting a week", "what_kids_make": "a playable instrument or instrument system, performed and documented", "audience": "students", "formats": ["Course"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "who": "College"}, {"id": "fpv-systems-primer", "title": "FPV Systems Primer", "domain": "flight-drones", "grade_min": 13, "grade_max": 13, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "5 sessions × 2–3 hr", "what_kids_make": "a saved drone configuration, a bench-proof checklist, a telemetry capture, and a troubleshooting story", "audience": "students", "formats": ["Course"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "who": "College"}, {"id": "imaging-otherwise", "title": "Imaging Otherwise", "domain": "media-light", "grade_min": 13, "grade_max": 13, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "14 weeks, one 3-hr meeting a week", "what_kids_make": "experimental image studies and a public-facing final project", "audience": "students", "formats": ["Course"], "setup_level": 1, "setup_label": "Basic materials plus batteries or small circuits", "who": "College"}, {"id": "sensing-and-gesture-studio", "title": "Sensing & Gesture Studio", "domain": "circuits-electronics", "grade_min": 13, "grade_max": 13, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": true, "sessions_hint": "14 weeks, one 2–3 hr meeting a week", "what_kids_make": "a gesture-sensing interactive work", "audience": "students", "formats": ["Course"], "setup_level": 0, "setup_label": "Room, tables, and a tote of basic materials", "who": "College"}, {"id": "sound-systems-society", "title": "Sound / Systems / Society", "domain": "sound-music", "grade_min": 13, "grade_max": 13, "screen_level": 2, "screen_load": "Short screen bursts", "can_run_screen_free": false, "sessions_hint": "14 weeks, one 3-hr meeting a week", "what_kids_make": "a tiny sound system with a demo, and a community mix with documentation", "audience": "students", "formats": ["Course"], "setup_level": 1, "setup_label": "Basic materials plus batteries or small circuits", "who": "College"}, {"id": "ai-workflow-arcade", "title": "AI Workflow Arcade", "domain": "civic-data", "grade_min": null, "grade_max": null, "screen_level": 4, "screen_load": "Screen studio", "can_run_screen_free": false, "sessions_hint": "45–60 min lunch lab", "what_kids_make": "an AI Workflow Card: sources, tools, what was checked, and the final human call", "audience": "adults", "formats": ["Lunch lab"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "who": "Adults · lunch lab"}, {"id": "dimension-token", "title": "Dimension Token", "domain": "fabrication-3d", "grade_min": null, "grade_max": null, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "45–60 min lunch lab", "what_kids_make": "a tiny 3D-modeled token and a card of its exact measurements", "audience": "adults", "formats": ["Lunch lab"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "who": "Adults · lunch lab"}, {"id": "fpv-flight-school", "title": "FPV Flight School", "domain": "flight-drones", "grade_min": null, "grade_max": null, "screen_level": 3, "screen_load": "Screens as a tool", "can_run_screen_free": false, "sessions_hint": "45–60 min lunch lab", "what_kids_make": "a Pilot Card with hover, gate, and personal-best notes", "audience": "adults", "formats": ["Lunch lab"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "who": "Adults · lunch lab"}, {"id": "own-your-own-ai", "title": "Own Your Own AI", "domain": "civic-data", "grade_min": null, "grade_max": null, "screen_level": 4, "screen_load": "Screen studio", "can_run_screen_free": false, "sessions_hint": "One 3-hour workshop", "what_kids_make": "a language model running on your own laptop, plus a tiny summarizer tool", "audience": "adults", "formats": ["Workshop"], "setup_level": 3, "setup_label": "Specialized kits, printers, or audio gear", "who": "Adults · workshop"}, {"id": "robot-mood-machines", "title": "Robot Mood Machines", "domain": "robots-machines", "grade_min": null, "grade_max": null, "screen_level": 2, "screen_load": "Short screen bursts", "can_run_screen_free": false, "sessions_hint": "45–60 min lunch lab", "what_kids_make": "a robot performance with a mood, plus a Behavior Card", "audience": "adults", "formats": ["Lunch lab"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "who": "Adults · lunch lab"}, {"id": "signal-postcards", "title": "Signal Postcards", "domain": "civic-data", "grade_min": null, "grade_max": null, "screen_level": 2, "screen_load": "Short screen bursts", "can_run_screen_free": false, "sessions_hint": "45–60 min lunch lab", "what_kids_make": "a 4×6 data postcard with a recommendation on the back", "audience": "adults", "formats": ["Lunch lab"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "who": "Adults · lunch lab"}, {"id": "sound-logo-sprint", "title": "Sound Logo Sprint", "domain": "sound-music", "grade_min": null, "grade_max": null, "screen_level": 2, "screen_load": "Short screen bursts", "can_run_screen_free": false, "sessions_hint": "45–60 min lunch lab", "what_kids_make": "a 5–10 second sound logo recorded from everyday objects", "audience": "adults", "formats": ["Lunch lab"], "setup_level": 1, "setup_label": "Basic materials plus batteries or small circuits", "who": "Adults · lunch lab"}, {"id": "tiny-code-creatures", "title": "Tiny Code Creatures", "domain": "code-games", "grade_min": null, "grade_max": null, "screen_level": 2, "screen_load": "Short screen bursts", "can_run_screen_free": false, "sessions_hint": "45–60 min lunch lab", "what_kids_make": "an interactive micro:bit creature with a cardstock body", "audience": "adults", "formats": ["Lunch lab"], "setup_level": 2, "setup_label": "Shared laptops or Chromebooks", "who": "Adults · lunch lab"}];
+
+const STAGES = {
+  'robots-machines':      {n:'Robots & Machines', c:'var(--s-robots)', i:'<rect x="5" y="8" width="14" height="11" rx="2"/><path d="M12 8V4M9.5 13h.01M14.5 13h.01M9 16h6"/>'},
+  'code-games':           {n:'Code & Games', c:'var(--s-code)', i:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>'},
+  'fabrication-3d':       {n:'3D Printing & Fab', c:'var(--s-fab)', i:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>'},
+  'circuits-electronics': {n:'Circuits', c:'var(--s-circ)', i:'<path d="M3 12h4l2-5 4 10 2-5h6"/>'},
+  'sound-music':          {n:'Sound & Music', c:'var(--s-sound)', i:'<path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/>'},
+  'flight-drones':        {n:'Flight & Drones', c:'var(--s-flight)', i:'<circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8 8l8 8M16 8l-8 8"/>'},
+  'media-light':          {n:'Media & Light', c:'var(--s-media)', i:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'},
+  'civic-data':           {n:'Civic Design', c:'var(--s-civic)', i:'<path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/>'},
+};
+const BANDS = {g35:[3,5,'Grades 3–5','3–5'], g68:[6,8,'Grades 6–8','6–8'], g912:[9,12,'Grades 9–12','9–12']};
+/* "I work with" = what you can book. Community centers serve mixed ages, so they see every grade,
+   limited to programs that run in a regular room (no flight zone or machine shop). */
+const WHO = {
+  all:       {label:'Everyone',            bands:['g35','g68','g912'], test:() => true, grades:[], lbl:'Grades 3–12'},
+  k5:        {label:'Grades K–5',          bands:['g35'],  test:() => true, grades:['K–2','3–5'], lbl:'Grades 3–5 (K–2 in development)'},
+  g68:       {label:'Grades 6–8',          bands:['g68'],  test:() => true, grades:['6–8'], lbl:'Grades 6–8'},
+  g912:      {label:'Grades 9–12',         bands:['g912'], test:() => true, grades:['9–12'], lbl:'Grades 9–12'},
+  community: {label:'A community center',  bands:['g35','g68','g912'], test:p => p.setup_level <= 3, grades:[], type:'Community center', lbl:'Community centers, all grades'},
+};
+const icon = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${STAGES[k].i}</svg>`;
+const gradeShort = p => p.grade_max >= 13 ? `Gr ${p.grade_min}–12+` : `Gr ${p.grade_min}–${p.grade_max}`;
+const gradeLabel = p => p.grade_max >= 13 ? `Grades ${p.grade_min}–12 + college` : `Grades ${p.grade_min}–${p.grade_max}`;
+const inBand = (p, b) => p.grade_min <= BANDS[b][1] && p.grade_max >= BANDS[b][0];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isMobile = () => matchMedia('(max-width:720px)').matches;
+
+/* ---------- motion gate + review mode ---------- */
+const root = document.documentElement;
+let stored = null; try { stored = localStorage.getItem('mz-motion'); } catch(e){}
+const mq = matchMedia('(prefers-reduced-motion: reduce)');
+root.dataset.motion = (stored === 'off' || (stored !== 'on' && mq.matches)) ? 'reduce' : 'full';
+const motionOK = () => root.dataset.motion === 'full';
+const qs = new URLSearchParams(location.search);
+if(qs.has('review')) root.classList.add('review');
+/* hero fallback if the 2023 photo cannot be cleared: ?hero=2025 */
+if(qs.get('hero') === '2025'){ const k = document.getElementById('heroKids'); k.src = 'img/kids-2025.webp'; k.width = 756; k.height = 545; k.alt = 'Two createMPLS students build a LEGO simple machine together.'; document.querySelector('.kids-tag').innerHTML = 'real createMPLS <span class="hide-s">students </span>&middot; 2019 &amp; 2025'; }
+
+/* ---------- logo ---------- */
+document.querySelectorAll('[data-logo]').forEach(a => a.appendChild(document.getElementById('logo-tpl').content.cloneNode(true)));
+
+/* ---------- bulbs (static, lit) ---------- */
+function buildBulbs(el){
+  let svg = el.querySelector(':scope > svg.bulbs');
+  if(!svg){ svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('class','bulbs'); svg.setAttribute('aria-hidden','true');
+    svg.innerHTML = '<rect class="dim"/><rect class="lit"/>'; el.appendChild(svg); }
+  const w = el.offsetWidth, h = el.offsetHeight, ins = +(el.dataset.inset||12), r = +(el.dataset.r||12), want = +(el.dataset.gap||22);
+  if(!w || !h) return;
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  const rw = w-2*ins, rh = h-2*ins, per = 2*(rw+rh) - (8-2*Math.PI)*r;
+  const n = Math.max(12, Math.round(per/want/3)*3), g = per/n;
+  const size = Math.max(5, Math.min(9, want*.32));
+  svg.style.setProperty('--g', g+'px'); if(el.dataset.speed) svg.style.setProperty('--speed', el.dataset.speed);
+  svg.querySelectorAll('rect').forEach(rc=>{ rc.setAttribute('x',ins); rc.setAttribute('y',ins); rc.setAttribute('width',rw); rc.setAttribute('height',rh); rc.setAttribute('rx',r); rc.setAttribute('stroke-width', size); });
+  svg.querySelector('.dim').setAttribute('stroke-dasharray', `0 ${g}`);
+  svg.querySelector('.lit').setAttribute('stroke-dasharray', `0 ${g*3}`);
+}
+const bulbEls = [...document.querySelectorAll('[data-bulbs]')];
+const ro = new ResizeObserver(es => es.forEach(e => buildBulbs(e.target)));
+bulbEls.forEach(el => { buildBulbs(el); ro.observe(el); });
+document.fonts && document.fonts.ready.then(() => bulbEls.forEach(buildBulbs));
+const big = document.getElementById('bigBox');
+big.addEventListener('mouseenter', () => big.setAttribute('data-chase',''));
+big.addEventListener('mouseleave', () => big.removeAttribute('data-chase'));
+
+/* ---------- nav ---------- */
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('solid', scrollY > 30);
+addEventListener('scroll', onScroll, {passive:true}); onScroll();
+const drawer = document.getElementById('drawer'), menuBtn = document.getElementById('menuBtn');
+const setMenu = o => { drawer.classList.toggle('open', o); menuBtn.setAttribute('aria-expanded', o); if(o) drawer.querySelector('a').focus(); };
+menuBtn.onclick = () => setMenu(true);
+document.getElementById('menuClose').onclick = () => { setMenu(false); menuBtn.focus(); };
+drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+addEventListener('keydown', e => { if(e.key === 'Escape' && drawer.classList.contains('open')) { setMenu(false); menuBtn.focus(); } });
+
+/* ---------- tape band verb loop (CSS crawl; pausable) ---------- */
+(() => {
+  const verbs = ['build','wire','code','print','fly','mix','fix','show it off'];
+  const one = verbs.map(v => `<span>${v}</span><i>✶</i>`).join('');
+  document.getElementById('bandTrack').innerHTML = one + one + one + one;
+})();
+const pauseBtn = document.getElementById('pauseBtn');
+pauseBtn.onclick = () => { const p = !root.classList.contains('paused'); root.classList.toggle('paused', p); pauseBtn.setAttribute('aria-pressed', p); pauseBtn.setAttribute('aria-label', p ? 'Play moving text' : 'Pause moving text'); pauseBtn.querySelector('[aria-hidden]').textContent = p ? '▶' : '❚❚'; pauseBtn.querySelector('.pl').textContent = p ? 'Play' : 'Pause'; };
+const motionBtn = document.getElementById('motionBtn');
+const syncMotionBtn = () => { const r = root.dataset.motion === 'reduce'; motionBtn.setAttribute('aria-pressed', r); motionBtn.textContent = r ? 'Motion: off' : 'Reduce motion'; };
+syncMotionBtn();
+motionBtn.onclick = () => { const off = root.dataset.motion !== 'reduce'; try { localStorage.setItem('mz-motion', off ? 'off' : 'on'); } catch(e){} location.reload(); };
+
+/* ---------- letter board: one word per visit, no animation (ROBOTS under reduced motion) ---------- */
+const WORDS = ['ROBOTS','BEATS','DRONES','GAMES','PRINTS'];
+const pick = qs.get('word') ? qs.get('word').toUpperCase() : (motionOK() ? WORDS[Math.floor(Math.random() * WORDS.length)] : WORDS[0]);
+document.getElementById('word').innerHTML = [...pick.slice(0, 6)].map(ch => `<span class="tile">${esc(ch)}</span>`).join('');
+
+/* ---------- paste-up: the one scroll effect ---------- */
+if(motionOK() && 'IntersectionObserver' in window){
+  const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.paste').forEach(el => io.observe(el));
+} else document.querySelectorAll('.paste').forEach(el => el.classList.add('in'));
+
+/* ---------- families: a ready-to-send note for the principal ---------- */
+document.getElementById('mailPrincipal').href = 'mailto:?subject=' + encodeURIComponent('A free STEM program for our school') + '&body=' + encodeURIComponent(
+  "Hi,\n\nI'm a parent at our school. createMPLS is a Minneapolis nonprofit that brings hands-on STEM programs (robotics, coding, 3D printing, drones, sound tech) into schools and community sites. It is free for students and families.\n\nCould we bring a program here? Their page: https://creatempls.org (or info@creatempls.org)\n\nThank you!");
+
+/* ================= PROGRAMS: "I work with" + season map + detail drawer ================= */
+const state = {who:'all', sf:false, open:null};
+const picked = new Set();
+
+const whoEl = document.getElementById('who');
+whoEl.insertAdjacentHTML('beforeend', Object.entries(WHO).map(([k,w]) => `<button data-who="${k}">${w.label}</button>`).join(''));
+whoEl.addEventListener('click', e => {
+  const b = e.target.closest('button[data-who]'); if(!b) return;
+  state.who = b.dataset.who; state.open = defaultOpen();
+  buildMap(); prefillFromWho();
+});
+const sf = document.getElementById('sfSwitch');
+sf.onclick = () => { state.sf = !state.sf; sf.setAttribute('aria-checked', state.sf); state.open = defaultOpen(); buildMap(); };
+
+const smap = document.getElementById('smap'), gridMap = document.getElementById('gridMap'), countEl = document.getElementById('count');
+const pool = () => PROGRAMS.filter(p => WHO[state.who].test(p) && (!state.sf || p.can_run_screen_free));
+function rowsFor(){
+  const cols = WHO[state.who].bands, list = pool();
+  return Object.entries(STAGES).map(([k, s]) => ({k, s, cells: cols.map(b => list.filter(p => p.domain === k && inBand(p, b)))})).filter(r => r.cells.some(c => c.length));
+}
+/* desktop opens the first subject so the tickets are visible; phones start closed (the map is the summary) */
+function defaultOpen(){ if(isMobile()) return null; const r = rowsFor()[0]; return r ? {stage:r.k, band:'all'} : null; }
+function drawerList(o){
+  const cols = WHO[state.who].bands;
+  return pool().filter(p => p.domain === o.stage && (o.band === 'all' ? cols.some(b => inBand(p, b)) : inBand(p, o.band)));
+}
+function buildMap(){
+  const w = WHO[state.who], cols = w.bands, rows = rowsFor();
+  gridMap.style.setProperty('--cols', isMobile() ? `1fr repeat(${cols.length}, ${cols.length === 1 ? '76px' : '54px'})` : `minmax(170px,220px) repeat(${cols.length}, 1fr)`);
+  let h = `<div class="srow head" aria-hidden="true"><span class="ch subj">Subject</span>${cols.map(b => `<span class="ch"><span class="gw">Grades </span>${BANDS[b][3]}</span>`).join('')}</div>`;
+  for(const r of rows){
+    const n = new Set(r.cells.flat().map(p => p.id)).size, rowOpen = state.open && state.open.stage === r.k;
+    h += `<div class="srow" style="--c:${r.s.c}" role="group" aria-label="${r.s.n}">
+      <button class="rl" data-stage="${r.k}" data-band="all" aria-expanded="${rowOpen && state.open.band === 'all'}" aria-controls="sd-${r.k}">${icon(r.k)}<span><span class="rn">${r.s.n}</span><span class="rc">${n} program${n>1?'s':''}</span></span></button>`;
+    r.cells.forEach((list, i) => {
+      const b = cols[i];
+      if(!list.length){ h += `<div class="slot blank"><span class="sr">${r.s.n}, ${BANDS[b][2]}: not offered yet</span></div>`; return; }
+      const names = list.slice(0, 3).map(p => `<span>${esc(p.short)}</span>`).join('') + (list.length > 3 ? `<em>+ ${list.length - 3} more</em>` : '');
+      h += `<button class="slot" data-stage="${r.k}" data-band="${b}" aria-expanded="${rowOpen && state.open.band === b}" aria-controls="sd-${r.k}" aria-label="${r.s.n}, ${BANDS[b][2]}: ${list.length} program${list.length>1?'s':''}. Show them.">
+        <span class="cnt" aria-hidden="true"><span class="bulb on"></span>${list.length}</span>
+        <span class="bulbs-row" aria-hidden="true">${list.map(() => '<span class="bulb on"></span>').join('')}</span>
+        <span class="names" aria-hidden="true">${names}</span></button>`;
+    });
+    h += `</div>`;
+    if(rowOpen){
+      const list = drawerList(state.open), bl = state.open.band === 'all' ? w.lbl : BANDS[state.open.band][2];
+      h += `<div class="sdrawer" id="sd-${r.k}" style="--c:${r.s.c}" role="region" aria-label="${r.s.n} programs">
+        <div class="sd-head"><h4>${r.s.n} <span>&middot; ${bl} &middot; ${list.length} program${list.length>1?'s':''}</span></h4><button class="sd-close" data-close>Close &times;</button></div>
+        <div class="tix-grid">${list.map(ticket).join('')}</div></div>`;
+    }
+  }
+  if(state.who === 'k5') h += `<div class="srow" style="--c:var(--paper-2)"><div class="rl">Grades K–2</div><div class="slot note">In development. Ask us about younger grades.</div></div>`;
+  gridMap.innerHTML = h;
+  document.getElementById('k2line').hidden = !(state.who === 'all' || state.who === 'community');
+  const total = pool().filter(p => cols.some(b => inBand(p, b))).length;
+  countEl.textContent = `${total} program${total === 1 ? '' : 's'} · ${w.lbl}${state.sf ? ' · can run screen-free' : ''} · every one free for students & families`;
+  whoEl.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.who === state.who));
+}
+gridMap.addEventListener('click', e => {
+  if(e.target.closest('[data-close]')){ const k = state.open && state.open.stage; state.open = null; buildMap(); const rl = k && gridMap.querySelector(`.rl[data-stage="${k}"]`); if(rl) rl.focus(); return; }
+  const add = e.target.closest('[data-add]');
+  if(add){ togglePick(add); return; }
+  const c = e.target.closest('button.slot, button.rl'); if(!c) return;
+  const o = {stage:c.dataset.stage, band:c.dataset.band};
+  state.open = (state.open && state.open.stage === o.stage && state.open.band === o.band) ? null : o;
+  buildMap();
+  const again = gridMap.querySelector(`[data-stage="${o.stage}"][data-band="${o.band}"]`); if(again) again.focus({preventScroll:true});
+  const d = state.open && document.getElementById('sd-' + o.stage);
+  if(d) d.scrollIntoView({behavior: motionOK() ? 'smooth' : 'auto', block:'nearest'});
+});
+
+const meter = lvl => `<span class="meter" aria-hidden="true">${[0,1,2,3,4].map(i => `<i class="${i < lvl ? 'f' : ''}"></i>`).join('')}</span>`;
+function ticket(p){
+  const s = STAGES[p.domain], on = picked.has(p.id);
+  return `<article class="tix" style="--c:${s.c}" data-id="${p.id}"><div class="tstock">
+    <div class="tmain">
+      <div class="tband">${icon(p.domain)}<span>${s.n}</span></div>
+      <h5>${esc(p.bill)}</h5>
+      <p class="prog">Program: ${esc(p.title)}</p>
+      <p class="meta">${gradeLabel(p)} &middot; ${esc(p.sessions_hint)}</p>
+      <details class="tdet"><summary>Details</summary>
+        <dl>
+          <dt>Ends with</dt><dd>${esc(p.show || 'Show-and-tell with the group')}</dd>
+          <dt>Screens</dt><dd>${meter(p.screen_level)}${esc(p.screen_load)}${p.can_run_screen_free ? ' · screen-free option' : ''}</dd>
+          <dt>Needs</dt><dd>${esc(p.setup_label)}</dd>
+        </dl>
+      </details>
+    </div>
+    <div class="stub"><span class="sg" aria-label="${gradeLabel(p)}">${gradeShort(p)}</span>
+      <button class="add" aria-pressed="${on}" data-add="${p.id}" aria-label="${on ? 'Remove' : 'Add'} ${esc(p.title)} ${on ? 'from' : 'to'} your list">${on ? '✓ Added' : '+ Add'}</button></div>
+  </div></article>`;
+}
+function togglePick(b){
+  const id = b.dataset.add; picked.has(id) ? picked.delete(id) : picked.add(id);
+  const on = picked.has(id), p = PROGRAMS.find(x => x.id === id);
+  b.setAttribute('aria-pressed', on); b.textContent = on ? '✓ Added' : '+ Add';
+  b.setAttribute('aria-label', `${on ? 'Remove' : 'Add'} ${p.title} ${on ? 'from' : 'to'} your list`);
+  renderPicks();
+}
+
+/* ---------- your list -> tray, mobile bar, and the inquiry form (pre-filled) ---------- */
+const gradeBoxes = [...document.querySelectorAll('#f-grades input')];
+function renderPicks(){
+  const items = PROGRAMS.filter(p => picked.has(p.id));
+  document.getElementById('tray').classList.toggle('show', items.length > 0);
+  document.getElementById('trayItems').innerHTML = items.map(p => `<span>${esc(p.title)}</span>`).join('');
+  document.getElementById('mbarN').textContent = items.length || '';
+  document.getElementById('bookPicks').innerHTML = items.length
+    ? items.map(p => `<span>${esc(p.title)} · ${gradeShort(p)}</span>`).join('')
+    : `<span class="none">None yet.</span> <a href="#lineup">Browse programs</a>`;
+  items.forEach(p => Object.values(BANDS).forEach(b => { if(p.grade_min <= b[1] && p.grade_max >= b[0]){ const box = gradeBoxes.find(x => x.value === b[3]); if(box) box.checked = true; } }));
+}
+function prefillFromWho(){
+  const w = WHO[state.who];
+  w.grades.forEach(g => { const box = gradeBoxes.find(x => x.value === g); if(box) box.checked = true; });
+  if(w.type) document.getElementById('f-type').value = w.type;
+}
+document.getElementById('bookForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target, bad = [...f.querySelectorAll('[required]')].find(i => !i.checkValidity());
+  if(bad){ bad.reportValidity(); bad.focus(); return; }
+  const n = picked.size, val = id => document.getElementById(id).value.trim(), name = val('f-name').split(' ')[0];
+  document.getElementById('bookSentMsg').textContent = `${name ? name + ', w' : 'W'}e'll email ${val('f-email')} about ${val('f-site')}${n ? ` and the ${n} program${n>1?'s':''} on your list` : ''}.`;
+  const card = document.getElementById('bookCard'); card.classList.add('done'); document.getElementById('bookSent').focus();
+});
+const crewForm = document.getElementById('crewForm');
+crewForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const bad = [...crewForm.querySelectorAll('[required]')].find(i => !i.checkValidity());
+  if(bad){ bad.reportValidity(); bad.focus(); return; }
+  crewForm.querySelector('.done-msg').hidden = false;
+});
+
+state.open = defaultOpen();
+buildMap(); renderPicks();
+let wasMobile = isMobile();
+addEventListener('resize', () => { if(isMobile() !== wasMobile){ wasMobile = isMobile(); buildMap(); } });
+
+/* college & adult programs: folded into the season map's footer */
+document.getElementById('bside').innerHTML = MORE.map(p => `<li style="--c:${STAGES[p.domain].c}"><span class="w">${esc(p.who)} · ${STAGES[p.domain].n}</span><b>${esc(p.what_kids_make.charAt(0).toUpperCase() + p.what_kids_make.slice(1))}</b><span class="t">${esc(p.title)} · ${esc(p.sessions_hint)}</span></li>`).join('');
+const openAlso = document.getElementById('openAlso');
+openAlso.onclick = () => { const m = document.getElementById('morep'), o = m.hidden; m.hidden = !o; openAlso.setAttribute('aria-expanded', o); };
+
+/* ---------- mobile action bar: on after the hero CTA; off over the form and the Crew / Give / Families flyers ---------- */
+(() => {
+  const bar = document.getElementById('mbar'); if(!('IntersectionObserver' in window)) { bar.classList.add('on'); return; }
+  const vis = new Map(), hideOn = ['heroCta','book','crew','give','families'];
+  const sync = () => bar.classList.toggle('on', !hideOn.some(id => vis.get(id)));
+  const io = new IntersectionObserver(es => { es.forEach(e => vis.set(e.target.id, e.isIntersecting)); sync(); }, {threshold:0});
+  vis.set('heroCta', true);
+  hideOn.forEach(id => io.observe(document.getElementById(id)));
+})();
+</script>
+</body>
+</html>
